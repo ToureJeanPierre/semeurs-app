@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+/* Identité visuelle — docs/03-design.md */
+@theme {
+  --color-royal: #1546b8;
+  --color-night: #0b2a6f;
+  --color-sky: #3ba7f0;
+  --color-gold: #e9a90f;
+  --color-warm: #f08a1c;
+  --color-cloud: #f5f8fd;
+  --color-surface: #ffffff;
+  --color-ink: #111a2e;
+  --color-muted: #4a5672;
+  --color-line: #dfe5f0;
+
+  /* États d'assiduité : anneau / fond du badge / texte du badge */
+  --color-ok-ring: #2e9d62;
+  --color-ok-bg: #ddf3e6;
+  --color-ok-text: #17633c;
+  --color-warn-ring: #e07a12;
+  --color-warn-bg: #fdebd6;
+  --color-warn-text: #8a4204;
+  --color-alert-ring: #d2342a;
+  --color-alert-bg: #fce3e0;
+  --color-alert-text: #9b1c14;
+  --color-lost-ring: #6b7280;
+  --color-lost-bg: #eceef2;
+  --color-lost-text: #374151;
+
+  --font-sans: var(--font-figtree), system-ui, sans-serif;
+  --font-display: var(--font-outfit), var(--font-figtree), system-ui, sans-serif;
+
+  /* Échelle 12 / 14 / 16 / 20 / 24 / 30 / 40 */
+  --text-4xl: 2.5rem;
+  --text-4xl--line-height: 1.15;
+
+  --radius-card: 1.375rem;
+  --radius-sheet: 1.75rem;
+
+  --shadow-float: 0 8px 24px -8px rgb(11 42 111 / 0.22);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--color-cloud);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.15;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-sky);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
