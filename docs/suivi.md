@@ -124,8 +124,11 @@ création, c'est normal) et rouvert l'appli verrouillée avec son schéma. **Lot
 Correctif : le bouton « Ajouter ce téléphone » est masqué sur un téléphone déjà enregistré
 (il proposait une clé en double).
 
-Prochaine action : demander à Jean-Pierre l'autorisation de fusionner la branche
-`claude/wizardly-hypatia-uejff4` dans `main` (production suivra `main`), puis présenter le lot 1. sur le test téléphone, puis validation du lot 0.
+Fusion dans `main` autorisée par Jean-Pierre et faite (avance rapide, commit `e309b0c`), après
+correction de la CI : `npm run typecheck` lance d'abord `next typegen` (PageProps / LayoutProps
+manquaient sur GitHub). CI verte. Vercel déploie désormais `main` en production automatiquement.
+
+Prochaine action : présenter le lot 1 à Jean-Pierre et attendre sa validation avant de coder. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 
