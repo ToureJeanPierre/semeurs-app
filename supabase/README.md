@@ -13,3 +13,4 @@ avec la même version que le nom du fichier.
 | `20261026120000_modules_navigation.sql` | `modules.nav_position` (barre du bas configurable), raccourcis réordonnés selon la maquette, module Événements |
 | `20261026130000_home_banner.sql` | Paramètre `home_banner` (adresse de la photo de la bannière ; vide = dessin de secours) |
 | `20261026140000_banner_headline.sql` | Titre « Jésus-Christ t’aime » au-dessus du verset du jour (`home_banner.headline`) |
+| `20261026150000_prayer_giving_icons.sql` | Icônes : mains jointes pour Prières, main au cœur pour Dons |

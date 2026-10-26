@@ -48,29 +48,34 @@ export function NextServiceCard({
     >
       <Link
         href={href}
-        className="flex items-center gap-3 rounded-card bg-surface p-3 pr-2 shadow-card active:scale-[0.99]"
+        className="relative flex items-center gap-3 overflow-hidden rounded-card bg-gradient-to-r from-gold to-warm p-3 pr-2 text-night shadow-card active:scale-[0.99]"
       >
-        <span className="relative grid size-12 shrink-0 place-items-center rounded-full bg-royal text-white">
+        {/* Reflet lumineux qui traverse la carte */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-white/35 to-transparent"
+        />
+        <span className="relative grid size-12 shrink-0 place-items-center rounded-full bg-royal text-white shadow-float">
           {inProgress && (
             <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-royal/40" />
           )}
           <Play aria-hidden className="relative ml-0.5 size-5 fill-current" />
         </span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-xs font-medium text-muted">Prochain culte</span>
-          <span className="block truncate font-display font-semibold text-ink">{name}</span>
-          <span className="block text-sm text-muted">{when}</span>
+        <span className="relative min-w-0 flex-1">
+          <span className="block text-xs font-bold">Prochain culte</span>
+          <span className="block truncate font-display text-lg font-extrabold leading-tight">{name}</span>
+          <span className="block text-sm font-medium">{when}</span>
         </span>
         {inProgress ? (
-          <span className="shrink-0 rounded-full bg-alert-ring px-2 py-0.5 text-[0.6875rem] font-bold text-white">
+          <span className="relative shrink-0 rounded-full bg-alert-ring px-2 py-0.5 text-[0.6875rem] font-bold text-white">
             En cours
           </span>
         ) : (
-          <span className="shrink-0 rounded-full bg-royal/10 px-2 py-0.5 text-xs font-semibold text-royal">
+          <span className="relative shrink-0 rounded-full bg-night px-2.5 py-1 text-xs font-bold text-white">
             {untilLabel(start, now)}
           </span>
         )}
-        <ChevronRight aria-hidden className="size-5 shrink-0 text-muted" />
+        <ChevronRight aria-hidden className="relative size-5 shrink-0" />
       </Link>
     </motion.div>
   );

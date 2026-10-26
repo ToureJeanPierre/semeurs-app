@@ -104,6 +104,10 @@ le logo n'est **pas entouré de blanc**.
   transatlantiques par page. Corrigé : région `dub1` (Dublin) dans `vercel.json` et dans le projet
   Vercel. En plus : animations d'entrée raccourcies, `app/loading.tsx` (affichage immédiat).
 
+- 6ᵉ retour : bannière moins haute ; carte « Prochain culte » sous la bannière (plus de
+  chevauchement), en dégradé or → orange avec reflet animé ; icône Prières = mains jointes
+  (`hands-praying`, dessinée dans `icons.tsx`, absente de Lucide), Dons = main au cœur.
+
 Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :

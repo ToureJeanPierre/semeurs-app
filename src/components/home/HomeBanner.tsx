@@ -35,9 +35,9 @@ function Headline({ text }: { text: string }) {
   const end = cut > 0 ? text.slice(cut + 1) : "";
   return (
     <motion.p variants={reveal} className="leading-none [text-shadow:0_2px_14px_rgb(11_42_111/0.7)]">
-      <span className="font-rounded text-[2rem] font-bold tracking-tight text-[#ffd34d]">{start}</span>
+      <span className="font-rounded text-[1.75rem] font-bold tracking-tight text-[#ffd34d]">{start}</span>
       {end && (
-        <span className="ml-2 inline-block -rotate-3 font-script text-[2.6rem] font-bold text-[#ffe9a6]">
+        <span className="ml-2 inline-block -rotate-3 font-script text-[2.25rem] font-bold text-[#ffe9a6]">
           {end}
         </span>
       )}
@@ -178,13 +178,13 @@ export function HomeBanner({
   const size = !verse
     ? ""
     : verse.text.length > 140
-      ? "text-base"
+      ? "text-[0.9375rem]"
       : verse.text.length > 80
-        ? "text-lg"
-        : "text-xl";
+        ? "text-base"
+        : "text-lg";
 
   return (
-    <section aria-label="Verset du jour" className="relative isolate h-80 overflow-hidden bg-night">
+    <section aria-label="Verset du jour" className="relative isolate h-64 overflow-hidden bg-night">
       {imageUrl ? (
         <Image
           src={imageUrl}
@@ -223,7 +223,7 @@ export function HomeBanner({
       >
         {headline && <Headline text={headline} />}
         {verse && (
-          <motion.figure variants={reveal} className="mt-3 text-left">
+          <motion.figure variants={reveal} className="mt-2 text-left">
             <blockquote className={`leading-snug ${size}`}>
               <span className="mr-1.5 font-sans text-[0.8125rem] font-bold text-gold">Verset du jour :</span>
               <span className="font-script">« {verse.text} »</span>

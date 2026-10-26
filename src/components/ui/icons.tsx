@@ -1,4 +1,4 @@
-import { createElement } from "react";
+import { createElement, type ComponentType } from "react";
 import {
   BookOpen,
   CalendarDays,
@@ -11,20 +11,45 @@ import {
   Sparkles,
   UserRound,
   UsersRound,
-  type LucideIcon,
   type LucideProps,
 } from "lucide-react";
+
+/** Mains jointes en prière (absent de Lucide), dessiné dans le même style de trait. */
+function HandsPraying({ size = 24, strokeWidth = 2, color = "currentColor", ...props }: LucideProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M12 16V5.2c0-1.3-1.6-1.9-2.4-.8L9 5.5 7.4 12.2 4.6 15.3" />
+      <path d="M12 16V5.2c0-1.3 1.6-1.9 2.4-.8l.6 1.1 1.6 6.7 2.8 3.1" />
+      <path d="M12 16l-5 5-4.5-4.4 2.1-2.3" />
+      <path d="M12 16l5 5 4.5-4.4-2.1-2.3" />
+      <path d="M9.6 8.5l1.4 2" />
+      <path d="M14.4 8.5l-1.4 2" />
+    </svg>
+  );
+}
 
 /**
  * Icônes proposées pour les modules et la navigation. La base stocke le nom
  * (kebab-case, comme sur lucide.dev) ; un nom inconnu affiche une étincelle.
  * Pour proposer une nouvelle icône à l'administrateur, l'ajouter ici.
  */
-const ICONS: Record<string, LucideIcon> = {
+const ICONS: Record<string, ComponentType<LucideProps>> = {
   "book-open": BookOpen,
   "calendar-days": CalendarDays,
   "circle-play": CirclePlay,
   "hand-heart": HandHeart,
+  "hands-praying": HandsPraying,
   heart: Heart,
   "heart-handshake": HeartHandshake,
   house: House,

@@ -42,7 +42,7 @@ export default async function HomePage() {
     <AppShell>
       <HomeBanner imageUrl={home.banner.image_url} headline={home.banner.headline} verse={verse} />
 
-      <div className="relative mx-auto -mt-3 flex w-full max-w-lg flex-col gap-6 px-4">
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-6 px-4 pt-4">
         {next && (
           <NextServiceCard
             name={next.service.short_name ?? next.service.name}
