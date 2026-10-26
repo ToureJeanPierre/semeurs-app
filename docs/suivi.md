@@ -81,6 +81,18 @@ téléphone de sa maquette** :
 - barre du bas alignée : Accueil, Prédications, Événements, Profil (configurable : `modules.nav_position`).
 - Les modules non livrés ouvrent une page « Bientôt disponible » (`/m/[code]`).
 
+## 3ᵉ passage (26/10/2026)
+
+Retours de Jean-Pierre : le menu est en **trois traits à gauche** (pas trois points) ; la bannière doit
+être une **photo**, pas un dessin ; la phrase de la bannière est remplacée par le **verset du jour** ;
+le logo n'est **pas entouré de blanc**.
+- Fait : bouton menu à gauche (panneau qui glisse depuis la gauche), logo détouré en cercle
+  transparent (`public/logo-semeurs.webp`, service worker passé en v2), verset du jour sur la
+  bannière (taille adaptée à la longueur), carte « Verset du jour » retirée.
+- Bannière : paramètre `home_banner.image_url`. **En attente de la photo** de Jean-Pierre (l'image
+  Canva ne peut pas être téléchargée depuis l'environnement cloud). Quand il l'envoie : la placer
+  dans `public/`, la compresser (WebP, ~1200 px de large) et renseigner `image_url`.
+
 Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :

@@ -48,6 +48,7 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-shine: shine 3.8s ease-in-out infinite;
   --animate-drift: drift 18s ease-in-out infinite alternate;
+  --animate-kenburns: kenburns 24s ease-in-out infinite alternate;
 
   @keyframes rays-sway {
     from { transform: rotate(-4deg); opacity: 0.75; }
@@ -63,6 +64,10 @@
   @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
+  }
+  @keyframes kenburns {
+    from { transform: scale(1); }
+    to { transform: scale(1.12) translateY(-2%); }
   }
   @keyframes drift {
     from { transform: translateX(-14px); }

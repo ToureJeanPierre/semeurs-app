@@ -1,7 +1,7 @@
 // Service worker du lot 0 : rend l'appli installable et affiche une page
 // « hors connexion » quand le réseau manque. Le vrai mode hors connexion
 // (pointage, suivi, file de synchronisation) arrive au lot 1.
-const VERSION = "v1";
+const VERSION = "v2";
 const STATIC_CACHE = `semeurs-static-${VERSION}`;
 const OFFLINE_URL = "/hors-ligne";
 const PRECACHE = [OFFLINE_URL, "/logo-semeurs.webp", "/icons/icon-192.png"];

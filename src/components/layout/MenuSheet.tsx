@@ -10,12 +10,14 @@ import { Logo } from "@/components/Logo";
 import { ModuleIcon } from "@/components/ui/icons";
 import type { menuLinks } from "@/lib/navigation";
 
-/** Menu complet : panneau qui glisse depuis la droite, entrées qui apparaissent en cascade. */
+/** Menu complet : panneau qui glisse depuis le côté du bouton, entrées qui apparaissent en cascade. */
 export function MenuSheet({
   open,
   onClose,
   items,
+  side = "left",
 }: {
+  side?: "left" | "right";
   open: boolean;
   onClose: () => void;
   items: ReturnType<typeof menuLinks>;
@@ -48,17 +50,17 @@ export function MenuSheet({
           />
           <motion.nav
             aria-label="Menu complet"
-            className="absolute inset-y-0 right-0 flex w-[min(20rem,86vw)] flex-col bg-cloud shadow-float"
-            initial={{ x: "100%" }}
+            className={`absolute inset-y-0 ${side === "left" ? "left-0" : "right-0"} flex w-[min(20rem,86vw)] flex-col bg-cloud shadow-float`}
+            initial={{ x: side === "left" ? "-100%" : "100%" }}
             animate={{ x: 0 }}
-            exit={{ x: "100%" }}
+            exit={{ x: side === "left" ? "-100%" : "100%" }}
             transition={{ type: "spring", stiffness: 380, damping: 38 }}
           >
             <div className="flex items-center gap-3 bg-royal px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] text-white">
-              <span className="rounded-full bg-white p-0.5">
-                <Logo size={44} />
-              </span>
-              <p className="min-w-0 flex-1 font-display font-semibold leading-tight">Les Semeurs de la Parole</p>
+              <Logo size={48} />
+              <p className="min-w-0 flex-1 font-display font-semibold leading-tight">
+                Les Semeurs de la Parole
+              </p>
               <button
                 type="button"
                 onClick={onClose}
@@ -80,7 +82,10 @@ export function MenuSheet({
                 return (
                   <motion.li
                     key={item.href}
-                    variants={{ hidden: { opacity: 0, x: 24 }, show: { opacity: 1, x: 0 } }}
+                    variants={{
+                      hidden: { opacity: 0, x: side === "left" ? -24 : 24 },
+                      show: { opacity: 1, x: 0 },
+                    }}
                   >
                     <Link
                       href={item.href}
@@ -112,7 +117,10 @@ export function MenuSheet({
               })}
             </motion.ul>
 
-            <form action={signOut} className="border-t border-line p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <form
+              action={signOut}
+              className="border-t border-line p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+            >
               <button
                 type="submit"
                 className="flex min-h-12 w-full items-center gap-3 rounded-2xl px-3 font-semibold text-alert-text hover:bg-alert-bg"

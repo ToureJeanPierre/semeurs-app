@@ -23,8 +23,8 @@ const FALLBACK_PROFILE: ChurchProfile = {
  */
 export async function loadHomeData() {
   const supabase = await createClient();
-  const [profile, services, verses] = await Promise.all([
-    supabase.from("settings").select("value").eq("key", "church_profile").maybeSingle(),
+  const [settings, services, verses] = await Promise.all([
+    supabase.from("settings").select("key, value").in("key", ["church_profile", "home_banner"]),
     supabase
       .from("service_types")
       .select("id, name, short_name, weekday, start_time, end_time, place")
@@ -32,8 +32,11 @@ export async function loadHomeData() {
     supabase.from("daily_verses").select("id, reference, text, translation, position"),
   ]);
 
+  const setting = (key: string) => settings.data?.find((row) => row.key === key)?.value;
+
   return {
-    profile: { ...FALLBACK_PROFILE, ...(profile.data?.value as Partial<ChurchProfile> | undefined) },
+    profile: { ...FALLBACK_PROFILE, ...(setting("church_profile") as Partial<ChurchProfile> | undefined) },
+    bannerImage: (setting("home_banner") as { image_url?: string | null } | undefined)?.image_url ?? null,
     services: (services.data ?? []) as ServiceType[],
     verses: (verses.data ?? []) as DailyVerse[],
   };

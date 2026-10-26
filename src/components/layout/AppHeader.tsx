@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Bell, EllipsisVertical } from "lucide-react";
+import { ArrowLeft, Bell, Menu } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import type { menuLinks } from "@/lib/navigation";
 import { MenuSheet } from "./MenuSheet";
@@ -13,9 +13,9 @@ const iconButton =
 
 /**
  * Barre du haut, bleu roi (maquette du 26/10/2026).
- * - Accueil : logo et nom de l'église.
- * - Autres pages : flèche retour et titre.
- * À droite : cloche (annonces) et trois points qui ouvrent le menu complet.
+ * - Accueil : trois traits (menu complet) à gauche, logo et nom de l'église.
+ * - Autres pages : flèche retour et titre, trois traits à droite.
+ * Cloche (annonces) à droite.
  */
 export function AppHeader({
   title,
@@ -29,6 +29,18 @@ export function AppHeader({
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
+  const menuButton = (
+    <button
+      type="button"
+      className={iconButton}
+      aria-label="Ouvrir le menu"
+      aria-expanded={open}
+      onClick={() => setOpen(true)}
+    >
+      <Menu aria-hidden className="size-7" />
+    </button>
+  );
+
   return (
     <>
       <header className="sticky top-0 z-30 bg-royal pt-[env(safe-area-inset-top)] text-white">
@@ -41,33 +53,28 @@ export function AppHeader({
               <h1 className="min-w-0 flex-1 truncate font-display text-xl font-semibold">{title}</h1>
             </>
           ) : (
-            <Link href="/" className="flex min-w-0 flex-1 items-center gap-3 pl-2" aria-label="Accueil">
-              <span className="shrink-0 rounded-full bg-white p-0.5 shadow-float">
-                <Logo size={40} priority />
-              </span>
-              <span className="min-w-0 leading-tight">
-                <span className="block text-xs font-medium text-white/85">Église Évangélique</span>
-                <span className="block truncate font-display text-base font-semibold">
-                  Les Semeurs de la Parole
+            <>
+              {menuButton}
+              <Link href="/" className="flex min-w-0 flex-1 items-center gap-2.5" aria-label="Accueil">
+                <span className="shrink-0">
+                  <Logo size={44} priority />
                 </span>
-              </span>
-            </Link>
+                <span className="min-w-0 leading-tight">
+                  <span className="block text-xs font-medium text-white/85">Église Évangélique</span>
+                  <span className="block truncate font-display text-base font-semibold">
+                    Les Semeurs de la Parole
+                  </span>
+                </span>
+              </Link>
+            </>
           )}
           <Link href={bellHref} className={iconButton} aria-label="Annonces">
             <Bell aria-hidden className="size-6" />
           </Link>
-          <button
-            type="button"
-            className={iconButton}
-            aria-label="Ouvrir le menu"
-            aria-expanded={open}
-            onClick={() => setOpen(true)}
-          >
-            <EllipsisVertical aria-hidden className="size-6" />
-          </button>
+          {title && menuButton}
         </div>
       </header>
-      <MenuSheet open={open} onClose={() => setOpen(false)} items={menu} />
+      <MenuSheet open={open} onClose={() => setOpen(false)} items={menu} side={title ? "right" : "left"} />
     </>
   );
 }
