@@ -97,6 +97,13 @@ le logo n'est **pas entouré de blanc**.
 - 4ᵉ retour : « C'est beaucoup mieux ». Ajouts : titre « Jésus-Christ t’aime » au-dessus du verset
   (paramètre `home_banner.headline`) et petite étiquette « Verset du jour » avant le verset.
 
+- 5ᵉ retour : titre dans le style de l'affiche (« Jésus-Christ » en lettres rondes Comfortaa,
+  « t’aime » en manuscrit, doré) ; « Verset du jour : » placé à gauche, suivi du verset.
+- **Lenteur signalée** (quelques secondes à chaque écran). Cause : fonctions Vercel aux États-Unis
+  (`iad1`) alors que Supabase est en Irlande (`eu-west-1`) → plusieurs allers-retours
+  transatlantiques par page. Corrigé : région `dub1` (Dublin) dans `vercel.json` et dans le projet
+  Vercel. En plus : animations d'entrée raccourcies, `app/loading.tsx` (affichage immédiat).
+
 Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :

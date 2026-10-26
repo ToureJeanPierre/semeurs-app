@@ -30,6 +30,7 @@
   --font-sans: var(--font-figtree), system-ui, sans-serif;
   --font-display: var(--font-outfit), var(--font-figtree), system-ui, sans-serif;
   --font-script: var(--font-dancing), cursive;
+  --font-rounded: var(--font-comfortaa), var(--font-figtree), system-ui, sans-serif;
 
   /* Échelle 12 / 14 / 16 / 20 / 24 / 30 / 40 */
   --text-4xl: 2.5rem;

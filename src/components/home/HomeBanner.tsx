@@ -25,6 +25,26 @@ const reveal = {
   },
 };
 
+/**
+ * Titre dans le style de l'affiche d'évangélisation : le début en lettres
+ * rondes, le dernier mot (« t’aime ») en écriture manuscrite, le tout doré.
+ */
+function Headline({ text }: { text: string }) {
+  const cut = text.lastIndexOf(" ");
+  const start = cut > 0 ? text.slice(0, cut) : text;
+  const end = cut > 0 ? text.slice(cut + 1) : "";
+  return (
+    <motion.p variants={reveal} className="leading-none [text-shadow:0_2px_14px_rgb(11_42_111/0.7)]">
+      <span className="font-rounded text-[2rem] font-bold tracking-tight text-[#ffd34d]">{start}</span>
+      {end && (
+        <span className="ml-2 inline-block -rotate-3 font-script text-[2.6rem] font-bold text-[#ffe9a6]">
+          {end}
+        </span>
+      )}
+    </motion.p>
+  );
+}
+
 const RAYS = Array.from({ length: 13 }, (_, i) => -72 + i * 12);
 
 /** Dessin de secours (Bible ouverte dans la lumière) tant qu'aucune photo n'est paramétrée. */
@@ -201,21 +221,16 @@ export function HomeBanner({
         animate="show"
         variants={{ show: { transition: { staggerChildren: 0.18 } } }}
       >
-        {headline && (
-          <motion.p
-            variants={reveal}
-            className="font-display text-[1.75rem] font-extrabold leading-tight text-white"
-          >
-            {headline}
-          </motion.p>
-        )}
+        {headline && <Headline text={headline} />}
         {verse && (
-          <motion.figure variants={reveal} className="mt-2">
-            <span className="inline-block rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-semibold text-gold backdrop-blur-sm [text-shadow:none]">
-              Verset du jour
-            </span>
-            <blockquote className={`mt-1.5 font-script leading-snug ${size}`}>« {verse.text} »</blockquote>
-            <figcaption className="mt-1 text-sm font-semibold text-gold">{verse.reference}</figcaption>
+          <motion.figure variants={reveal} className="mt-3 text-left">
+            <blockquote className={`leading-snug ${size}`}>
+              <span className="mr-1.5 font-sans text-[0.8125rem] font-bold text-gold">Verset du jour :</span>
+              <span className="font-script">« {verse.text} »</span>
+            </blockquote>
+            <figcaption className="mt-1 text-right text-sm font-semibold text-gold">
+              {verse.reference}
+            </figcaption>
           </motion.figure>
         )}
       </motion.div>

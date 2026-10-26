@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Dancing_Script, Figtree, Outfit } from "next/font/google";
+import { Comfortaa, Dancing_Script, Figtree, Outfit } from "next/font/google";
 import { MotionProvider } from "@/components/MotionProvider";
 import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
 import "./globals.css";
@@ -14,7 +14,14 @@ const figtree = Figtree({
 const script = Dancing_Script({
   variable: "--font-dancing",
   subsets: ["latin"],
-  weight: ["600"],
+  weight: ["600", "700"],
+});
+
+// Lettres rondes du titre « Jésus-Christ » (style de l'affiche d'évangélisation)
+const rounded = Comfortaa({
+  variable: "--font-comfortaa",
+  subsets: ["latin"],
+  weight: ["700"],
 });
 
 const outfit = Outfit({
@@ -49,7 +56,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr-CI" className={`${figtree.variable} ${outfit.variable} ${script.variable} h-full antialiased`}>
+    <html
+      lang="fr-CI"
+      className={`${figtree.variable} ${outfit.variable} ${script.variable} ${rounded.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col">
         <MotionProvider>{children}</MotionProvider>
         <RegisterServiceWorker />

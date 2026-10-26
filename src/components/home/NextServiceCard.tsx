@@ -44,7 +44,7 @@ export function NextServiceCard({
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 28 }}
+      transition={{ type: "spring", stiffness: 400, damping: 32 }}
     >
       <Link
         href={href}

@@ -20,7 +20,7 @@ export function ShortcutGrid({ items }: { items: Shortcut[] }) {
         className="grid grid-cols-3 gap-x-3 gap-y-5"
         initial="hidden"
         animate="show"
-        variants={{ show: { transition: { delayChildren: 0.3, staggerChildren: 0.06 } } }}
+        variants={{ show: { transition: { delayChildren: 0.05, staggerChildren: 0.04 } } }}
       >
         {items.map((m) => (
           <motion.li key={m.code} variants={tile}>
