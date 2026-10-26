@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { requireUser } from "@/lib/auth/session";
-import { bottomNavLinks, loadModules, menuLinks, moduleHref } from "@/lib/navigation";
+import { getAccess } from "@/lib/access";
+import { bottomNavLinks, loadModules, menuLinks, moduleHref, visibleModules } from "@/lib/navigation";
 import { AppHeader } from "@/components/layout/AppHeader";
 
 /**
@@ -12,7 +13,8 @@ import { AppHeader } from "@/components/layout/AppHeader";
  */
 export default async function AppLayout({ children }: { children: ReactNode }) {
   await requireUser();
-  const modules = await loadModules();
+  const [allModules, access] = await Promise.all([loadModules(), getAccess()]);
+  const modules = visibleModules(allModules, access);
   const announcements = modules.find((m) => m.code === "messages");
 
   return (

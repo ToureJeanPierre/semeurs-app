@@ -20,7 +20,13 @@ const iconButton =
 export function AppHeader({ menu, bellHref }: { menu: ReturnType<typeof menuLinks>; bellHref: string }) {
   const router = useRouter();
   const pathname = usePathname();
-  const title = pathname === "/" ? undefined : (menu.find((m) => m.href === pathname)?.label ?? "");
+  // Titre : l'entrée du menu dont l'adresse est le début le plus long de la page courante.
+  const title =
+    pathname === "/"
+      ? undefined
+      : (menu
+          .filter((m) => m.href !== "/" && (pathname === m.href || pathname.startsWith(`${m.href}/`)))
+          .sort((a, b) => b.href.length - a.href.length)[0]?.label ?? "");
   const [open, setOpen] = useState(false);
 
   const menuButton = (

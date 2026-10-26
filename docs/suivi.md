@@ -128,7 +128,30 @@ Fusion dans `main` autorisée par Jean-Pierre et faite (avance rapide, commit `e
 correction de la CI : `npm run typecheck` lance d'abord `next typegen` (PageProps / LayoutProps
 manquaient sur GitHub). CI verte. Vercel déploie désormais `main` en production automatiquement.
 
-Prochaine action : présenter le lot 1 à Jean-Pierre et attendre sa validation avant de coder. sur le test téléphone, puis validation du lot 0.
+## Lot 1 — démarré le 26/10/2026 (validé par Jean-Pierre)
+
+Étapes annoncées : (1) socle « tout se configure », (2) fidèles et familles + délégation,
+(3) pointage liste/QR hors connexion, (4) alertes d'absence, (5) espace fidèle / « Je suis à la
+maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes de démonstration.
+
+### Étape 1 — socle (fait, en attente du test de Jean-Pierre)
+- Migrations `20261027000000_core_engine.sql` et `20261027010000_admin_module.sql` (appliquées).
+- Modèle des droits : rôle d'église (vaut partout) ou fonction dans un groupe (vaut dans le groupe).
+  Catalogue `permissions` : settings.manage, roles.manage, groups.manage, people.view,
+  people.manage, alerts.view, alerts.manage, audit.view.
+- Écrans `/administration` : groupes (ajouter famille/équipe/cellule…, couleur, capacités à cocher,
+  bureau choisi dans la liste des membres, membres), personnes (ajout rapide), rôles d'église,
+  paramètres (seuils d'alerte). Module « Administration » visible selon les droits.
+- Tests RLS : `tests/rls/core-engine.test.ts` (5 scénarios, base réelle, sans trace).
+- Testé de bout en bout en local avec un compte administrateur temporaire, puis données de test
+  supprimées (le journal d'audit, lui, n'est jamais modifié : il garde la trace de ces essais).
+- **En attente** : accord de Jean-Pierre pour lui attribuer le rôle Administrateur (refusé par la
+  protection automatique tant qu'il ne l'a pas demandé explicitement). Sans ce rôle, il ne voit
+  pas le menu Administration.
+- Plus tard : désignation de l'administrateur « validée par le pasteur » (docs/01 §13) ;
+  capacités toutes marquées « Bientôt » tant qu'elles ne sont pas livrées.
+
+Prochaine action : obtenir l'accord de Jean-Pierre pour le rôle Administrateur, puis test. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 

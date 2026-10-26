@@ -14,3 +14,8 @@ avec la même version que le nom du fichier.
 | `20261026130000_home_banner.sql` | Paramètre `home_banner` (adresse de la photo de la bannière ; vide = dessin de secours) |
 | `20261026140000_banner_headline.sql` | Titre « Jésus-Christ t’aime » au-dessus du verset du jour (`home_banner.headline`) |
 | `20261026150000_prayer_giving_icons.sql` | Icônes : mains jointes pour Prières, main au cœur pour Dons |
+| `20261027000000_core_engine.sql` | Lot 1 — socle : personnes, comptes, groupes et types, bureau (fonctions), appartenances (une seule famille), capacités, droits / rôles / affectations, listes de valeurs, journal d'audit ; fonctions `private.has_permission`, `can_see_person`… ; RLS ; données de l'église (docs/05) |
+| `20261027010000_admin_module.sql` | `modules.required_permissions` et module « Administration » (visible selon les droits) |
+
+Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
+s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

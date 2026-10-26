@@ -12,7 +12,9 @@ import {
   setUnlocked,
 } from "@/lib/auth/session";
 
-export type FormState = { error?: string; fieldErrors?: Record<string, string> } | undefined;
+export type FormState =
+  | { error?: string; fieldErrors?: Record<string, string>; success?: string }
+  | undefined;
 
 const loginSchema = z.object({
   phone: z.string().trim().min(1, "Saisissez votre numéro de téléphone."),

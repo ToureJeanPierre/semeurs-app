@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { hasAny, type Access } from "@/lib/access";
 
 export type AppModule = {
   code: string;
@@ -11,6 +12,7 @@ export type AppModule = {
   enabled: boolean;
   home_position: number | null;
   nav_position: number | null;
+  required_permissions: string[];
 };
 
 export type NavLink = { href: string; label: string; icon: string };
@@ -18,6 +20,11 @@ export type NavLink = { href: string; label: string; icon: string };
 /** Adresse d'un module : sa page s'il est activé, sinon sa page « Bientôt ». */
 export function moduleHref(m: Pick<AppModule, "code" | "href" | "enabled">): string {
   return m.enabled && m.href ? m.href : `/m/${m.code}`;
+}
+
+/** Ne garde que les modules que la personne a le droit de voir (required_permissions). */
+export function visibleModules(modules: AppModule[], access: Access): AppModule[] {
+  return modules.filter((m) => hasAny(access, m.required_permissions ?? []));
 }
 
 /**
@@ -28,7 +35,7 @@ export const loadModules = cache(async (): Promise<AppModule[]> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("modules")
-    .select("code, label, description, icon, href, enabled, home_position, nav_position")
+    .select("code, label, description, icon, href, enabled, home_position, nav_position, required_permissions")
     .order("home_position", { nullsFirst: false })
     .order("label");
   return (data ?? []) as AppModule[];
