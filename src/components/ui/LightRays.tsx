@@ -1,8 +1,9 @@
 /**
  * Motif signature : éventail de rayons de lumière partant du haut,
- * en écho au logo (docs/03-design.md §1.4). Purement décoratif.
+ * en écho au logo (docs/03-design.md §1.4). Purement décoratif ;
+ * `animated` les fait osciller lentement (CSS, coupé si mouvement réduit).
  */
-export function LightRays({ className = "" }: { className?: string }) {
+export function LightRays({ className = "", animated = false }: { className?: string; animated?: boolean }) {
   const rays = Array.from({ length: 11 }, (_, i) => -50 + i * 10);
   return (
     <svg
@@ -18,14 +19,16 @@ export function LightRays({ className = "" }: { className?: string }) {
         </linearGradient>
       </defs>
       <g transform="translate(200 -20)">
-        {rays.map((angle) => (
-          <polygon
-            key={angle}
-            points="-7,0 7,0 34,300 -34,300"
-            fill="url(#ray)"
-            transform={`rotate(${angle})`}
-          />
-        ))}
+        <g className={animated ? "animate-rays" : undefined}>
+          {rays.map((angle) => (
+            <polygon
+              key={angle}
+              points="-7,0 7,0 34,300 -34,300"
+              fill="url(#ray)"
+              transform={`rotate(${angle})`}
+            />
+          ))}
+        </g>
       </g>
     </svg>
   );

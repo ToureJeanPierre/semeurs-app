@@ -45,6 +45,27 @@ Notes :
 - 26/10 : le compte de test avait un chiffre en trop dans son numéro (11 chiffres) ; adresse
   technique corrigée via l'API admin Supabase, mot de passe inchangé.
 
+## Nouvel habillage animé (26/10/2026, demandé par Jean-Pierre)
+
+Jean-Pierre s'est connecté avec succès, mais il a trouvé le design trop pauvre. Il a envoyé deux
+maquettes : bleu roi et or, logo, bandeau lumineux, grille d'icônes, verset du jour, prochain culte.
+Il a validé la proposition suivante, réalisée sur la branche `claude/wizardly-hypatia-uejff4` :
+
+- Migration `20261026000000_home_configuration.sql` (appliquée) : `settings`, `service_types`,
+  `daily_verses`, `modules`. Tout ce qu'affiche l'accueil vient de là (principe « tout se configure »).
+- Accueil : bandeau animé (rayons qui oscillent, grains dorés qui montent, halo autour du logo),
+  carte « Prochain culte » avec compte à rebours en direct, 6 raccourcis « Bientôt » (modules
+  désactivés), verset du jour (12 versets Louis Segond 1910, un par jour), programme de la semaine.
+- Connexion, déverrouillage et profil : même ciel animé. Barre du bas flottante avec pastille qui glisse.
+  Transition douce entre les pages. `prefers-reduced-motion` respecté partout (MotionConfig + CSS).
+- Tests : `tests/unit/services.test.ts`, `tests/unit/verses.test.ts`. RLS vérifiée à la main
+  (anon : refusé ; authenticated : lecture seule, settings publics seulement).
+- Production : déployée depuis cette branche via l'API Vercel (sans toucher à `main`).
+  À fusionner dans `main` quand Jean-Pierre valide.
+- À faire au lot 1 : écrans d'administration pour modifier ces paramètres ; RLS d'écriture pour l'admin.
+- Les maquettes montrent aussi les cultes en direct, les dons en ligne et l'App Store : ce n'est pas
+  au cahier des charges tel quel. À rediscuter avec Jean-Pierre le moment venu.
+
 Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :

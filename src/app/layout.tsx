@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Figtree, Outfit } from "next/font/google";
+import { MotionProvider } from "@/components/MotionProvider";
 import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
 import "./globals.css";
 
@@ -43,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr-CI" className={`${figtree.variable} ${outfit.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        {children}
+        <MotionProvider>{children}</MotionProvider>
         <RegisterServiceWorker />
       </body>
     </html>

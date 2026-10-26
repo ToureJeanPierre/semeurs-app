@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Fingerprint, LogOut, Trash2 } from "lucide-react";
+import { Fingerprint, LogOut, Trash2, UserRound } from "lucide-react";
 import { removePasskey, signOut } from "@/app/actions/auth";
 import { PasskeySetupCard } from "@/components/auth/PasskeySetupCard";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { HeroSky } from "@/components/ui/HeroSky";
+import { Reveal } from "@/components/ui/Reveal";
 import { requireUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { formatPhone } from "@/lib/phone";
@@ -30,17 +32,24 @@ export default async function ProfilePage() {
 
   return (
     <>
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-4 px-4 pb-24 pt-8">
-        <h1 className="text-3xl font-extrabold">Mon profil</h1>
+      <main className="flex flex-1 flex-col pb-28">
+        <HeroSky className="px-5 pb-16 pt-8">
+          <Reveal className="mx-auto flex max-w-lg items-center gap-4">
+            <span className="grid size-16 shrink-0 place-items-center rounded-full bg-white/15 ring-2 ring-gold">
+              <UserRound aria-hidden className="size-8" strokeWidth={1.8} />
+            </span>
+            <div>
+              <h1 className="text-3xl font-extrabold">Mon profil</h1>
+              <p className="text-white/85">
+                {user.phone ? formatPhone(user.phone) : "Numéro inconnu"}
+              </p>
+            </div>
+          </Reveal>
+        </HeroSky>
 
-        <Card>
-          <p className="text-sm text-muted">Numéro de connexion</p>
-          <p className="font-display text-2xl font-semibold">
-            {user.phone ? formatPhone(user.phone) : "—"}
-          </p>
-        </Card>
+        <div className="relative mx-auto -mt-8 flex w-full max-w-lg flex-col gap-4 px-4">
 
-        <Card className="flex flex-col gap-4">
+        <Card className="flex flex-col gap-4 shadow-card">
           <div>
             <h2 className="text-xl font-semibold">Empreinte ou schéma</h2>
             <p className="mt-1 text-muted">Téléphones autorisés à ouvrir votre compte d&apos;un geste.</p>
@@ -83,6 +92,7 @@ export default async function ProfilePage() {
             Se déconnecter
           </Button>
         </form>
+        </div>
       </main>
       <BottomNav />
     </>

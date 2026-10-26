@@ -38,6 +38,34 @@
   --radius-sheet: 1.75rem;
 
   --shadow-float: 0 8px 24px -8px rgb(11 42 111 / 0.22);
+  --shadow-card: 0 10px 30px -14px rgb(11 42 111 / 0.28);
+
+  /* Animations CSS (légères : aucune ne coûte de JavaScript) */
+  --animate-rays: rays-sway 14s ease-in-out infinite alternate;
+  --animate-halo: halo-spin 12s linear infinite;
+  --animate-glow: glow-pulse 3.2s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shine: shine 3.8s ease-in-out infinite;
+
+  @keyframes rays-sway {
+    from { transform: rotate(-4deg); opacity: 0.75; }
+    to { transform: rotate(4deg); opacity: 1; }
+  }
+  @keyframes halo-spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  @keyframes shine {
+    0%, 60% { transform: translateX(-120%) skewX(-20deg); }
+    100% { transform: translateX(220%) skewX(-20deg); }
+  }
 }
 
 html {
@@ -64,7 +92,36 @@ h3 {
   outline-offset: 2px;
 }
 
+/* Les « semences » : grains dorés qui montent dans la lumière */
+@keyframes seed-rise {
+  0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; }
+  15% { opacity: 0.9; }
+  100% { transform: translate3d(var(--drift, 12px), -220px, 0) scale(1); opacity: 0; }
+}
+
+.seed {
+  position: absolute;
+  bottom: -8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: radial-gradient(circle, #ffe7a3 0%, var(--color-gold) 55%, transparent 70%);
+  animation: seed-rise var(--dur, 7s) linear var(--delay, 0s) infinite;
+  will-change: transform, opacity;
+}
+
+/* Fond du bandeau : bleu roi vers bleu nuit, halo de lumière en haut */
+.hero-sky {
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgb(59 167 240 / 0.55) 0%, transparent 60%),
+    linear-gradient(180deg, var(--color-royal) 0%, var(--color-night) 100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .seed {
+    display: none;
+  }
+
   *,
   *::before,
   *::after {

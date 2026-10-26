@@ -1,10 +1,16 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { CircleCheck, CircleAlert } from "lucide-react";
+import { CircleAlert, CircleCheck, Info } from "lucide-react";
 import { useEffect } from "react";
 
-export type ToastMessage = { tone: "success" | "error"; text: string } | null;
+export type ToastMessage = { tone: "success" | "error" | "info"; text: string } | null;
+
+const TONES = {
+  success: "bg-ok-bg text-ok-text",
+  error: "bg-alert-bg text-alert-text",
+  info: "bg-night text-white",
+};
 
 /** Message bref en bas de l'écran ; disparaît seul au bout de 4 s. */
 export function Toast({ message, onDone }: { message: ToastMessage; onDone: () => void }) {
@@ -27,11 +33,13 @@ export function Toast({ message, onDone }: { message: ToastMessage; onDone: () =
             exit={reduceMotion ? { opacity: 0 } : { y: 24, opacity: 0 }}
             transition={{ type: "spring", stiffness: 380, damping: 30 }}
             className={`flex max-w-md items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold shadow-float ${
-              message.tone === "success" ? "bg-ok-bg text-ok-text" : "bg-alert-bg text-alert-text"
+              TONES[message.tone]
             }`}
           >
             {message.tone === "success" ? (
               <CircleCheck aria-hidden className="size-5 shrink-0" />
+            ) : message.tone === "info" ? (
+              <Info aria-hidden className="size-5 shrink-0" />
             ) : (
               <CircleAlert aria-hidden className="size-5 shrink-0" />
             )}
