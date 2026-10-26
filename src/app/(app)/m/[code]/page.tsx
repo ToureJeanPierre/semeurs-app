@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AppShell } from "@/components/layout/AppShell";
 import { Reveal } from "@/components/ui/Reveal";
 import { ModuleIcon } from "@/components/ui/icons";
 import { requireUser } from "@/lib/auth/session";
@@ -17,7 +16,7 @@ export default async function ModulePage({ params }: PageProps<"/m/[code]">) {
   if (!mod) notFound();
 
   return (
-    <AppShell title={mod.label}>
+    <>
       <div className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center gap-5 px-6 py-12 text-center">
         <Reveal variant="pop">
           <span className="relative grid size-28 place-items-center">
@@ -43,6 +42,6 @@ export default async function ModulePage({ params }: PageProps<"/m/[code]">) {
           </Link>
         </Reveal>
       </div>
-    </AppShell>
+    </>
   );
 }

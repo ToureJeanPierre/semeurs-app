@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft, Bell, Menu } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import type { menuLinks } from "@/lib/navigation";
@@ -14,19 +14,13 @@ const iconButton =
 /**
  * Barre du haut, bleu roi (maquette du 26/10/2026).
  * - Accueil : trois traits (menu complet) à gauche, logo et nom de l'église.
- * - Autres pages : flèche retour et titre, trois traits à droite.
- * Cloche (annonces) à droite.
+ * - Autres pages : flèche retour et titre (celui de l'entrée du menu), trois traits à droite.
+ * Cloche (annonces) à droite. La barre reste affichée d'une page à l'autre.
  */
-export function AppHeader({
-  title,
-  menu,
-  bellHref,
-}: {
-  title?: string;
-  menu: ReturnType<typeof menuLinks>;
-  bellHref: string;
-}) {
+export function AppHeader({ menu, bellHref }: { menu: ReturnType<typeof menuLinks>; bellHref: string }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const title = pathname === "/" ? undefined : (menu.find((m) => m.href === pathname)?.label ?? "");
   const [open, setOpen] = useState(false);
 
   const menuButton = (

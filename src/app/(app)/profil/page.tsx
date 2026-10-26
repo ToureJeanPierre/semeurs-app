@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Fingerprint, LogOut, Trash2, UserRound } from "lucide-react";
 import { removePasskey, signOut } from "@/app/actions/auth";
 import { PasskeySetupCard } from "@/components/auth/PasskeySetupCard";
-import { AppShell } from "@/components/layout/AppShell";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/ui/Reveal";
 import { requireUser } from "@/lib/auth/session";
@@ -29,7 +28,7 @@ export default async function ProfilePage() {
     .order("created_at", { ascending: false });
 
   return (
-    <AppShell title="Profil">
+    <>
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pt-5">
         <Reveal>
           <Card className="flex items-center gap-4 shadow-card">
@@ -96,6 +95,6 @@ export default async function ProfilePage() {
           </form>
         </Reveal>
       </div>
-    </AppShell>
+    </>
   );
 }

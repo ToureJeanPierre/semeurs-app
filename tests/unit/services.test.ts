@@ -95,7 +95,7 @@ describe("countdownParts", () => {
 
 describe("formatTime", () => {
   it("écrit l'heure à la française", () => {
-    expect(formatTime("09:00:00")).toBe("9 h");
-    expect(formatTime("18:30")).toBe("18 h 30");
+    expect(formatTime("09:00:00")).toBe("9\u00a0h");
+    expect(formatTime("18:30")).toBe("18\u00a0h\u00a030");
   });
 });

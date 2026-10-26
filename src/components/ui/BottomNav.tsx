@@ -22,6 +22,8 @@ export function BottomNav({ items }: { items: NavLink[] }) {
             <li key={href} className="flex-1">
               <Link
                 href={href}
+                // Onglets préchargés en entier : ils s'ouvrent sans attendre le serveur.
+                prefetch
                 aria-current={active ? "page" : undefined}
                 className={`relative flex min-h-16 flex-col items-center justify-center gap-1 text-xs transition-colors ${
                   active ? "font-bold text-royal" : "font-medium text-muted"

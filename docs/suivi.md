@@ -108,6 +108,13 @@ le logo n'est **pas entouré de blanc**.
   chevauchement), en dégradé or → orange avec reflet animé ; icône Prières = mains jointes
   (`hands-praying`, dessinée dans `icons.tsx`, absente de Lucide), Dons = main au cœur.
 
+- 7ᵉ retour : le « h » de « 18 h » passait à la ligne → espaces insécables dans `formatTime`
+  et ligne tronquée. **Page blanche 1–2 s** en passant à Accueil / Profil : chaque page reconstruisait
+  tout l'écran. Corrigé : groupe de routes `app/(app)/` avec un `layout.tsx` commun (barre du haut et
+  du bas persistantes, titre déduit de l'adresse), onglets préchargés (`prefetch`),
+  `experimental.staleTimes` (60 s), animations de la bannière raccourcies. Mesuré en local :
+  changement d'onglet en 50–100 ms.
+
 Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :

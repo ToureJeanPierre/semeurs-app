@@ -3,7 +3,6 @@ import { ChevronRight, Fingerprint } from "lucide-react";
 import { HomeBanner } from "@/components/home/HomeBanner";
 import { NextServiceCard } from "@/components/home/NextServiceCard";
 import { ShortcutGrid } from "@/components/home/ShortcutGrid";
-import { AppShell } from "@/components/layout/AppShell";
 import { isDeviceLockedFor, requireUser } from "@/lib/auth/session";
 import { loadHomeData } from "@/lib/home";
 import { loadModules, moduleHref } from "@/lib/navigation";
@@ -39,7 +38,7 @@ export default async function HomePage() {
     .map((m) => ({ code: m.code, label: m.label, icon: m.icon, href: moduleHref(m) }));
 
   return (
-    <AppShell>
+    <>
       <HomeBanner imageUrl={home.banner.image_url} headline={home.banner.headline} verse={verse} />
 
       <div className="mx-auto flex w-full max-w-lg flex-col gap-6 px-4 pt-4">
@@ -67,6 +66,6 @@ export default async function HomePage() {
           </Link>
         )}
       </div>
-    </AppShell>
+    </>
   );
 }

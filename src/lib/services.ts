@@ -82,8 +82,11 @@ export function countdownParts(target: Date, now: Date) {
   };
 }
 
-/** « 09:00:00 » → « 9 h », « 18:30 » → « 18 h 30 » */
+/**
+ * « 09:00:00 » → « 9 h », « 18:30 » → « 18 h 30 ». Espaces insécables : l'heure
+ * ne se coupe jamais en fin de ligne (le « h » ne passe pas à la ligne).
+ */
 export function formatTime(time: string): string {
   const [h, m] = time.split(":").map(Number);
-  return m ? `${h} h ${String(m).padStart(2, "0")}` : `${h} h`;
+  return m ? `${h}\u00a0h\u00a0${String(m).padStart(2, "0")}` : `${h}\u00a0h`;
 }

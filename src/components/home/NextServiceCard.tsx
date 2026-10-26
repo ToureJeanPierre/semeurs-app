@@ -64,7 +64,7 @@ export function NextServiceCard({
         <span className="relative min-w-0 flex-1">
           <span className="block text-xs font-bold">Prochain culte</span>
           <span className="block truncate font-display text-lg font-extrabold leading-tight">{name}</span>
-          <span className="block text-sm font-medium">{when}</span>
+          <span className="block truncate text-sm font-medium">{when}</span>
         </span>
         {inProgress ? (
           <span className="relative shrink-0 rounded-full bg-alert-ring px-2 py-0.5 text-[0.6875rem] font-bold text-white">

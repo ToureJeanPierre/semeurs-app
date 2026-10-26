@@ -21,7 +21,7 @@ const reveal = {
     opacity: 1,
     y: 0,
     filter: "blur(0px)",
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
 
@@ -219,7 +219,7 @@ export function HomeBanner({
         className="absolute inset-x-5 top-4 text-center text-white [text-shadow:0_2px_10px_rgb(11_42_111/0.8)]"
         initial="hidden"
         animate="show"
-        variants={{ show: { transition: { staggerChildren: 0.18 } } }}
+        variants={{ show: { transition: { staggerChildren: 0.08 } } }}
       >
         {headline && <Headline text={headline} />}
         {verse && (
