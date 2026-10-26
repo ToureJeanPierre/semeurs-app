@@ -151,7 +151,7 @@ export function HomeBanner({
         : "text-2xl";
 
   return (
-    <section aria-label="Verset du jour" className="relative isolate h-64 overflow-hidden bg-night">
+    <section aria-label="Verset du jour" className="relative isolate h-72 overflow-hidden bg-night">
       {imageUrl ? (
         <Image
           src={imageUrl}

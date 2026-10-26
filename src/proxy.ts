@@ -95,6 +95,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     // Tout sauf les fichiers statiques, les icônes, le manifeste et le service worker.
-    "/((?!_next/static|_next/image|icons/|logo|favicon.ico|manifest.webmanifest|sw.js|robots.txt).*)",
+    "/((?!_next/static|_next/image|icons/|images/|logo|favicon.ico|manifest.webmanifest|sw.js|robots.txt).*)",
   ],
 };

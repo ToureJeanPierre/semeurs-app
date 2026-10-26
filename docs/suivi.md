@@ -89,9 +89,10 @@ le logo n'est **pas entouré de blanc**.
 - Fait : bouton menu à gauche (panneau qui glisse depuis la gauche), logo détouré en cercle
   transparent (`public/logo-semeurs.webp`, service worker passé en v2), verset du jour sur la
   bannière (taille adaptée à la longueur), carte « Verset du jour » retirée.
-- Bannière : paramètre `home_banner.image_url`. **En attente de la photo** de Jean-Pierre (l'image
-  Canva ne peut pas être téléchargée depuis l'environnement cloud). Quand il l'envoie : la placer
-  dans `public/`, la compresser (WebP, ~1200 px de large) et renseigner `image_url`.
+- Bannière : photo envoyée par Jean-Pierre (Bible ouverte, ciel bleu), compressée en WebP 1280 px
+  (46 Ko) dans `public/images/banniere-accueil.webp` ; `home_banner.image_url` renseigné en base.
+  `images/` exclu du proxy d'authentification. Le dessin SVG reste en secours si `image_url` est vide.
+  Plus tard (lot 1, administration) : téléversement de la photo dans le stockage Supabase.
 
 Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
 
