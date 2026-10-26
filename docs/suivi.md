@@ -20,8 +20,8 @@ précédente s'est arrêtée.
 | Supabase : inscriptions libres fermées, « Confirm email » désactivé | Fait |
 | Migration `20261025000000_webauthn_credentials.sql` appliquée (RLS + 2 règles vérifiées) | Fait |
 | Compte de test de Jean-Pierre (e-mail technique `225…@telephone.semeurs.invalid`) | Fait |
-| Vercel : projet, variables d'environnement, premier déploiement | À faire |
-| Supabase : Site URL + Redirect URLs (`https://*.vercel.app/**`) | À faire après Vercel |
+| Vercel : projet `semeurs-app` (équipe `toure5`) relié au dépôt, 4 variables, déploiement de `main` | Fait (26/10) |
+| Supabase : Site URL `https://semeurs-app.vercel.app` + Redirect URLs (prod, `*-toure5.vercel.app`, localhost) | Fait (26/10) |
 | Test sur le téléphone de Jean-Pierre (installation, connexion, empreinte) | À faire |
 
 ## Automatisation (demandée le 26/10/2026) — accès en place
@@ -31,8 +31,18 @@ semeurs-app, 30 jours) et `VERCEL_TOKEN` (portée : l'équipe Vercel « TOUR… 
 ajoutés aux variables de l'environnement cloud « Default ». Le compte Vercel a une double
 authentification (application Oracle Mobile Authenticator sur le téléphone de Jean-Pierre).
 
-Prochaine action pour Claude Code : vérifier les deux jetons, puis faire seul les étapes
-« À faire » du tableau ci-dessus, et donner à Jean-Pierre le lien Vercel pour le test.
+Le 26/10, les deux jetons ont été vérifiés et utilisés : projet Vercel créé, variables écrites
+(`SUPABASE_SECRET_KEY` et `APP_LOCK_SECRET` en type « sensitive », production + preview),
+déploiement de production prêt, Supabase réglé. Lien de test : https://semeurs-app.vercel.app
+
+Notes :
+- Le réseau de l'environnement cloud bloque `*.vercel.app` : Claude Code ne peut pas ouvrir le site
+  lui-même, le test se fait sur le téléphone de Jean-Pierre.
+- Les clés d'accès (empreinte) sont liées au nom de domaine : toujours tester sur
+  `semeurs-app.vercel.app`, pas sur les liens de prévisualisation.
+- Les déploiements de prévisualisation sont protégés par l'authentification Vercel (réglage par défaut).
+
+Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 
