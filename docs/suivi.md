@@ -145,13 +145,13 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
 - Tests RLS : `tests/rls/core-engine.test.ts` (5 scénarios, base réelle, sans trace).
 - Testé de bout en bout en local avec un compte administrateur temporaire, puis données de test
   supprimées (le journal d'audit, lui, n'est jamais modifié : il garde la trace de ces essais).
-- **En attente** : accord de Jean-Pierre pour lui attribuer le rôle Administrateur (refusé par la
-  protection automatique tant qu'il ne l'a pas demandé explicitement). Sans ce rôle, il ne voit
-  pas le menu Administration.
+- 26/10 : avec l'accord explicite de Jean-Pierre, il est inscrit au registre (« Jean-Pierre
+  Touré », +2250778016695), son compte y est rattaché (`public.users`) et il a le rôle
+  **Administrateur** pour la phase de test.
 - Plus tard : désignation de l'administrateur « validée par le pasteur » (docs/01 §13) ;
   capacités toutes marquées « Bientôt » tant qu'elles ne sont pas livrées.
 
-Prochaine action : obtenir l'accord de Jean-Pierre pour le rôle Administrateur, puis test. sur le test téléphone, puis validation du lot 0.
+Prochaine action : test de l'administration par Jean-Pierre, étape par étape. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 
