@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Fingerprint, LogOut, Trash2, UserRound } from "lucide-react";
+import { CircleCheck, Fingerprint, LogOut, Trash2, UserRound } from "lucide-react";
 import { removePasskey, signOut } from "@/app/actions/auth";
 import { PasskeySetupCard } from "@/components/auth/PasskeySetupCard";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/ui/Reveal";
-import { requireUser } from "@/lib/auth/session";
+import { isDeviceLockedFor, requireUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { formatPhone } from "@/lib/phone";
 
@@ -21,6 +21,7 @@ const dateFormat = new Intl.DateTimeFormat("fr-CI", {
 export default async function ProfilePage() {
   const user = await requireUser();
   const supabase = await createClient();
+  const thisPhoneEnrolled = await isDeviceLockedFor(user.id);
   // RLS : la personne ne reçoit que ses propres clés.
   const { data: passkeys } = await supabase
     .from("webauthn_credentials")
@@ -79,7 +80,15 @@ export default async function ProfilePage() {
               <p className="text-sm text-muted">Aucun téléphone pour l&apos;instant.</p>
             )}
 
-            <PasskeySetupCard compact />
+            {/* Sur un téléphone déjà enregistré, pas de bouton : il créerait une clé en double. */}
+            {thisPhoneEnrolled ? (
+              <p className="flex items-center gap-2 rounded-2xl bg-ok-bg px-3 py-2 text-sm font-semibold text-ok-text">
+                <CircleCheck aria-hidden className="size-5 shrink-0" />
+                Ce téléphone est enregistré.
+              </p>
+            ) : (
+              <PasskeySetupCard compact />
+            )}
           </Card>
         </Reveal>
 

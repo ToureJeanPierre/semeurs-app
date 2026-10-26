@@ -22,7 +22,7 @@ précédente s'est arrêtée.
 | Compte de test de Jean-Pierre (e-mail technique `225…@telephone.semeurs.invalid`) | Fait |
 | Vercel : projet `semeurs-app` (équipe `toure5`) relié au dépôt, 4 variables, déploiement de `main` | Fait (26/10) |
 | Supabase : Site URL `https://semeurs-app.vercel.app` + Redirect URLs (prod, `*-toure5.vercel.app`, localhost) | Fait (26/10) |
-| Test sur le téléphone de Jean-Pierre (installation, connexion, empreinte) | À faire |
+| Test sur le téléphone de Jean-Pierre (installation, connexion, empreinte) | Fait (26/10) : installée en plein écran, clé « Android · K », déverrouillage par schéma OK |
 
 ## Automatisation (demandée le 26/10/2026) — accès en place
 
@@ -117,8 +117,15 @@ le logo n'est **pas entouré de blanc**.
 
 - **Accueil validé par Jean-Pierre** (« C'est bon »), navigation fluide confirmée sur son téléphone.
 
-Prochaine action : finir le lot 0 avec Jean-Pierre, une étape à la fois : (1) installer l'appli sur
-l'écran d'accueil, (2) activer l'empreinte depuis Profil, puis fusionner la branche dans `main`. sur le test téléphone, puis validation du lot 0.
+## Lot 0 validé (26/10/2026)
+
+Jean-Pierre a installé l'appli (plein écran), créé sa clé d'accès (Android demande le schéma à la
+création, c'est normal) et rouvert l'appli verrouillée avec son schéma. **Lot 0 validé.**
+Correctif : le bouton « Ajouter ce téléphone » est masqué sur un téléphone déjà enregistré
+(il proposait une clé en double).
+
+Prochaine action : demander à Jean-Pierre l'autorisation de fusionner la branche
+`claude/wizardly-hypatia-uejff4` dans `main` (production suivra `main`), puis présenter le lot 1. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 
