@@ -24,7 +24,15 @@ précédente s'est arrêtée.
 | Supabase : Site URL + Redirect URLs (`https://*.vercel.app/**`) | À faire après Vercel |
 | Test sur le téléphone de Jean-Pierre (installation, connexion, empreinte) | À faire |
 
-## Automatisation (demandée le 26/10/2026)
+## Automatisation (demandée le 26/10/2026) — accès en place
+
+État au 26/10/2026 : domaines réseau autorisés ; `SUPABASE_ACCESS_TOKEN` (limité au projet
+semeurs-app, 30 jours) et `VERCEL_TOKEN` (portée : l'équipe Vercel « TOUR… », 30 jours)
+ajoutés aux variables de l'environnement cloud « Default ». Le compte Vercel a une double
+authentification (application Oracle Mobile Authenticator sur le téléphone de Jean-Pierre).
+
+Prochaine action pour Claude Code : vérifier les deux jetons, puis faire seul les étapes
+« À faire » du tableau ci-dessus, et donner à Jean-Pierre le lien Vercel pour le test.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 
