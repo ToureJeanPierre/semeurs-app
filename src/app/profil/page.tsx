@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import { Fingerprint, LogOut, Trash2, UserRound } from "lucide-react";
 import { removePasskey, signOut } from "@/app/actions/auth";
 import { PasskeySetupCard } from "@/components/auth/PasskeySetupCard";
-import { BottomNav } from "@/components/ui/BottomNav";
-import { Button } from "@/components/ui/Button";
+import { AppShell } from "@/components/layout/AppShell";
 import { Card } from "@/components/ui/Card";
-import { HeroSky } from "@/components/ui/HeroSky";
 import { Reveal } from "@/components/ui/Reveal";
 import { requireUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
@@ -31,70 +29,73 @@ export default async function ProfilePage() {
     .order("created_at", { ascending: false });
 
   return (
-    <>
-      <main className="flex flex-1 flex-col pb-28">
-        <HeroSky className="px-5 pb-16 pt-8">
-          <Reveal className="mx-auto flex max-w-lg items-center gap-4">
-            <span className="grid size-16 shrink-0 place-items-center rounded-full bg-white/15 ring-2 ring-gold">
+    <AppShell title="Profil">
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pt-5">
+        <Reveal>
+          <Card className="flex items-center gap-4 shadow-card">
+            <span className="grid size-16 shrink-0 place-items-center rounded-full bg-royal text-white">
               <UserRound aria-hidden className="size-8" strokeWidth={1.8} />
             </span>
             <div>
-              <h1 className="text-3xl font-extrabold">Mon profil</h1>
-              <p className="text-white/85">
-                {user.phone ? formatPhone(user.phone) : "Numéro inconnu"}
-              </p>
+              <p className="font-display text-lg font-semibold text-royal">Mon compte</p>
+              <p className="text-muted">{user.phone ? formatPhone(user.phone) : "Numéro inconnu"}</p>
             </div>
-          </Reveal>
-        </HeroSky>
+          </Card>
+        </Reveal>
 
-        <div className="relative mx-auto -mt-8 flex w-full max-w-lg flex-col gap-4 px-4">
+        <Reveal delay={0.08}>
+          <Card className="flex flex-col gap-4 shadow-card">
+            <div className="flex items-start gap-3">
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-royal/10 text-royal">
+                <Fingerprint aria-hidden className="size-6" strokeWidth={1.8} />
+              </span>
+              <div>
+                <h2 className="text-lg font-semibold">Empreinte ou schéma</h2>
+                <p className="text-sm text-muted">Téléphones autorisés à ouvrir votre compte d&apos;un geste.</p>
+              </div>
+            </div>
 
-        <Card className="flex flex-col gap-4 shadow-card">
-          <div>
-            <h2 className="text-xl font-semibold">Empreinte ou schéma</h2>
-            <p className="mt-1 text-muted">Téléphones autorisés à ouvrir votre compte d&apos;un geste.</p>
-          </div>
+            {passkeys && passkeys.length > 0 ? (
+              <ul className="flex flex-col divide-y divide-line">
+                {passkeys.map((p) => (
+                  <li key={p.id} className="flex items-center gap-3 py-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-semibold">{p.device_label}</p>
+                      <p className="text-sm text-muted">Ajouté le {dateFormat.format(new Date(p.created_at))}</p>
+                    </div>
+                    <form action={removePasskey}>
+                      <input type="hidden" name="id" value={p.id} />
+                      <button
+                        type="submit"
+                        className="grid size-11 place-items-center rounded-full text-alert-text hover:bg-alert-bg"
+                        aria-label={`Retirer ${p.device_label}`}
+                      >
+                        <Trash2 aria-hidden className="size-5" />
+                      </button>
+                    </form>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted">Aucun téléphone pour l&apos;instant.</p>
+            )}
 
-          {passkeys && passkeys.length > 0 ? (
-            <ul className="flex flex-col divide-y divide-line">
-              {passkeys.map((p) => (
-                <li key={p.id} className="flex items-center gap-3 py-3">
-                  <Fingerprint aria-hidden className="size-6 shrink-0 text-royal" strokeWidth={1.8} />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold">{p.device_label}</p>
-                    <p className="text-sm text-muted">
-                      Ajouté le {dateFormat.format(new Date(p.created_at))}
-                    </p>
-                  </div>
-                  <form action={removePasskey}>
-                    <input type="hidden" name="id" value={p.id} />
-                    <button
-                      type="submit"
-                      className="grid size-11 place-items-center rounded-full text-alert-text hover:bg-alert-bg"
-                      aria-label={`Retirer ${p.device_label}`}
-                    >
-                      <Trash2 aria-hidden className="size-5" />
-                    </button>
-                  </form>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-muted">Aucun téléphone pour l&apos;instant.</p>
-          )}
+            <PasskeySetupCard compact />
+          </Card>
+        </Reveal>
 
-          <PasskeySetupCard compact />
-        </Card>
-
-        <form action={signOut}>
-          <Button type="submit" variant="ghost" fullWidth>
-            <LogOut aria-hidden className="size-5" />
-            Se déconnecter
-          </Button>
-        </form>
-        </div>
-      </main>
-      <BottomNav />
-    </>
+        <Reveal delay={0.16}>
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="flex min-h-14 w-full items-center gap-3 rounded-card bg-surface px-5 font-semibold text-alert-text shadow-card"
+            >
+              <LogOut aria-hidden className="size-5" />
+              Se déconnecter
+            </button>
+          </form>
+        </Reveal>
+      </div>
+    </AppShell>
   );
 }

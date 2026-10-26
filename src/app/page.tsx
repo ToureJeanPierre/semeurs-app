@@ -1,75 +1,75 @@
-import { PasskeySetupCard } from "@/components/auth/PasskeySetupCard";
-import { HomeHero } from "@/components/home/HomeHero";
+import Link from "next/link";
+import { ChevronRight, Fingerprint } from "lucide-react";
+import { HomeBanner } from "@/components/home/HomeBanner";
 import { NextServiceCard } from "@/components/home/NextServiceCard";
 import { ShortcutGrid } from "@/components/home/ShortcutGrid";
 import { VerseCard } from "@/components/home/VerseCard";
-import { WeekProgramme } from "@/components/home/WeekProgramme";
-import { BottomNav } from "@/components/ui/BottomNav";
+import { AppShell } from "@/components/layout/AppShell";
 import { isDeviceLockedFor, requireUser } from "@/lib/auth/session";
 import { loadHomeData } from "@/lib/home";
-import { formatTime, nextService, weekProgramme } from "@/lib/services";
+import { loadModules, moduleHref } from "@/lib/navigation";
+import { formatTime, nextService } from "@/lib/services";
 import { pickDailyVerse } from "@/lib/verses";
 
 // Abidjan = UTC toute l'année.
-const TZ = "Africa/Abidjan";
-const dayLong = new Intl.DateTimeFormat("fr-CI", { weekday: "long", day: "numeric", month: "long", timeZone: TZ });
-const dayShort = new Intl.DateTimeFormat("fr-CI", { weekday: "short", timeZone: TZ });
-const dayNumber = new Intl.DateTimeFormat("fr-CI", { day: "numeric", timeZone: TZ });
+const dayLabel = new Intl.DateTimeFormat("fr-CI", {
+  weekday: "long",
+  day: "numeric",
+  month: "short",
+  timeZone: "Africa/Abidjan",
+});
 
-function greetingFor(now: Date) {
-  const hour = now.getUTCHours();
-  if (hour < 12) return "Bonjour,";
-  if (hour < 17) return "Bon après-midi,";
-  return "Bonsoir,";
+function capitalize(text: string) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 export default async function HomePage() {
   const user = await requireUser();
-  const [passkeyActive, home] = await Promise.all([isDeviceLockedFor(user.id), loadHomeData()]);
+  const [passkeyActive, home, modules] = await Promise.all([
+    isDeviceLockedFor(user.id),
+    loadHomeData(),
+    loadModules(),
+  ]);
 
   const now = new Date();
   const next = nextService(home.services, now);
   const verse = pickDailyVerse(home.verses, now);
-  const programme = weekProgramme(home.services, now).map((o) => ({
-    id: o.service.id,
-    day: dayShort.format(o.startsAt).replace(".", ""),
-    date: dayNumber.format(o.startsAt),
-    name: o.service.name,
-    hours: `${formatTime(o.service.start_time)} – ${formatTime(o.service.end_time)}`,
-    isNext: o.service.id === next?.service.id,
-  }));
+  const servicesModule = modules.find((m) => m.code === "services");
+  const shortcuts = modules
+    .filter((m) => m.home_position !== null)
+    .map((m) => ({ code: m.code, label: m.label, icon: m.icon, href: moduleHref(m) }));
 
   return (
-    <>
-      <main className="flex flex-1 flex-col pb-28">
-        <HomeHero
-          greeting={greetingFor(now)}
-          churchName={home.profile.name}
-          tagline={home.profile.tagline}
-        />
+    <AppShell>
+      <HomeBanner tagline={home.profile.tagline} />
 
-        <div className="relative mx-auto -mt-14 flex w-full max-w-lg flex-col gap-5 px-4">
-          {next && (
-            <NextServiceCard
-              name={next.service.short_name ?? next.service.name}
-              when={`${dayLong.format(next.startsAt)}, ${formatTime(next.service.start_time)} – ${formatTime(next.service.end_time)}`}
-              place={next.service.place}
-              startsAt={next.startsAt.toISOString()}
-              endsAt={next.endsAt.toISOString()}
-              serverNow={now.toISOString()}
-            />
-          )}
+      <div className="relative mx-auto -mt-8 flex w-full max-w-lg flex-col gap-6 px-4">
+        {next && (
+          <NextServiceCard
+            name={next.service.short_name ?? next.service.name}
+            when={`${capitalize(dayLabel.format(next.startsAt))} · ${formatTime(next.service.start_time)}`}
+            href={servicesModule ? moduleHref(servicesModule) : "/"}
+            startsAt={next.startsAt.toISOString()}
+            endsAt={next.endsAt.toISOString()}
+            serverNow={now.toISOString()}
+          />
+        )}
 
-          <ShortcutGrid modules={home.modules} />
+        <ShortcutGrid items={shortcuts} />
 
-          {!passkeyActive && <PasskeySetupCard />}
+        {verse && <VerseCard reference={verse.reference} text={verse.text} />}
 
-          {verse && <VerseCard reference={verse.reference} text={verse.text} translation={verse.translation} />}
-
-          <WeekProgramme items={programme} />
-        </div>
-      </main>
-      <BottomNav />
-    </>
+        {!passkeyActive && (
+          <Link
+            href="/profil"
+            className="flex items-center gap-3 rounded-card bg-royal/5 p-3 text-sm font-semibold text-royal"
+          >
+            <Fingerprint aria-hidden className="size-6 shrink-0" />
+            <span className="flex-1">Ouvrir l&apos;appli avec votre empreinte ou votre schéma</span>
+            <ChevronRight aria-hidden className="size-5 shrink-0" />
+          </Link>
+        )}
+      </div>
+    </AppShell>
   );
 }

@@ -3,53 +3,42 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { House, UserRound, type LucideIcon } from "lucide-react";
+import { ModuleIcon } from "@/components/ui/icons";
+import type { NavLink } from "@/lib/navigation";
 
-export type NavItem = { href: string; label: string; icon: LucideIcon };
-
-/** Lot 0 : entrées minimales. Au lot 1, elles dépendront du rôle (docs/03 §4). */
-const DEFAULT_ITEMS: NavItem[] = [
-  { href: "/", label: "Accueil", icon: House },
-  { href: "/profil", label: "Profil", icon: UserRound },
-];
-
-export function BottomNav({ items = DEFAULT_ITEMS }: { items?: NavItem[] }) {
+/** Barre du bas : icônes alignées, l'onglet actif en bleu roi (maquette du 26/10/2026). */
+export function BottomNav({ items }: { items: NavLink[] }) {
   const pathname = usePathname();
 
   return (
     <nav
       aria-label="Navigation principale"
-      className="fixed inset-x-0 bottom-0 z-20 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+      className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_-8px_rgb(11_42_111/0.15)]"
     >
-      <ul className="mx-auto flex max-w-lg rounded-[1.75rem] border border-line/70 bg-surface/90 p-1.5 shadow-float backdrop-blur-md">
-        {items.map(({ href, label, icon: Icon }) => {
+      <ul className="mx-auto flex max-w-lg">
+        {items.map(({ href, label, icon }) => {
           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (
             <li key={href} className="flex-1">
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`relative flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-[1.375rem] text-xs font-semibold transition-colors ${
-                  active ? "text-white" : "text-muted"
+                className={`relative flex min-h-16 flex-col items-center justify-center gap-1 text-xs transition-colors ${
+                  active ? "font-bold text-royal" : "font-medium text-muted"
                 }`}
               >
                 {active && (
                   <motion.span
                     layoutId="nav-indicator"
                     aria-hidden
-                    className="absolute inset-0 rounded-[1.375rem] bg-gradient-to-br from-royal to-night"
-                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute top-0 h-[3px] w-8 rounded-b-full bg-royal"
+                    transition={{ type: "spring", stiffness: 500, damping: 38 }}
                   />
                 )}
-                <motion.span
-                  className="relative"
-                  whileTap={{ scale: 0.85 }}
-                  animate={active ? { y: [0, -3, 0] } : { y: 0 }}
-                  transition={{ duration: 0.35 }}
-                >
-                  <Icon aria-hidden className="size-6" strokeWidth={1.9} />
+                <motion.span whileTap={{ scale: 0.82 }} animate={{ scale: active ? 1.08 : 1 }}>
+                  <ModuleIcon name={icon} className="size-6" strokeWidth={active ? 2.3 : 1.8} />
                 </motion.span>
-                <span className="relative">{label}</span>
+                {label}
               </Link>
             </li>
           );

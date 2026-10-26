@@ -1,45 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { CalendarDays, MapPin } from "lucide-react";
-import { countdownParts } from "@/lib/services";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ChevronRight, Play } from "lucide-react";
 
-/** Un chiffre qui glisse vers le haut quand il change. */
-function Digit({ value, label }: { value: number; label: string }) {
-  const text = String(value).padStart(2, "0");
-  return (
-    <div className="flex flex-col items-center">
-      <div className="relative h-11 w-12 overflow-hidden rounded-xl bg-night/95 text-white shadow-inner">
-        <AnimatePresence initial={false} mode="popLayout">
-          <motion.span
-            key={text}
-            className="absolute inset-0 grid place-items-center font-display text-2xl font-extrabold tabular-nums"
-            initial={{ y: "-100%", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", stiffness: 420, damping: 32 }}
-          >
-            {text}
-          </motion.span>
-        </AnimatePresence>
-      </div>
-      <span className="mt-1 text-xs font-medium text-muted">{label}</span>
-    </div>
-  );
+function untilLabel(start: Date, now: Date) {
+  const minutes = Math.max(0, Math.round((start.getTime() - now.getTime()) / 60000));
+  const days = Math.floor(minutes / 1440);
+  const hours = Math.floor((minutes % 1440) / 60);
+  if (days > 0) return `dans ${days} j ${hours} h`;
+  if (hours > 0) return `dans ${hours} h ${String(minutes % 60).padStart(2, "0")}`;
+  return `dans ${minutes} min`;
 }
 
+/** Rappel discret du prochain culte (maquette du 26/10/2026). */
 export function NextServiceCard({
   name,
   when,
-  place,
+  href,
   startsAt,
   endsAt,
   serverNow,
 }: {
   name: string;
   when: string;
-  place: string | null;
+  href: string;
   startsAt: string;
   endsAt: string;
   serverNow: string;
@@ -47,71 +33,45 @@ export function NextServiceCard({
   const [now, setNow] = useState(() => new Date(serverNow));
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 1000);
+    const timer = setInterval(() => setNow(new Date()), 30_000);
     return () => clearInterval(timer);
   }, []);
 
   const start = new Date(startsAt);
   const inProgress = now >= start && now < new Date(endsAt);
-  const { days, hours, minutes, seconds } = countdownParts(start, now);
 
   return (
-    <motion.section
-      aria-labelledby="next-service-title"
-      initial={{ opacity: 0, y: 24, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: 0.25, type: "spring", stiffness: 260, damping: 26 }}
-      className="relative overflow-hidden rounded-card bg-surface p-5 shadow-card"
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 28 }}
     >
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-sky/10 to-transparent"
-      />
-      <div className="relative flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-royal">Prochain culte</p>
-          <h2 id="next-service-title" className="mt-0.5 text-xl font-semibold">
-            {name}
-          </h2>
-          <p className="mt-1 flex items-center gap-1.5 text-sm text-muted">
-            <CalendarDays aria-hidden className="size-4 shrink-0" />
-            {when}
-          </p>
-          {place && (
-            <p className="mt-0.5 flex items-center gap-1.5 text-sm text-muted">
-              <MapPin aria-hidden className="size-4 shrink-0" />
-              <span className="truncate">{place}</span>
-            </p>
+      <Link
+        href={href}
+        className="flex items-center gap-3 rounded-card bg-surface p-3 pr-2 shadow-card active:scale-[0.99]"
+      >
+        <span className="relative grid size-12 shrink-0 place-items-center rounded-full bg-royal text-white">
+          {inProgress && (
+            <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-royal/40" />
           )}
-        </div>
-        {inProgress && (
-          <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-alert-bg px-2.5 py-1 text-xs font-bold text-alert-text">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-alert-ring opacity-75" />
-              <span className="relative inline-flex size-2 rounded-full bg-alert-ring" />
-            </span>
-            En ce moment
+          <Play aria-hidden className="relative ml-0.5 size-5 fill-current" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-xs font-medium text-muted">Prochain culte</span>
+          <span className="block truncate font-display font-semibold text-ink">{name}</span>
+          <span className="block text-sm text-muted">{when}</span>
+        </span>
+        {inProgress ? (
+          <span className="shrink-0 rounded-full bg-alert-ring px-2 py-0.5 text-[0.6875rem] font-bold text-white">
+            En cours
+          </span>
+        ) : (
+          <span className="shrink-0 rounded-full bg-royal/10 px-2 py-0.5 text-xs font-semibold text-royal">
+            {untilLabel(start, now)}
           </span>
         )}
-      </div>
-
-      {inProgress ? (
-        <p className="relative mt-4 rounded-2xl bg-royal/5 px-4 py-3 text-sm font-medium text-night">
-          Le culte a commencé. Que Dieu vous bénisse pendant ce moment !
-        </p>
-      ) : (
-        <div className="relative mt-4 flex items-start justify-between" role="timer" aria-live="off">
-          <span className="sr-only">
-            Début dans {days} jours, {hours} heures et {minutes} minutes
-          </span>
-          <div aria-hidden className="flex w-full justify-between">
-            <Digit value={days} label={days > 1 ? "jours" : "jour"} />
-            <Digit value={hours} label="heures" />
-            <Digit value={minutes} label="min" />
-            <Digit value={seconds} label="s" />
-          </div>
-        </div>
-      )}
-    </motion.section>
+        <ChevronRight aria-hidden className="size-5 shrink-0 text-muted" />
+      </Link>
+    </motion.div>
   );
 }

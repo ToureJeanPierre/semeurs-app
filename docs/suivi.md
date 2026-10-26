@@ -66,6 +66,21 @@ Il a validé la proposition suivante, réalisée sur la branche `claude/wizardly
 - Les maquettes montrent aussi les cultes en direct, les dons en ligne et l'App Store : ce n'est pas
   au cahier des charges tel quel. À rediscuter avec Jean-Pierre le moment venu.
 
+## Refonte d'après la maquette (26/10/2026, 2ᵉ passage)
+
+Jean-Pierre n'était pas satisfait du 1ᵉʳ habillage. Il a demandé de reproduire **exactement le
+téléphone de sa maquette** :
+- barre du haut bleu roi : logo et « Église Évangélique / Les Semeurs de la Parole », cloche, et
+  **trois points** qui ouvrent le menu complet (panneau latéral, tous les modules + déconnexion) ;
+- bannière : Bible ouverte dans la lumière, ciel bleu, phrase en écriture manuscrite (police
+  Dancing Script, ajoutée pour cette seule phrase). Dessinée en SVG (`HomeBanner.tsx`) : l'image
+  générée par Canva n'a pas pu être téléchargée en grand (domaine `media.canva.com` bloqué) ;
+- « Prochain culte » **discret** : une ligne avec « dans 4 j 9 h », plus de gros compte à rebours ;
+- grille 3 × 2 de carrés bleus (Prédications, Cultes, Annonces / Prières, Événements, Dons) ;
+- verset du jour dans une carte blanche ; programme de la semaine retiré de l'accueil ;
+- barre du bas alignée : Accueil, Prédications, Événements, Profil (configurable : `modules.nav_position`).
+- Les modules non livrés ouvrent une page « Bientôt disponible » (`/m/[code]`).
+
 Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :

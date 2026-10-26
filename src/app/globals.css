@@ -29,6 +29,7 @@
 
   --font-sans: var(--font-figtree), system-ui, sans-serif;
   --font-display: var(--font-outfit), var(--font-figtree), system-ui, sans-serif;
+  --font-script: var(--font-dancing), cursive;
 
   /* Échelle 12 / 14 / 16 / 20 / 24 / 30 / 40 */
   --text-4xl: 2.5rem;
@@ -46,6 +47,7 @@
   --animate-glow: glow-pulse 3.2s ease-in-out infinite;
   --animate-float: float 6s ease-in-out infinite;
   --animate-shine: shine 3.8s ease-in-out infinite;
+  --animate-drift: drift 18s ease-in-out infinite alternate;
 
   @keyframes rays-sway {
     from { transform: rotate(-4deg); opacity: 0.75; }
@@ -61,6 +63,10 @@
   @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
+  }
+  @keyframes drift {
+    from { transform: translateX(-14px); }
+    to { transform: translateX(14px); }
   }
   @keyframes shine {
     0%, 60% { transform: translateX(-120%) skewX(-20deg); }

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Figtree, Outfit } from "next/font/google";
+import { Dancing_Script, Figtree, Outfit } from "next/font/google";
 import { MotionProvider } from "@/components/MotionProvider";
 import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
 import "./globals.css";
@@ -8,6 +8,13 @@ const figtree = Figtree({
   variable: "--font-figtree",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+// Écriture manuscrite, réservée à la phrase de la bannière (maquette du 26/10/2026)
+const script = Dancing_Script({
+  variable: "--font-dancing",
+  subsets: ["latin"],
+  weight: ["600"],
 });
 
 const outfit = Outfit({
@@ -42,7 +49,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr-CI" className={`${figtree.variable} ${outfit.variable} h-full antialiased`}>
+    <html lang="fr-CI" className={`${figtree.variable} ${outfit.variable} ${script.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <MotionProvider>{children}</MotionProvider>
         <RegisterServiceWorker />
