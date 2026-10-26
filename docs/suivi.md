@@ -42,6 +42,9 @@ Notes :
   `semeurs-app.vercel.app`, pas sur les liens de prévisualisation.
 - Les déploiements de prévisualisation sont protégés par l'authentification Vercel (réglage par défaut).
 
+- 26/10 : le compte de test avait un chiffre en trop dans son numéro (11 chiffres) ; adresse
+  technique corrigée via l'API admin Supabase, mot de passe inchangé.
+
 Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
