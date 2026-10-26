@@ -40,7 +40,7 @@ export default async function HomePage() {
 
   return (
     <AppShell>
-      <HomeBanner imageUrl={home.bannerImage} verse={verse} />
+      <HomeBanner imageUrl={home.banner.image_url} headline={home.banner.headline} verse={verse} />
 
       <div className="relative mx-auto -mt-3 flex w-full max-w-lg flex-col gap-6 px-4">
         {next && (

@@ -94,6 +94,9 @@ le logo n'est **pas entouré de blanc**.
   `images/` exclu du proxy d'authentification. Le dessin SVG reste en secours si `image_url` est vide.
   Plus tard (lot 1, administration) : téléversement de la photo dans le stockage Supabase.
 
+- 4ᵉ retour : « C'est beaucoup mieux ». Ajouts : titre « Jésus-Christ t’aime » au-dessus du verset
+  (paramètre `home_banner.headline`) et petite étiquette « Verset du jour » avant le verset.
+
 Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :

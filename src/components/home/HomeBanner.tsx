@@ -15,6 +15,16 @@ const SPARKS = [
   { left: "78%", dur: "6.8s", delay: "1.3s", drift: "-10px" },
 ];
 
+const reveal = {
+  hidden: { opacity: 0, y: 10, filter: "blur(6px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
+  },
+};
+
 const RAYS = Array.from({ length: 13 }, (_, i) => -72 + i * 12);
 
 /** Dessin de secours (Bible ouverte dans la lumière) tant qu'aucune photo n'est paramétrée. */
@@ -131,27 +141,30 @@ function BannerArt() {
 
 /**
  * Bannière de l'accueil (maquette du 26/10/2026) : une photo (paramètre
- * « home_banner ») sur laquelle s'affiche le verset du jour. La photo zoome
+ * « home_banner ») sur laquelle s'affichent un titre (« Jésus-Christ t'aime »,
+ * même paramètre) puis le verset du jour. La photo zoome
  * très lentement et des étincelles dorées montent de la Bible.
  */
 export function HomeBanner({
   imageUrl,
+  headline,
   verse,
 }: {
   imageUrl?: string | null;
+  headline?: string | null;
   verse?: { text: string; reference: string } | null;
 }) {
   // Les versets longs prennent une taille plus petite pour tenir dans la bannière.
   const size = !verse
     ? ""
     : verse.text.length > 140
-      ? "text-lg"
+      ? "text-base"
       : verse.text.length > 80
-        ? "text-xl"
-        : "text-2xl";
+        ? "text-lg"
+        : "text-xl";
 
   return (
-    <section aria-label="Verset du jour" className="relative isolate h-72 overflow-hidden bg-night">
+    <section aria-label="Verset du jour" className="relative isolate h-80 overflow-hidden bg-night">
       {imageUrl ? (
         <Image
           src={imageUrl}
@@ -182,17 +195,30 @@ export function HomeBanner({
         className="absolute inset-x-0 top-0 h-3/4 bg-gradient-to-b from-night/70 via-night/30 to-transparent"
       />
 
-      {verse && (
-        <motion.figure
-          className="absolute inset-x-5 top-5 text-center text-white [text-shadow:0_2px_10px_rgb(11_42_111/0.8)]"
-          initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <blockquote className={`font-script leading-snug ${size}`}>« {verse.text} »</blockquote>
-          <figcaption className="mt-1 text-sm font-semibold text-gold">{verse.reference}</figcaption>
-        </motion.figure>
-      )}
+      <motion.div
+        className="absolute inset-x-5 top-4 text-center text-white [text-shadow:0_2px_10px_rgb(11_42_111/0.8)]"
+        initial="hidden"
+        animate="show"
+        variants={{ show: { transition: { staggerChildren: 0.18 } } }}
+      >
+        {headline && (
+          <motion.p
+            variants={reveal}
+            className="font-display text-[1.75rem] font-extrabold leading-tight text-white"
+          >
+            {headline}
+          </motion.p>
+        )}
+        {verse && (
+          <motion.figure variants={reveal} className="mt-2">
+            <span className="inline-block rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-semibold text-gold backdrop-blur-sm [text-shadow:none]">
+              Verset du jour
+            </span>
+            <blockquote className={`mt-1.5 font-script leading-snug ${size}`}>« {verse.text} »</blockquote>
+            <figcaption className="mt-1 text-sm font-semibold text-gold">{verse.reference}</figcaption>
+          </motion.figure>
+        )}
+      </motion.div>
     </section>
   );
 }

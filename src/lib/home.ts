@@ -36,7 +36,7 @@ export async function loadHomeData() {
 
   return {
     profile: { ...FALLBACK_PROFILE, ...(setting("church_profile") as Partial<ChurchProfile> | undefined) },
-    bannerImage: (setting("home_banner") as { image_url?: string | null } | undefined)?.image_url ?? null,
+    banner: (setting("home_banner") ?? {}) as { image_url?: string | null; headline?: string | null },
     services: (services.data ?? []) as ServiceType[],
     verses: (verses.data ?? []) as DailyVerse[],
   };
