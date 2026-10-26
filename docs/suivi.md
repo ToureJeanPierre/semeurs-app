@@ -115,7 +115,10 @@ le logo n'est **pas entouré de blanc**.
   `experimental.staleTimes` (60 s), animations de la bannière raccourcies. Mesuré en local :
   changement d'onglet en 50–100 ms.
 
-Prochaine action : retour de Jean-Pierre sur le test téléphone, puis validation du lot 0.
+- **Accueil validé par Jean-Pierre** (« C'est bon »), navigation fluide confirmée sur son téléphone.
+
+Prochaine action : finir le lot 0 avec Jean-Pierre, une étape à la fois : (1) installer l'appli sur
+l'écran d'accueil, (2) activer l'empreinte depuis Profil, puis fusionner la branche dans `main`. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 
