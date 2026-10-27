@@ -231,8 +231,41 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
 
 - Jean-Pierre : « c'est bon, ça peut aller » ; demande d'accélérer → nouvelle méthode (ci-dessus).
 
-Prochaine action : terminer tout le lot 1 (pointage, alertes, espace fidèle, domicile,
-anniversaires, messages groupés, audiences, comptes de démonstration), puis livrer. sur le test téléphone, puis validation du lot 0.
+### Étapes 3 à 6 — fin du lot 1 (fait le 27/10, livré d'un bloc selon la nouvelle méthode)
+- Migrations (appliquées) : `20261028000000_attendance`, `20261028010000_alerts`,
+  `20261028020000_follow_helpers`, `20261028030000_member_space`, `20261028040000_sendable_groups`,
+  `20261028050000_demo_data_flag`.
+- **Pointage** (`/pointage`, rôle « Protocole » ou droit `attendance.record`) : ouverture du culte du
+  jour, liste avec recherche, scan du QR du fidèle (`BarcodeDetector`), file hors connexion (Dexie,
+  identifiants créés sur le téléphone, envoi idempotent au retour du réseau). Le père de famille
+  pointe après coup une présence oubliée des siens (mode « manual », depuis la fiche).
+- **Alertes** : `compute_alerts` (serveur seulement) chaque matin à 6 h (cron Vercel
+  `/api/cron/alertes`, `CRON_SECRET`), seuils des paramètres, absences excusées, exemption de
+  semaine ; baromètre et « À contacter » dans Ma famille, `/alertes` pour pasteur et assistants ;
+  journal de suivi (`follow_ups`), note sensible confidentielle ; un contact noté traite l'alerte.
+  Notifications dans l'appli (cloche avec pastille).
+- **Espace fidèle** (`/mon-espace`) : QR de présence, « Ma maison » (« Je suis à la maison » ou lien
+  à usage unique envoyé par le père de famille), « Je serai absent(e) ».
+- **Anniversaires** : liste dans Ma famille, notification du jour (`notify_birthdays`).
+- **Messages groupés** (`/messages`) : à la famille / au groupe dont on a la charge (`{prénom}`
+  personnalisé), toute l'église réservée au droit `messages.send` ; envoi dans l'appli, liste
+  WhatsApp un par un (l'API WhatsApp payante reste désactivée).
+- **Audiences** (`/audiences`) : créneaux tirés du paramètre `audience_schedule`, demande par le
+  fidèle, confirmation / refus par le pasteur, notification.
+- **Démonstration** : `scripts/seed-demo.mjs` (données marquées `is_demo`, jamais mêlées aux vraies,
+  effaçables avec `--effacer`) ; 7 comptes, 6 fidèles fictifs, 7 semaines de cultes.
+- Tests : 61 unitaires, 15 scénarios RLS (dont 6 nouveaux, `tests/rls/lot1.test.ts`), 4 e2e ;
+  parcours de chaque rôle vérifiés en local avec les comptes de démonstration.
+- **Choix prudents à confirmer par Jean-Pierre** (tous modifiables sans recoder) : membres qui se
+  voient entre eux par type de groupe ; l'administrateur ne voit pas les domiciles ; statuts suivis
+  par les alertes (membre, en intégration, nouveau converti) ; destinataires des notifications par
+  niveau ; créneaux d'audience (mercredi 14 h–19 h 30, toutes les 30 min, 3 semaines) ; le protocole
+  ne voit que les noms ; pointage hors connexion : ouvrir la liste avant le culte ; supprimer les
+  données de démonstration avant le lancement.
+
+Prochaine action : retours de Jean-Pierre sur le lot 1 (une seule liste), puis lot 2.
+
+## Accès de l'environnement cloud
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 

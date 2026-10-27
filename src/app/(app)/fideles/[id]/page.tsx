@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CircleCheck, KeyRound, MessageCircle, Phone } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
+import { PersonFollowUp } from "@/components/alerts/PersonFollowUp";
+import { PersonHome } from "@/components/location/PersonHome";
 import { ActionForm } from "@/components/people/ActionForm";
 import { EditToggle } from "@/components/people/EditToggle";
 import { PersonFields } from "@/components/people/PersonFields";
@@ -143,6 +145,10 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
           ))}
         {person.weekday_exempt && <p className="text-sm text-muted">Dispensé(e) des cultes de semaine</p>}
       </Card>
+
+      <PersonFollowUp personId={id} name={personName(person)} canManage={Boolean(canManage)} />
+
+      <PersonHome personId={id} firstName={person.first_name} phone={person.whatsapp ?? person.phone} canManage={Boolean(canManage)} />
 
       {canManage && (
         <>

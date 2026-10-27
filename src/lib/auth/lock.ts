@@ -89,7 +89,8 @@ export async function readChallenge(
 /**
  * Chemins accessibles sans être connecté. Tout le reste exige une session.
  */
-export const PUBLIC_PATHS = ["/connexion", "/hors-ligne", "/api/passkey/authenticate"];
+// /api/cron : protégé par son propre secret (CRON_SECRET) ; /p : liens publics à jeton (position du domicile).
+export const PUBLIC_PATHS = ["/connexion", "/hors-ligne", "/api/passkey/authenticate", "/api/cron", "/api/position", "/p"];
 
 /** Chemins accessibles connecté mais verrouillé. */
 export const LOCKED_ALLOWED_PATHS = ["/deverrouiller", "/api/passkey/authenticate"];

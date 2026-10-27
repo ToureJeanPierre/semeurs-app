@@ -4,19 +4,32 @@ import { ChevronRight, UserCheck, XCircle } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import type { PersonOption } from "@/components/admin/PersonPicker";
 import { ActionForm } from "@/components/people/ActionForm";
+import { Barometer } from "@/components/alerts/Barometer";
+import { Birthdays } from "@/components/alerts/Birthdays";
+import { daysUntilBirthday } from "@/lib/birthdays";
+import { ContactList, type ContactRow } from "@/components/alerts/ContactList";
 import { ContactPickerButton } from "@/components/people/ContactPickerButton";
 import { DelegationForm } from "@/components/people/DelegationForm";
 import { Card } from "@/components/ui/Card";
 import { TextField } from "@/components/ui/TextField";
 import { getAccess } from "@/lib/access";
 import { personName } from "@/lib/admin";
+import { barometer, byUrgency, needsContact, type AlertRow } from "@/lib/alerts";
 import { formatPhone, parseIvorianPhone } from "@/lib/phone";
 import { createClient } from "@/lib/supabase/server";
 import { addPersonToGroup, createDelegation, endDelegation } from "../fideles/actions";
 
 export const metadata: Metadata = { title: "Ma famille" };
 
-type Person = { id: string; first_name: string; last_name: string; phone: string | null; district: string | null; commune: string | null };
+type Person = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  phone: string | null;
+  district: string | null;
+  commune: string | null;
+  birth_date?: string | null;
+};
 type Member = { person_id: string; group_functions: { label: string; permissions: string[] } | null; people: Person | null };
 type Delegation = {
   id: string;
@@ -75,7 +88,7 @@ export default async function FamilyPage() {
   const [membersRes, delegationsRes, myDelegationsRes] = await Promise.all([
     supabase
       .from("group_memberships")
-      .select("group_id, person_id, group_functions(label, permissions), people(id, first_name, last_name, phone, district, commune)")
+      .select("group_id, person_id, group_functions(label, permissions), people(id, first_name, last_name, phone, district, commune, birth_date)")
       .in("group_id", families.map((f) => f.id))
       .is("end_date", null),
     supabase
@@ -90,6 +103,36 @@ export default async function FamilyPage() {
       .is("end_date", null),
   ]);
   const members = (membersRes.data ?? []) as unknown as (Member & { group_id: string })[];
+  const followed = [
+    ...members.map((m) => m.person_id),
+    ...((myDelegationsRes.data ?? []) as unknown as Delegation[]).flatMap((d) => d.delegation_members.map((x) => x.people?.id ?? "")),
+  ].filter(Boolean);
+  const { data: alertRows } = await supabase
+    .from("alerts")
+    .select("person_id, level, days_absent, last_presence_on, status")
+    .in("person_id", followed);
+  const { data: birthdayTemplate } = await supabase.from("message_templates").select("body").eq("code", "birthday").maybeSingle();
+  const today = new Date().toISOString().slice(0, 10);
+  const birthdaysOf = (people: Person[]) =>
+    people
+      .filter((p) => p.birth_date)
+      .map((p) => ({ id: p.id, firstName: p.first_name, name: personName(p), inDays: daysUntilBirthday(p.birth_date!, today), phone: p.phone }))
+      .filter((b) => b.inDays <= 7)
+      .sort((a, b) => a.inDays - b.inDays);
+  const alerts = new Map(((alertRows ?? []) as AlertRow[]).map((a) => [a.person_id, a]));
+  const toContact = (people: Person[]): ContactRow[] =>
+    people
+      .map((p) => ({ p, a: alerts.get(p.id) }))
+      .filter(({ a }) => a && needsContact(a.level))
+      .map(({ p, a }) => ({
+        person_id: p.id,
+        name: personName(p),
+        level: a!.level,
+        days_absent: a!.days_absent,
+        treated: a!.status === "treated",
+        phone: p.phone,
+      }))
+      .sort(byUrgency);
   const delegations = (delegationsRes.data ?? []) as unknown as Delegation[];
   const myDelegations = (myDelegationsRes.data ?? []) as unknown as (Delegation & { groups: { name: string } | null })[];
 
@@ -111,6 +154,17 @@ export default async function FamilyPage() {
         return (
           <section key={family.id} aria-labelledby={`f-${family.id}`} className="flex flex-col gap-4">
             <PageTitle title={family.name} intro={`${list.length} membre${list.length > 1 ? "s" : ""}`} />
+
+            <Barometer
+              {...barometer(list.map((m) => alerts.get(m.person_id)?.level ?? "ok"))}
+            />
+            <h3 className="font-display text-lg font-semibold">À contacter</h3>
+            <ContactList
+              rows={toContact(list.map((m) => m.people!))}
+              empty="Aucun absent cette semaine. Merci pour votre fidélité au suivi."
+            />
+            <Birthdays rows={birthdaysOf(list.map((m) => m.people!))} template={birthdayTemplate?.body ?? "Joyeux anniversaire {prénom} !"} />
+            <h3 className="font-display text-lg font-semibold">Toute la famille</h3>
 
             <ul className="flex flex-col divide-y divide-line rounded-card bg-surface px-4 shadow-card">
               {list.map((m) => (
@@ -198,6 +252,10 @@ export default async function FamilyPage() {
           <PageTitle
             title={`Fidèles qui me sont confiés${d.label ? ` · ${d.label}` : ""}`}
             intro={d.groups?.name ?? undefined}
+          />
+          <ContactList
+            rows={toContact(d.delegation_members.filter((x) => x.people).map((x) => x.people!))}
+            empty="Aucun absent parmi les fidèles qui vous sont confiés."
           />
           <ul className="flex flex-col divide-y divide-line rounded-card bg-surface px-4 shadow-card">
             {d.delegation_members

@@ -1,7 +1,10 @@
 import { createElement, type ComponentType } from "react";
 import {
   BookOpen,
+  BellRing,
+  CalendarClock,
   CalendarDays,
+  SquareCheck,
   CirclePlay,
   HandHeart,
   Heart,
@@ -48,7 +51,10 @@ function HandsPraying({ size = 24, strokeWidth = 2, color = "currentColor", ...p
  */
 const ICONS: Record<string, ComponentType<LucideProps>> = {
   "book-open": BookOpen,
+  "bell-ring": BellRing,
+  "calendar-clock": CalendarClock,
   "calendar-days": CalendarDays,
+  "check-square": SquareCheck,
   "circle-play": CirclePlay,
   "hand-heart": HandHeart,
   "hands-praying": HandsPraying,

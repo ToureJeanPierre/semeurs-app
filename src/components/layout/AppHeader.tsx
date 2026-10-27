@@ -9,6 +9,14 @@ import type { menuLinks } from "@/lib/navigation";
 import { MenuSheet } from "./MenuSheet";
 import { OPEN_MENU_EVENT, useNavTrail } from "./NavTrail";
 
+const FALLBACK_TITLES: Record<string, string> = {
+  "/notifications": "Notifications",
+  "/fideles": "Fidèles",
+  "/famille": "Ma famille",
+  "/mon-espace": "Mon espace",
+  "/profil": "Profil",
+};
+
 const iconButton =
   "grid size-11 place-items-center rounded-full text-white transition-colors hover:bg-white/10 active:bg-white/20";
 
@@ -16,19 +24,22 @@ const iconButton =
  * Barre du haut, bleu roi (maquette du 26/10/2026).
  * - Accueil : trois traits (menu complet) à gauche, logo et nom de l'église.
  * - Autres pages : flèche retour (refait le chemin parcouru, jamais hors de l'appli) et titre (celui de l'entrée du menu), trois traits à droite.
- * Cloche (annonces) à droite. La barre reste affichée d'une page à l'autre.
+ * Cloche (notifications, avec le nombre de non lues) à droite. La barre reste affichée d'une page à l'autre.
  */
-export function AppHeader({ menu, bellHref }: { menu: ReturnType<typeof menuLinks>; bellHref: string }) {
+export function AppHeader({ menu, unread }: { menu: ReturnType<typeof menuLinks>; unread: number }) {
   const pathname = usePathname();
   const { back } = useNavTrail();
 
-  // Titre : l'entrée du menu dont l'adresse est le début le plus long de la page courante.
+  // Titre : l'entrée du menu dont l'adresse est le début le plus long de la page courante,
+  // sinon le titre par défaut de la rubrique (écran absent du menu de cette personne).
   const title =
     pathname === "/"
       ? undefined
       : (menu
           .filter((m) => m.href !== "/" && (pathname === m.href || pathname.startsWith(`${m.href}/`)))
-          .sort((a, b) => b.href.length - a.href.length)[0]?.label ?? "");
+          .sort((a, b) => b.href.length - a.href.length)[0]?.label ??
+        FALLBACK_TITLES[`/${pathname.split("/")[1]}`] ??
+        "");
   const [open, setOpen] = useState(false);
 
   // Retour vers un écran d'où l'on avait ouvert le menu : on le rouvre (comme Yango).
@@ -77,8 +88,20 @@ export function AppHeader({ menu, bellHref }: { menu: ReturnType<typeof menuLink
               </Link>
             </>
           )}
-          <Link href={bellHref} className={iconButton} aria-label="Annonces">
+          <Link
+            href="/notifications"
+            className={`relative ${iconButton}`}
+            aria-label={unread ? `Notifications : ${unread} non lue${unread > 1 ? "s" : ""}` : "Notifications"}
+          >
             <Bell aria-hidden className="size-6" />
+            {unread > 0 && (
+              <span
+                aria-hidden
+                className="absolute right-1.5 top-1.5 grid min-w-5 place-items-center rounded-full bg-alert-ring px-1 text-[0.6875rem] font-bold leading-5 text-white ring-2 ring-royal"
+              >
+                {unread > 9 ? "9+" : unread}
+              </span>
+            )}
           </Link>
           {title && menuButton}
         </div>

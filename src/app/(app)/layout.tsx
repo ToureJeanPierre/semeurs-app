@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { requireUser } from "@/lib/auth/session";
 import { getAccess } from "@/lib/access";
-import { bottomNavLinks, loadModules, menuLinks, moduleHref, visibleModules } from "@/lib/navigation";
+import { bottomNavLinks, loadModules, menuLinks, visibleModules } from "@/lib/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { NavTrailTracker } from "@/components/layout/NavTrail";
 
@@ -14,13 +15,17 @@ import { NavTrailTracker } from "@/components/layout/NavTrail";
  */
 export default async function AppLayout({ children }: { children: ReactNode }) {
   await requireUser();
-  const [allModules, access] = await Promise.all([loadModules(), getAccess()]);
+  const supabase = await createClient();
+  const [allModules, access, { data: unread }] = await Promise.all([
+    loadModules(),
+    getAccess(),
+    supabase.rpc("unread_notifications"),
+  ]);
   const modules = visibleModules(allModules, access);
-  const announcements = modules.find((m) => m.code === "messages");
 
   return (
     <>
-      <AppHeader menu={menuLinks(modules)} bellHref={announcements ? moduleHref(announcements) : "/"} />
+      <AppHeader menu={menuLinks(modules)} unread={unread ?? 0} />
       <main className="flex flex-1 flex-col pb-24">{children}</main>
       <BottomNav items={bottomNavLinks(modules)} />
       <NavTrailTracker />

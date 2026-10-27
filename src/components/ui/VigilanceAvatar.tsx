@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 
 /** États d'assiduité (docs/01 §6.5). Les seuils, eux, sont paramétrables (lot 1). */
-export type VigilanceLevel = "ok" | "attention" | "urgent" | "critical" | "lost";
+export type VigilanceLevel = "ok" | "attention" | "urgent" | "critical" | "lost" | "excused";
 
 const LEVELS: Record<VigilanceLevel, { label: string; ring: string; badge: string; pulse: boolean }> = {
   ok: { label: "À jour", ring: "var(--color-ok-ring)", badge: "bg-ok-bg text-ok-text", pulse: false },
@@ -11,6 +11,7 @@ const LEVELS: Record<VigilanceLevel, { label: string; ring: string; badge: strin
   urgent: { label: "Urgent", ring: "var(--color-alert-ring)", badge: "bg-alert-bg text-alert-text", pulse: true },
   critical: { label: "Critique", ring: "var(--color-alert-ring)", badge: "bg-alert-bg text-alert-text", pulse: true },
   lost: { label: "Perdu de vue", ring: "var(--color-lost-ring)", badge: "bg-lost-bg text-lost-text", pulse: false },
+  excused: { label: "Absence justifiée", ring: "var(--color-sky)", badge: "bg-royal/10 text-night", pulse: false },
 };
 
 function initials(name: string) {

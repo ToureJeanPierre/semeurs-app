@@ -309,3 +309,75 @@ export async function endDelegation(formData: FormData): Promise<void> {
     .eq("id", id.data);
   revalidatePath("/famille");
 }
+
+// ---------------------------------------------------------------------------
+// Suivi : noter un contact, pointer après coup
+// ---------------------------------------------------------------------------
+const followUpSchema = z.object({
+  person_id: uuid,
+  channel: z.string().min(1, "Choisissez le moyen de contact."),
+  result: z.string().min(1, "Choisissez le résultat."),
+  note: text,
+  confidential: z.preprocess((v) => v === "on", z.boolean()),
+  next_action_on: date,
+});
+
+/** Journal de suivi (docs/01 §6.6) : noter un contact traite l'alerte en cours. */
+export async function addFollowUp(_prev: FormState, formData: FormData): Promise<FormState> {
+  const raw = Object.fromEntries(formData) as Record<string, string>;
+  const parsed = followUpSchema.safeParse({ ...raw, confidential: raw.confidential ?? "", note: raw.note ?? "", next_action_on: raw.next_action_on ?? "" });
+  if (!parsed.success) return fieldErrors(parsed.error.issues);
+  const [user, supabase] = await Promise.all([getCurrentUser(), createClient()]);
+  const { data: me } = await supabase.rpc("my_access");
+  const authorId = (me as { person_id?: string } | null)?.person_id;
+  if (!authorId) return { error: "Votre compte n'est pas rattaché à une fiche." };
+  const { error } = await supabase.from("follow_ups").insert({ ...parsed.data, author_id: authorId, created_by: user?.id });
+  if (error) return { error: explain(error) };
+  revalidatePath(`/fideles/${parsed.data.person_id}`);
+  revalidatePath("/famille");
+  return { success: "Contact noté. L'alerte est marquée comme traitée." };
+}
+
+/** Le père de famille pointe après coup (ou annule) une présence d'un membre de sa famille. */
+export async function toggleManualPresence(formData: FormData): Promise<void> {
+  const parsed = z
+    .object({ person_id: uuid, session_id: uuid, present: z.enum(["0", "1"]) })
+    .safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return;
+  const user = await getCurrentUser();
+  const supabase = await createClient();
+  if (parsed.data.present === "1") {
+    await supabase
+      .from("attendance")
+      .delete()
+      .eq("session_id", parsed.data.session_id)
+      .eq("person_id", parsed.data.person_id)
+      .eq("mode", "manual");
+  } else {
+    await supabase.from("attendance").insert({
+      session_id: parsed.data.session_id,
+      person_id: parsed.data.person_id,
+      mode: "manual",
+      recorded_by: user?.id,
+    });
+  }
+  revalidatePath(`/fideles/${parsed.data.person_id}`);
+}
+
+// ---------------------------------------------------------------------------
+// Domicile : lien de position pour un fidèle sans compte
+// ---------------------------------------------------------------------------
+/** Crée un lien (valable 7 jours, une seule fois) que le fidèle ouvre chez lui pour partager sa position. */
+export async function createLocationLink(_prev: FormState, formData: FormData): Promise<FormState> {
+  const id = uuid.safeParse(formData.get("person_id"));
+  if (!id.success) return { error: "Fiche inconnue." };
+  const user = await getCurrentUser();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("location_tokens")
+    .insert({ person_id: id.data, created_by: user?.id })
+    .select("token")
+    .single();
+  if (error || !data) return { error: explain(error) };
+  return { success: `LIEN:${data.token}` };
+}

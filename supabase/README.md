@@ -16,8 +16,13 @@ avec la même version que le nom du fichier.
 | `20261026150000_prayer_giving_icons.sql` | Icônes : mains jointes pour Prières, main au cœur pour Dons |
 | `20261027000000_core_engine.sql` | Lot 1 — socle : personnes, comptes, groupes et types, bureau (fonctions), appartenances (une seule famille), capacités, droits / rôles / affectations, listes de valeurs, journal d'audit ; fonctions `private.has_permission`, `can_see_person`… ; RLS ; données de l'église (docs/05) |
 | `20261027010000_admin_module.sql` | `modules.required_permissions` et module « Administration » (visible selon les droits) |
-
 | `20261027100000_people_families.sql` | Lot 1 étape 2 — fiche complétée, délégation (`delegations`, `delegation_members`), `add_person_to_group`, `can_manage_person`, `my_groups`, `my_access` avec droits de groupe, `modules.required_scope`, modules Fidèles / Ma famille / Mes groupes |
+| `20261028000000_attendance.sql` | Cultes (`sessions`), présences, absences excusées, jetons QR, rôle Protocole, `attendance_roster`, `record_attendance_by_qr` |
+| `20261028010000_alerts.sql` | Alertes d'absence, `compute_alerts` (serveur seulement), journal de suivi, notifications, listes de valeurs du suivi |
+| `20261028020000_follow_helpers.sql` | `public.can_follow_person` (qui peut noter un contact) |
+| `20261028030000_member_space.sql` | Domiciles (GPS, lien à usage unique), modèles de message, anniversaires, messages groupés, audiences et créneaux |
+| `20261028040000_sendable_groups.sql` | `my_message_targets` : groupes auxquels on peut écrire |
+| `20261028050000_demo_data_flag.sql` | Colonne `is_demo` (personnes, groupes, cultes) : la démonstration ne se mêle pas aux vraies données |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.
