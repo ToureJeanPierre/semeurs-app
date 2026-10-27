@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { parentPath } from "@/lib/parent-path";
 import { ArrowLeft, Bell, Menu } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import type { menuLinks } from "@/lib/navigation";
 import { MenuSheet } from "./MenuSheet";
+import { OPEN_MENU_EVENT, useNavTrail } from "./NavTrail";
 
 const iconButton =
   "grid size-11 place-items-center rounded-full text-white transition-colors hover:bg-white/10 active:bg-white/20";
@@ -15,11 +15,13 @@ const iconButton =
 /**
  * Barre du haut, bleu roi (maquette du 26/10/2026).
  * - Accueil : trois traits (menu complet) à gauche, logo et nom de l'église.
- * - Autres pages : flèche retour (vers l'écran parent, jamais hors de l'appli) et titre (celui de l'entrée du menu), trois traits à droite.
+ * - Autres pages : flèche retour (refait le chemin parcouru, jamais hors de l'appli) et titre (celui de l'entrée du menu), trois traits à droite.
  * Cloche (annonces) à droite. La barre reste affichée d'une page à l'autre.
  */
 export function AppHeader({ menu, bellHref }: { menu: ReturnType<typeof menuLinks>; bellHref: string }) {
   const pathname = usePathname();
+  const { back } = useNavTrail();
+
   // Titre : l'entrée du menu dont l'adresse est le début le plus long de la page courante.
   const title =
     pathname === "/"
@@ -28,6 +30,13 @@ export function AppHeader({ menu, bellHref }: { menu: ReturnType<typeof menuLink
           .filter((m) => m.href !== "/" && (pathname === m.href || pathname.startsWith(`${m.href}/`)))
           .sort((a, b) => b.href.length - a.href.length)[0]?.label ?? "");
   const [open, setOpen] = useState(false);
+
+  // Retour vers un écran d'où l'on avait ouvert le menu : on le rouvre (comme Yango).
+  useEffect(() => {
+    const reopen = () => setOpen(true);
+    window.addEventListener(OPEN_MENU_EVENT, reopen);
+    return () => window.removeEventListener(OPEN_MENU_EVENT, reopen);
+  }, []);
 
   const menuButton = (
     <button
@@ -47,9 +56,9 @@ export function AppHeader({ menu, bellHref }: { menu: ReturnType<typeof menuLink
         <div className="mx-auto flex h-16 max-w-lg items-center gap-2 px-2">
           {title ? (
             <>
-              <Link href={parentPath(pathname)} className={iconButton} aria-label="Retour">
+              <button type="button" onClick={back} className={iconButton} aria-label="Retour">
                 <ArrowLeft aria-hidden className="size-6" />
-              </Link>
+              </button>
               <h1 className="min-w-0 flex-1 truncate font-display text-xl font-semibold">{title}</h1>
             </>
           ) : (

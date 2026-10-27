@@ -191,7 +191,18 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
   (3) « navigation logique et progressive » : son message était coupé, suite demandée.
   `/fideles` est ouvert à quiconque voit des fiches (le père de famille n'y voit que les siens, RLS).
 
-Prochaine action : obtenir la fin du compte rendu de Jean-Pierre. sur le test téléphone, puis validation du lot 0.
+- Suite du compte rendu (navigation « comme Yango ») : la flèche Retour doit refaire le chemin
+  réellement parcouru, une étape à la fois, et rouvrir le menu (trois traits) pour un écran ouvert
+  depuis le menu. Fait : **fil d'Ariane** (`src/lib/nav-trail.ts`, logique pure testée, 8 cas ;
+  `src/components/layout/NavTrail.tsx`, branchement). Le fil suit l'historique du téléphone : la
+  flèche de l'appli et le bouton Retour d'Android font la même chose (retour reconnu quand on
+  arrive sur l'écran juste avant ; les onglets du bas sont marqués comme nouvel écran). Sans écran
+  précédent, la flèche remonte à l'écran parent (`parentPath`) au lieu de quitter l'appli.
+  « Terminer » revient à la liste en remontant le chemin (pas de boucle) ; un formulaire
+  « nouveau » déjà envoyé est sauté au retour. Vérifié en local sur 5 parcours.
+- Base réelle : Jean-Pierre et « Flore » (personne de test créée par Jean-Pierre, compte, Famille 2).
+
+Prochaine action : test de la navigation par Jean-Pierre, puis suite de l'étape 2. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 

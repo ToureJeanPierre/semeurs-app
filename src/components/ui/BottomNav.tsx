@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { ModuleIcon } from "@/components/ui/icons";
+import { markTabNavigation } from "@/components/layout/NavTrail";
 import type { NavLink } from "@/lib/navigation";
 
 /** Barre du bas : icônes alignées, l'onglet actif en bleu roi (maquette du 26/10/2026). */
@@ -25,6 +26,9 @@ export function BottomNav({ items }: { items: NavLink[] }) {
                 // Onglets préchargés en entier : ils s'ouvrent sans attendre le serveur.
                 prefetch
                 aria-current={active ? "page" : undefined}
+                onClick={() => {
+                  if (!active) markTabNavigation();
+                }}
                 className={`relative flex min-h-16 flex-col items-center justify-center gap-1 text-xs transition-colors ${
                   active ? "font-bold text-royal" : "font-medium text-muted"
                 }`}

@@ -8,6 +8,7 @@ import { ChevronRight, LogOut, X } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { Logo } from "@/components/Logo";
 import { ModuleIcon } from "@/components/ui/icons";
+import { markMenuNavigation } from "./NavTrail";
 import type { menuLinks } from "@/lib/navigation";
 
 /** Menu complet : panneau qui glisse depuis le côté du bouton, entrées qui apparaissent en cascade. */
@@ -89,7 +90,10 @@ export function MenuSheet({
                   >
                     <Link
                       href={item.href}
-                      onClick={onClose}
+                      onClick={() => {
+                        if (!active) markMenuNavigation();
+                        onClose();
+                      }}
                       aria-current={active ? "page" : undefined}
                       className={`flex min-h-14 items-center gap-3 rounded-2xl px-3 py-2 ${
                         active ? "bg-royal/10" : "hover:bg-surface"

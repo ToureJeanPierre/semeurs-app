@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth/session";
 import { getAccess } from "@/lib/access";
 import { bottomNavLinks, loadModules, menuLinks, moduleHref, visibleModules } from "@/lib/navigation";
 import { AppHeader } from "@/components/layout/AppHeader";
+import { NavTrailTracker } from "@/components/layout/NavTrail";
 
 /**
  * Cadre commun des écrans connectés : barre du haut, contenu, barre du bas.
@@ -22,6 +23,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <AppHeader menu={menuLinks(modules)} bellHref={announcements ? moduleHref(announcements) : "/"} />
       <main className="flex flex-1 flex-col pb-24">{children}</main>
       <BottomNav items={bottomNavLinks(modules)} />
+      <NavTrailTracker />
     </>
   );
 }
