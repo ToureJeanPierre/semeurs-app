@@ -5,6 +5,12 @@ précédente s'est arrêtée.
 
 ## Méthode de travail convenue avec Jean-Pierre
 
+**Depuis le 27/10/2026 : livraison par lot entier.** Claude Code termine tout un lot sans attendre
+de validation entre les étapes, teste lui-même avec des comptes de démonstration, puis livre un
+lien + une liste d'essais + la liste des choix faits (prudents et modifiables dans les réglages)
+à confirmer. Jean-Pierre teste et renvoie une seule liste de corrections. Seules les décisions
+réellement bloquantes lui sont posées en cours de lot.
+
 - Une question ou une action à la fois, en français simple ; attendre sa réponse avant la suite.
 - Jean-Pierre ne veut plus faire les réglages techniques à la main : dès que les accès sont en
   place (voir « Automatisation »), Claude Code s'en charge lui-même.
@@ -223,7 +229,10 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
   Présent sur Nouvelle fiche / Modifier la fiche, Ma famille → Inscrire, Administration → Personnes.
   Vérifié en local avec un répertoire simulé.
 
-Prochaine action : test par Jean-Pierre du lancement, du déverrouillage et de l'import de contacts. sur le test téléphone, puis validation du lot 0.
+- Jean-Pierre : « c'est bon, ça peut aller » ; demande d'accélérer → nouvelle méthode (ci-dessus).
+
+Prochaine action : terminer tout le lot 1 (pointage, alertes, espace fidèle, domicile,
+anniversaires, messages groupés, audiences, comptes de démonstration), puis livrer. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 
