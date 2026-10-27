@@ -6,6 +6,7 @@ import { FormFeedback } from "@/components/admin/FormFeedback";
 import { PersonPicker, type PersonOption } from "@/components/admin/PersonPicker";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
+import { ContactPickerButton } from "./ContactPickerButton";
 
 export type ValueOption = { value: string; label: string };
 
@@ -100,6 +101,7 @@ export function PersonFields({
       {values.id && <input type="hidden" name="person_id" value={values.id} />}
 
       <Section title="Identité">
+        <ContactPickerButton />
         <div className="grid grid-cols-2 gap-3">
           <TextField label="Nom" name="last_name" defaultValue={values.last_name} error={err.last_name} />
           <TextField label="Prénom(s)" name="first_name" defaultValue={values.first_name} error={err.first_name} />

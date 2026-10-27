@@ -4,6 +4,7 @@ import { ChevronRight, UserCheck, XCircle } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import type { PersonOption } from "@/components/admin/PersonPicker";
 import { ActionForm } from "@/components/people/ActionForm";
+import { ContactPickerButton } from "@/components/people/ContactPickerButton";
 import { DelegationForm } from "@/components/people/DelegationForm";
 import { Card } from "@/components/ui/Card";
 import { TextField } from "@/components/ui/TextField";
@@ -123,6 +124,7 @@ export default async function FamilyPage() {
               <Card className="shadow-card">
                 <h3 className="mb-3 font-display text-lg font-semibold">Inscrire un nouveau membre</h3>
                 <ActionForm action={addPersonToGroup} hidden={{ group_id: family.id }} submitLabel="Inscrire dans la famille">
+                  <ContactPickerButton />
                   <div className="grid grid-cols-2 gap-3">
                     <TextField label="Nom" name="last_name" autoComplete="off" />
                     <TextField label="Prénom(s)" name="first_name" autoComplete="off" />

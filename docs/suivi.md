@@ -217,7 +217,13 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
      derrière « Modifier la fiche » (bouton « Enregistrer les modifications »).
 - Base réelle : Jean-Pierre, Flore Zago, Jean Kouassi, Rodrigue Delo (saisis par Jean-Pierre).
 
-Prochaine action : retour de Jean-Pierre sur ces corrections et sur l'import depuis le répertoire. sur le test téléphone, puis validation du lot 0.
+- « Choisir dans mes contacts » (accord de Jean-Pierre) : `ContactPickerButton.tsx` (API Contact
+  Picker de Chrome Android, invisible ailleurs), logique `lib/contact-import.ts` testée (premier mot
+  = nom, reste = prénoms, premier numéro ivoirien valide), bouton « Inverser nom et prénom ».
+  Présent sur Nouvelle fiche / Modifier la fiche, Ma famille → Inscrire, Administration → Personnes.
+  Vérifié en local avec un répertoire simulé.
+
+Prochaine action : test par Jean-Pierre du lancement, du déverrouillage et de l'import de contacts. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 

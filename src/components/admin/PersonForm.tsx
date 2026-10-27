@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef } from "react";
 import type { FormState } from "@/app/actions/auth";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
+import { ContactPickerButton } from "@/components/people/ContactPickerButton";
 import { FormFeedback } from "./FormFeedback";
 
 /** Ajout rapide au registre (la fiche complète arrive à l'étape 2). */
@@ -17,6 +18,7 @@ export function PersonForm({ action }: { action: (state: FormState, formData: Fo
 
   return (
     <form ref={formRef} action={formAction} className="flex flex-col gap-4" noValidate>
+      <ContactPickerButton />
       <div className="grid grid-cols-2 gap-3">
         <TextField label="Nom" name="last_name" autoComplete="off" required error={state?.fieldErrors?.last_name} />
         <TextField label="Prénom(s)" name="first_name" autoComplete="off" required error={state?.fieldErrors?.first_name} />
