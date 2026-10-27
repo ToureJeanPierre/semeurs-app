@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { CircleCheck, Fingerprint, LogOut, Trash2, UserRound } from "lucide-react";
-import { removePasskey, signOut } from "@/app/actions/auth";
+import { changePassword, removePasskey, signOut } from "@/app/actions/auth";
+import { ActionForm } from "@/components/people/ActionForm";
+import { TextField } from "@/components/ui/TextField";
 import { PasskeySetupCard } from "@/components/auth/PasskeySetupCard";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/ui/Reveal";
@@ -89,6 +91,17 @@ export default async function ProfilePage() {
             ) : (
               <PasskeySetupCard compact />
             )}
+          </Card>
+        </Reveal>
+
+        <Reveal delay={0.12}>
+          <Card className="shadow-card">
+            <h2 className="mb-3 text-lg font-semibold">Changer mon mot de passe</h2>
+            <ActionForm action={changePassword} submitLabel="Changer le mot de passe">
+              <TextField label="Mot de passe actuel" name="current" type="password" autoComplete="current-password" />
+              <TextField label="Nouveau mot de passe (8 caractères ou plus)" name="next" type="password" autoComplete="new-password" />
+              <TextField label="Nouveau mot de passe, encore une fois" name="confirm" type="password" autoComplete="new-password" />
+            </ActionForm>
           </Card>
         </Reveal>
 

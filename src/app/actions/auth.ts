@@ -96,3 +96,32 @@ export async function removePasskey(formData: FormData) {
 
   revalidatePath("/profil");
 }
+
+const passwordSchema = z
+  .object({
+    current: z.string().min(1, "Saisissez votre mot de passe actuel."),
+    next: z.string().min(8, "Au moins 8 caractères."),
+    confirm: z.string(),
+  })
+  .refine((v) => v.next === v.confirm, { message: "Les deux mots de passe ne sont pas identiques.", path: ["confirm"] });
+
+/** Le fidèle remplace son mot de passe de départ par le sien (Profil). */
+export async function changePassword(_prev: FormState, formData: FormData): Promise<FormState> {
+  const parsed = passwordSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) fieldErrors[String(issue.path[0])] = issue.message;
+    return { fieldErrors };
+  }
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const email = data?.claims?.email as string | undefined;
+  if (!email) redirect("/connexion");
+
+  // On vérifie d'abord l'ancien mot de passe.
+  const { error: checkError } = await supabase.auth.signInWithPassword({ email, password: parsed.data.current });
+  if (checkError) return { fieldErrors: { current: "Mot de passe actuel incorrect." } };
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.next });
+  if (error) return { error: "Le changement a échoué. Réessayez dans un instant." };
+  return { success: "Votre mot de passe est changé." };
+}

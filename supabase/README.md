@@ -17,5 +17,7 @@ avec la même version que le nom du fichier.
 | `20261027000000_core_engine.sql` | Lot 1 — socle : personnes, comptes, groupes et types, bureau (fonctions), appartenances (une seule famille), capacités, droits / rôles / affectations, listes de valeurs, journal d'audit ; fonctions `private.has_permission`, `can_see_person`… ; RLS ; données de l'église (docs/05) |
 | `20261027010000_admin_module.sql` | `modules.required_permissions` et module « Administration » (visible selon les droits) |
 
+| `20261027100000_people_families.sql` | Lot 1 étape 2 — fiche complétée, délégation (`delegations`, `delegation_members`), `add_person_to_group`, `can_manage_person`, `my_groups`, `my_access` avec droits de groupe, `modules.required_scope`, modules Fidèles / Ma famille / Mes groupes |
+
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

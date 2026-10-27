@@ -161,8 +161,29 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
 - Question de Jean-Pierre : comment un membre voit son équipe → proposé : page « Mes groupes »
   dans l'espace du fidèle dès l'étape 2, avec la création des comptes des membres.
 
-Prochaine action : étape 2 (fiche fidèle complète, familles, délégation, comptes des membres,
-« Mes groupes »), après accord de Jean-Pierre. sur le test téléphone, puis validation du lot 0.
+### Étape 2 — fidèles et familles (fait, en attente du test de Jean-Pierre)
+- Migration `20261027100000_people_families.sql` (appliquée).
+- `/fideles` (registre, recherche, filtre « sans famille ») et `/fideles/nouveau` : droit d'église
+  « people.view » / « people.manage ». `/fideles/[id]` : fiche complète (RLS), boutons Appeler /
+  WhatsApp, groupes, modification si `can_manage_person`, **accès à l'appli** (création du compte
+  avec mot de passe de départ affiché une fois, ou nouveau mot de passe), transfert de famille
+  (administrateur, historique conservé).
+- `/famille` : pères / mères / adjoints voient leur famille, inscrivent un nouveau membre
+  (`add_person_to_group`), confient un sous-groupe à un délégué ; le délégué voit « Fidèles qui me
+  sont confiés » (lecture seule).
+- `/mes-groupes` : chaque fidèle voit ses groupes, le bureau, et les noms des membres si le type le
+  permet (`group_types.members_see_each_other` : vrai pour équipes, cellules, Jeunesse ; faux pour
+  familles et classes — **à confirmer par Jean-Pierre**).
+- Profil : changement de mot de passe (vérifie l'ancien).
+- Comptes : créés avec la clé secrète **après** vérification `can_manage_person`, opération
+  inscrite au journal (`audit_log`, table « auth.users »).
+- Tests : 4 scénarios RLS de plus (`tests/rls/families.test.ts`), générateur de mot de passe testé ;
+  parcours complet vérifié en local (administrateur, père de famille, délégué), données de test
+  supprimées ensuite.
+- Reste pour plus tard : liens familiaux (conjoint, enfants), champs personnalisés, photo,
+  position GPS du domicile (étape 5, « Je suis à la maison »).
+
+Prochaine action : test de l'étape 2 par Jean-Pierre, une étape à la fois. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 

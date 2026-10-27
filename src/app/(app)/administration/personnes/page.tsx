@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PersonForm } from "@/components/admin/PersonForm";
 import { Card } from "@/components/ui/Card";
@@ -33,9 +34,11 @@ export default async function PeoplePage() {
         ) : (
           <ul className="flex flex-col divide-y divide-line rounded-card bg-surface px-4 shadow-card">
             {people.map((p) => (
-              <li key={p.id} className="py-3">
-                <p className="font-semibold">{p.name}</p>
-                {p.detail && <p className="text-sm text-muted">{p.detail}</p>}
+              <li key={p.id}>
+                <Link href={`/fideles/${p.id}`} className="block py-3">
+                  <span className="block font-semibold">{p.name}</span>
+                  {p.detail && <span className="block text-sm text-muted">{p.detail}</span>}
+                </Link>
               </li>
             ))}
           </ul>
