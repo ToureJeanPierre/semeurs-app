@@ -292,3 +292,25 @@ export async function updateAlertThresholds(_prev: FormState, formData: FormData
   revalidatePath("/administration/parametres");
   return { success: "Seuils enregistrés." };
 }
+
+const templateSchema = z.object({
+  code: z.string().min(1),
+  body: z.string().trim().min(5, "Le message est trop court.").max(1000, "Le message est trop long (1 000 caractères au plus)."),
+});
+
+/** Modèle de message (prise de nouvelles, anniversaire…) : RLS réservée à « settings.manage ». */
+export async function updateMessageTemplate(_prev: FormState, formData: FormData): Promise<FormState> {
+  const parsed = templateSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return fieldErrors(parsed.error.issues);
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("message_templates")
+    .update({ body: parsed.data.body, updated_at: new Date().toISOString() })
+    .eq("code", parsed.data.code)
+    .select("code");
+  if (error) return { error: explain(error) };
+  if (!data?.length) return { error: "Vous n'avez pas le droit de modifier les messages." };
+  revalidatePath("/administration/parametres");
+  revalidatePath("/famille");
+  return { success: "Message enregistré." };
+}

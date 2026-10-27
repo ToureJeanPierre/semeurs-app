@@ -35,7 +35,7 @@ function friendly(error: unknown): Error {
       return new Error("Opération annulée. Vous pouvez réessayer.");
     }
     if (error.name === "InvalidStateError") {
-      return new Error("L'empreinte ou le schéma est déjà activé sur ce téléphone.");
+      return new Error("Ce téléphone est déjà autorisé à ouvrir votre compte.");
     }
     return error;
   }

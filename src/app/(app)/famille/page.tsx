@@ -15,6 +15,7 @@ import { TextField } from "@/components/ui/TextField";
 import { getAccess } from "@/lib/access";
 import { personName } from "@/lib/admin";
 import { barometer, byUrgency, needsContact, type AlertRow } from "@/lib/alerts";
+import { ABSENCE_FALLBACK, loadMessageTemplate } from "@/lib/message-templates";
 import { formatPhone, parseIvorianPhone } from "@/lib/phone";
 import { createClient } from "@/lib/supabase/server";
 import { addPersonToGroup, createDelegation, endDelegation } from "../fideles/actions";
@@ -26,6 +27,7 @@ type Person = {
   first_name: string;
   last_name: string;
   phone: string | null;
+  whatsapp?: string | null;
   district: string | null;
   commune: string | null;
   birth_date?: string | null;
@@ -88,17 +90,17 @@ export default async function FamilyPage() {
   const [membersRes, delegationsRes, myDelegationsRes] = await Promise.all([
     supabase
       .from("group_memberships")
-      .select("group_id, person_id, group_functions(label, permissions), people(id, first_name, last_name, phone, district, commune, birth_date)")
+      .select("group_id, person_id, group_functions(label, permissions), people(id, first_name, last_name, phone, whatsapp, district, commune, birth_date)")
       .in("group_id", families.map((f) => f.id))
       .is("end_date", null),
     supabase
       .from("delegations")
-      .select("id, label, family_id, delegate_id, delegate:people!delegations_delegate_id_fkey(first_name, last_name), delegation_members(people(id, first_name, last_name, phone, district, commune))")
+      .select("id, label, family_id, delegate_id, delegate:people!delegations_delegate_id_fkey(first_name, last_name), delegation_members(people(id, first_name, last_name, phone, whatsapp, district, commune))")
       .in("family_id", families.map((f) => f.id))
       .is("end_date", null),
     supabase
       .from("delegations")
-      .select("id, label, family_id, delegate_id, groups(name), delegation_members(people(id, first_name, last_name, phone, district, commune))")
+      .select("id, label, family_id, delegate_id, groups(name), delegation_members(people(id, first_name, last_name, phone, whatsapp, district, commune))")
       .eq("delegate_id", access.personId ?? "")
       .is("end_date", null),
   ]);
@@ -111,7 +113,10 @@ export default async function FamilyPage() {
     .from("alerts")
     .select("person_id, level, days_absent, last_presence_on, status")
     .in("person_id", followed);
-  const { data: birthdayTemplate } = await supabase.from("message_templates").select("body").eq("code", "birthday").maybeSingle();
+  const [birthdayTemplate, absenceTemplate] = await Promise.all([
+    loadMessageTemplate("birthday", "Joyeux anniversaire {prénom} !"),
+    loadMessageTemplate("absence_followup", ABSENCE_FALLBACK),
+  ]);
   const today = new Date().toISOString().slice(0, 10);
   const birthdaysOf = (people: Person[]) =>
     people
@@ -127,10 +132,12 @@ export default async function FamilyPage() {
       .map(({ p, a }) => ({
         person_id: p.id,
         name: personName(p),
+        firstName: p.first_name,
         level: a!.level,
         days_absent: a!.days_absent,
         treated: a!.status === "treated",
         phone: p.phone,
+        whatsapp: p.whatsapp,
       }))
       .sort(byUrgency);
   const delegations = (delegationsRes.data ?? []) as unknown as Delegation[];
@@ -162,8 +169,9 @@ export default async function FamilyPage() {
             <ContactList
               rows={toContact(list.map((m) => m.people!))}
               empty="Aucun absent cette semaine. Merci pour votre fidélité au suivi."
+              template={absenceTemplate}
             />
-            <Birthdays rows={birthdaysOf(list.map((m) => m.people!))} template={birthdayTemplate?.body ?? "Joyeux anniversaire {prénom} !"} />
+            <Birthdays rows={birthdaysOf(list.map((m) => m.people!))} template={birthdayTemplate} />
             <h3 className="font-display text-lg font-semibold">Toute la famille</h3>
 
             <ul className="flex flex-col divide-y divide-line rounded-card bg-surface px-4 shadow-card">
@@ -256,6 +264,7 @@ export default async function FamilyPage() {
           <ContactList
             rows={toContact(d.delegation_members.filter((x) => x.people).map((x) => x.people!))}
             empty="Aucun absent parmi les fidèles qui vous sont confiés."
+            template={absenceTemplate}
           />
           <ul className="flex flex-col divide-y divide-line rounded-card bg-surface px-4 shadow-card">
             {d.delegation_members

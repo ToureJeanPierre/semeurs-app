@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Fingerprint } from "lucide-react";
+import { LockKeyhole } from "lucide-react";
 import { loginWithPassword } from "@/app/actions/auth";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
@@ -37,8 +37,8 @@ export function LoginForm() {
       {passkeyAvailable && (
         <div className="flex flex-col gap-3">
           <Button type="button" variant="primary" fullWidth onClick={handlePasskey} loading={passkeyPending}>
-            {!passkeyPending && <Fingerprint aria-hidden className="size-6" />}
-            Empreinte ou schéma
+            {!passkeyPending && <LockKeyhole aria-hidden className="size-6" />}
+            Avec le verrouillage du téléphone
           </Button>
           {passkeyError && (
             <p role="alert" className="text-center text-sm font-medium text-alert-text">

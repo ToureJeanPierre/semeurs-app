@@ -1,5 +1,6 @@
 import { CakeSlice, MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { fillTemplate, whatsappHref } from "@/lib/contact-links";
 
 export type BirthdayRow = { id: string; firstName: string; name: string; inDays: number; phone: string | null };
 
@@ -23,7 +24,7 @@ export function Birthdays({ rows, template }: { rows: BirthdayRow[]; template: s
             </span>
             {r.phone && (
               <a
-                href={`https://wa.me/${r.phone.replace("+", "")}?text=${encodeURIComponent(template.replaceAll("{prénom}", r.firstName))}`}
+                href={whatsappHref(r.phone, fillTemplate(template, r.firstName))}
                 target="_blank"
                 rel="noreferrer"
                 className="flex min-h-11 items-center gap-2 rounded-full bg-[#1f8f4e] px-4 text-sm font-semibold text-white"

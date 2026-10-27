@@ -3,7 +3,7 @@
 import { useActionState, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Fingerprint } from "lucide-react";
+import { LockKeyhole } from "lucide-react";
 import { signOut, unlockWithPassword } from "@/app/actions/auth";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
@@ -64,14 +64,14 @@ export function UnlockPanel() {
         onClick={() => unlock()}
         disabled={pending}
         whileTap={{ scale: 0.94 }}
-        aria-label="Déverrouiller avec l'empreinte ou le schéma"
+        aria-label="Déverrouiller avec le verrouillage du téléphone"
         className="relative grid size-28 place-items-center rounded-full bg-white text-royal shadow-float disabled:opacity-90"
       >
         <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-white/30" />
-        <Fingerprint aria-hidden className="relative size-14" strokeWidth={1.6} />
+        <LockKeyhole aria-hidden className="relative size-14" strokeWidth={1.6} />
       </motion.button>
       <p className="text-center text-lg font-semibold text-white">
-        {pending ? "Posez votre doigt ou tracez votre schéma…" : "Touchez pour déverrouiller"}
+        {pending ? "Déverrouillez comme votre téléphone…" : "Touchez pour déverrouiller"}
       </p>
       {error && (
         <p role="alert" className="rounded-2xl bg-white px-4 py-3 text-center text-sm font-medium text-alert-text">

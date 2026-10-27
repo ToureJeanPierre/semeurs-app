@@ -66,6 +66,6 @@ export function menuLinks(modules: AppModule[]): (NavLink & { soon: boolean; des
       soon: !m.enabled,
       description: m.description,
     })),
-    { href: "/profil", label: "Profil", icon: "user-round", soon: false, description: "Mon compte, empreinte" },
+    { href: "/profil", label: "Profil", icon: "user-round", soon: false, description: "Mon compte, verrouillage" },
   ];
 }

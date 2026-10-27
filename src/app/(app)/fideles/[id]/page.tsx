@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CircleCheck, KeyRound, MessageCircle, Phone } from "lucide-react";
+import { CircleCheck, KeyRound } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
+import { ContactButtons } from "@/components/alerts/ContactButtons";
 import { PersonFollowUp } from "@/components/alerts/PersonFollowUp";
 import { PersonHome } from "@/components/location/PersonHome";
 import { ActionForm } from "@/components/people/ActionForm";
@@ -12,6 +13,9 @@ import { DoneLink } from "@/components/ui/DoneLink";
 import { ModuleIcon } from "@/components/ui/icons";
 import { getAccess, hasAny } from "@/lib/access";
 import { loadPeopleOptions, personName } from "@/lib/admin";
+import { needsContact } from "@/lib/alerts";
+import { fillTemplate } from "@/lib/contact-links";
+import { ABSENCE_FALLBACK, loadMessageTemplate } from "@/lib/message-templates";
 import { loadFamilies, loadValueList, PERSON_COLUMNS } from "@/lib/people";
 import { formatPhone, parseIvorianPhone } from "@/lib/phone";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -37,7 +41,7 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
   const { data: person } = await supabase.from("people").select(PERSON_COLUMNS).eq("id", id).maybeSingle();
   if (!person) notFound();
 
-  const [access, { data: canManage }, { data: memberships }, statuses] = await Promise.all([
+  const [access, { data: canManage }, { data: memberships }, statuses, { data: alert }] = await Promise.all([
     getAccess(),
     supabase.rpc("can_manage_person", { target: id }),
     supabase
@@ -46,12 +50,18 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
       .eq("person_id", id)
       .is("end_date", null),
     loadValueList("person_status"),
+    supabase.from("alerts").select("level").eq("person_id", id).maybeSingle(),
   ]);
   const groups = (memberships ?? []) as unknown as Membership[];
   const family = groups.find((m) => m.groups?.group_types?.slug === "family");
   const statusLabel = statuses.find((s) => s.value === person.status)?.label ?? person.status;
   const phone = person.phone ? parseIvorianPhone(person.phone) : null;
   const whatsapp = person.whatsapp ? parseIvorianPhone(person.whatsapp) : phone;
+  // Fidèle absent à contacter : le message de prise de nouvelles est déjà écrit.
+  const absenceMessage =
+    alert && needsContact(alert.level)
+      ? fillTemplate(await loadMessageTemplate("absence_followup", ABSENCE_FALLBACK), person.first_name)
+      : undefined;
 
   // Formulaire et accès : seulement pour qui peut gérer la fiche.
   const [people, maritalStatuses, unattachedReasons, families, hasAccount] = canManage
@@ -87,24 +97,13 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
       </div>
 
       {phone && (
-        <div className="grid grid-cols-2 gap-3">
-          <a
-            href={`tel:${phone.e164}`}
-            className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-royal font-semibold text-white shadow-card"
-          >
-            <Phone aria-hidden className="size-5" />
-            Appeler
-          </a>
-          <a
-            href={`https://wa.me/${(whatsapp ?? phone).e164.replace("+", "")}`}
-            target="_blank"
-            rel="noreferrer"
-            className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-[#1f8f4e] font-semibold text-white shadow-card"
-          >
-            <MessageCircle aria-hidden className="size-5" />
-            WhatsApp
-          </a>
-        </div>
+        <ContactButtons
+          large
+          name={personName(person)}
+          phone={phone.e164}
+          whatsapp={whatsapp?.e164}
+          message={absenceMessage}
+        />
       )}
 
       {groups.length > 0 && (

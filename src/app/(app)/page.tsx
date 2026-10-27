@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, Fingerprint } from "lucide-react";
+import { ChevronRight, LockKeyhole } from "lucide-react";
 import { HomeBanner } from "@/components/home/HomeBanner";
 import { NextServiceCard } from "@/components/home/NextServiceCard";
 import { ShortcutGrid } from "@/components/home/ShortcutGrid";
@@ -60,8 +60,8 @@ export default async function HomePage() {
             href="/profil"
             className="flex items-center gap-3 rounded-card bg-royal/5 p-3 text-sm font-semibold text-royal"
           >
-            <Fingerprint aria-hidden className="size-6 shrink-0" />
-            <span className="flex-1">Ouvrir l&apos;appli avec votre empreinte ou votre schéma</span>
+            <LockKeyhole aria-hidden className="size-6 shrink-0" />
+            <span className="flex-1">Ouvrir l&apos;appli comme votre téléphone (empreinte, schéma ou code)</span>
             <ChevronRight aria-hidden className="size-5 shrink-0" />
           </Link>
         )}

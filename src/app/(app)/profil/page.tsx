@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CircleCheck, Fingerprint, LogOut, Trash2, UserRound } from "lucide-react";
+import { CircleCheck, LockKeyhole, LogOut, Trash2, UserRound } from "lucide-react";
 import { changePassword, removePasskey, signOut } from "@/app/actions/auth";
 import { ActionForm } from "@/components/people/ActionForm";
 import { TextField } from "@/components/ui/TextField";
@@ -49,11 +49,18 @@ export default async function ProfilePage() {
           <Card className="flex flex-col gap-4 shadow-card">
             <div className="flex items-start gap-3">
               <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-royal/10 text-royal">
-                <Fingerprint aria-hidden className="size-6" strokeWidth={1.8} />
+                <LockKeyhole aria-hidden className="size-6" strokeWidth={1.8} />
               </span>
               <div>
-                <h2 className="text-lg font-semibold">Empreinte ou schéma</h2>
-                <p className="text-sm text-muted">Téléphones autorisés à ouvrir votre compte d&apos;un geste.</p>
+                <h2 className="text-lg font-semibold">Verrouillage du téléphone</h2>
+                <p className="text-sm text-muted">
+                  Ouvrez l&apos;appli comme vous ouvrez votre téléphone : empreinte, schéma ou code, selon ce
+                  que vous avez réglé dans le téléphone. C&apos;est le téléphone qui choisit, pas l&apos;appli.
+                </p>
+                <p className="mt-1 text-sm text-muted">
+                  En ajoutant un téléphone, Android demande souvent le schéma ou le code, même avec une
+                  empreinte : c&apos;est normal.
+                </p>
               </div>
             </div>
 

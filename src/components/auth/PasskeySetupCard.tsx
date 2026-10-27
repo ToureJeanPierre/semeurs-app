@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Fingerprint } from "lucide-react";
+import { LockKeyhole } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Toast, type ToastMessage } from "@/components/ui/Toast";
@@ -26,7 +26,7 @@ export function PasskeySetupCard({ compact = false }: { compact?: boolean }) {
     setPending(true);
     try {
       await registerPasskey();
-      setToast({ tone: "success", text: "C'est activé : votre empreinte ou schéma suffira désormais." });
+      setToast({ tone: "success", text: "C'est activé : vous ouvrirez l'appli comme vous ouvrez votre téléphone." });
       router.refresh();
     } catch (error) {
       setToast({ tone: "error", text: (error as Error).message });
@@ -40,7 +40,7 @@ export function PasskeySetupCard({ compact = false }: { compact?: boolean }) {
   if (!supported) {
     return compact ? (
       <p className="text-sm text-muted">
-        Ce téléphone ne permet pas le déverrouillage par empreinte ou schéma. Vous continuerez avec
+        Ce téléphone ne permet pas d&apos;ouvrir l&apos;appli avec son verrouillage. Vous continuerez avec
         votre mot de passe.
       </p>
     ) : null;
@@ -48,7 +48,7 @@ export function PasskeySetupCard({ compact = false }: { compact?: boolean }) {
 
   const button = (
     <Button type="button" variant={compact ? "secondary" : "gold"} fullWidth onClick={activate} loading={pending}>
-      {!pending && <Fingerprint aria-hidden className="size-6" />}
+      {!pending && <LockKeyhole aria-hidden className="size-6" />}
       {compact ? "Ajouter ce téléphone" : "Activer maintenant"}
     </Button>
   );
@@ -61,13 +61,13 @@ export function PasskeySetupCard({ compact = false }: { compact?: boolean }) {
         <Card className="flex flex-col gap-4">
           <div className="flex items-start gap-4">
             <span className="grid size-12 shrink-0 place-items-center rounded-full bg-royal/10 text-royal">
-              <Fingerprint aria-hidden className="size-7" strokeWidth={1.8} />
+              <LockKeyhole aria-hidden className="size-7" strokeWidth={1.8} />
             </span>
             <div>
               <h2 className="text-xl font-semibold">Ouvrir l&apos;appli d&apos;un geste</h2>
               <p className="mt-1 text-muted">
-                Utilisez l&apos;empreinte, le schéma ou le code de votre téléphone au lieu du
-                mot de passe. Rien n&apos;est envoyé : tout reste dans votre téléphone.
+                Ouvrez l&apos;appli comme vous ouvrez votre téléphone : empreinte, schéma ou code,
+                selon ce que vous avez réglé. Rien n&apos;est envoyé : tout reste dans votre téléphone.
               </p>
             </div>
           </div>

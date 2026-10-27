@@ -263,7 +263,17 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
   ne voit que les noms ; pointage hors connexion : ouvrir la liste avant le culte ; supprimer les
   données de démonstration avant le lancement.
 
-Prochaine action : retours de Jean-Pierre sur le lot 1 (une seule liste), puis lot 2.
+- 27/10, retours de Jean-Pierre (tests en père de famille : « c'est bon ») :
+  1. Contacter un absent en un geste → boutons **Appeler / SMS / WhatsApp** (« À contacter », Absences,
+     fiche d'un absent) ; SMS et WhatsApp s'ouvrent avec le message de prise de nouvelles déjà écrit
+     (prénom inséré), la personne touche « Envoyer » elle-même (sans API payante). Texte par défaut
+     choisi par Jean-Pierre (migration `20261029000000_absence_message`), modifiable dans
+     Administration → Paramètres → « Messages préparés » (`lib/contact-links.ts`, testé).
+  2. Empreinte / schéma : c'est le téléphone qui choisit la méthode. Pour éviter la confusion, les
+     écrans parlent de « verrouillage du téléphone (empreinte, schéma ou code) », icône cadenas, et
+     le Profil explique qu'Android demande souvent le schéma à l'ajout d'un téléphone.
+
+Prochaine action : autres retours éventuels de Jean-Pierre sur le lot 1, puis lot 2.
 
 ## Accès de l'environnement cloud
 
