@@ -3,7 +3,8 @@ import Link from "next/link";
 import { UserPlus } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PeopleList, type PeopleRow } from "@/components/people/PeopleList";
-import { hasAny, requirePermission } from "@/lib/access";
+import { redirect } from "next/navigation";
+import { getAccess, hasAny } from "@/lib/access";
 import { personName } from "@/lib/admin";
 import { formatPhone, parseIvorianPhone } from "@/lib/phone";
 import { createClient } from "@/lib/supabase/server";
@@ -22,7 +23,10 @@ type Row = {
 };
 
 export default async function PeoplePage() {
-  const access = await requirePermission("people.view");
+  // Rôle d'église : tout le registre ; père de famille, délégué… : seulement ses fidèles (RLS).
+  const access = await getAccess();
+  if (!hasAny(access, ["people.view"], "any")) redirect("/");
+  const wholeChurch = hasAny(access, ["people.view"]);
   const supabase = await createClient();
   const { data } = await supabase
     .from("people")
@@ -45,7 +49,10 @@ export default async function PeoplePage() {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
       <div className="flex items-start justify-between gap-3">
-        <PageTitle title="Fidèles" intro="Le registre de l'église." />
+        <PageTitle
+          title="Fidèles"
+          intro={wholeChurch ? "Le registre de l'église." : "Les fidèles que vous suivez."}
+        />
         {hasAny(access, ["people.manage"]) && (
           <Link
             href="/fideles/nouveau"

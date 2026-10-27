@@ -5,6 +5,7 @@ import { GroupForm } from "@/components/admin/GroupForm";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PickPersonForm } from "@/components/admin/PickPersonForm";
 import { Card } from "@/components/ui/Card";
+import { DoneLink } from "@/components/ui/DoneLink";
 import { requirePermission } from "@/lib/access";
 import { loadGroupConfig, loadPeopleOptions, personName } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -127,6 +128,7 @@ export default async function GroupPage({ params }: PageProps<"/administration/g
           submitLabel="Enregistrer"
         />
       </section>
+      <DoneLink href="/administration/groupes" label="Terminer et revenir aux groupes" />
     </div>
   );
 }

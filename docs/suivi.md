@@ -183,7 +183,15 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
 - Reste pour plus tard : liens familiaux (conjoint, enfants), champs personnalisés, photo,
   position GPS du domicile (étape 5, « Je suis à la maison »).
 
-Prochaine action : test de l'étape 2 par Jean-Pierre, une étape à la fois. sur le test téléphone, puis validation du lot 0.
+- 27/10, compte rendu de Jean-Pierre : création d'une fiche, de l'accès, mot de passe de départ et
+  rattachement à une famille : OK. Demandes : (1) un bouton pour terminer et revenir à la liste
+  → `DoneLink` « Terminer et revenir à la liste » (fiche) et « … aux groupes » (groupe) ;
+  (2) l'appli ne doit pas se fermer → la flèche Retour mène à l'écran parent (`parentPath`), et non
+  plus à la page précédente de l'historique (sans historique, Android fermait l'appli) ;
+  (3) « navigation logique et progressive » : son message était coupé, suite demandée.
+  `/fideles` est ouvert à quiconque voit des fiches (le père de famille n'y voit que les siens, RLS).
+
+Prochaine action : obtenir la fin du compte rendu de Jean-Pierre. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 

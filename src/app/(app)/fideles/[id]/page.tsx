@@ -5,6 +5,7 @@ import { PageTitle } from "@/components/admin/AdminCard";
 import { ActionForm } from "@/components/people/ActionForm";
 import { PersonFields } from "@/components/people/PersonFields";
 import { Card } from "@/components/ui/Card";
+import { DoneLink } from "@/components/ui/DoneLink";
 import { ModuleIcon } from "@/components/ui/icons";
 import { getAccess, hasAny } from "@/lib/access";
 import { loadPeopleOptions, personName } from "@/lib/admin";
@@ -195,6 +196,7 @@ export default async function PersonPage({ params }: PageProps<"/fideles/[id]">)
             ))}
         </Card>
       )}
+      <DoneLink href="/fideles" label="Terminer et revenir à la liste" />
     </div>
   );
 }
