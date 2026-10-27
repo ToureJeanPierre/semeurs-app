@@ -11,7 +11,8 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: "/",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#F5F8FD",
+    // Couleur de l'écran d'ouverture affiché par Android : le même bleu que notre lancement.
+    background_color: "#1546B8",
     theme_color: "#1546B8",
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },

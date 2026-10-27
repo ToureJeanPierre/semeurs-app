@@ -63,7 +63,7 @@ export function PersonPicker({
         </div>
       ) : (
         <div className="relative">
-          <div className="flex min-h-13 items-center rounded-2xl border-2 border-line bg-surface px-3 focus-within:border-royal">
+          <div className="flex min-h-13 items-center rounded-2xl border-2 border-line bg-surface px-3 focus-within:border-ink/40">
             <Search aria-hidden className="mr-2 size-5 shrink-0 text-muted" />
             <input
               id={id}

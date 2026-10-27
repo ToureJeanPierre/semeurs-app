@@ -104,6 +104,67 @@ h3 {
   outline-offset: 2px;
 }
 
+/* Champs de saisie : pas de cadre bleu (demande de Jean-Pierre), le contour du champ suffit. */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
+/* Écran de lancement (SplashScreen.tsx) : logo, balayage de lumière, sortie vers le haut. */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  background: radial-gradient(120% 70% at 50% 40%, #2b63d6 0%, var(--color-royal) 45%, var(--color-night) 100%);
+  animation: splash-out 0.45s cubic-bezier(0.7, 0, 0.84, 0) 1.35s forwards;
+}
+.splash-seen .splash {
+  display: none;
+}
+.splash-logo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  box-shadow: 0 0 0 6px rgb(255 255 255 / 0.15), 0 20px 60px -10px rgb(0 0 0 / 0.5);
+  animation: splash-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.splash-sweep {
+  position: absolute;
+  inset: -20% auto -20% -60%;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.75), transparent);
+  transform: skewX(-20deg);
+  animation: splash-sweep 0.7s ease-in-out 0.55s both;
+}
+.splash-name {
+  color: white;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 600;
+  animation: splash-rise 0.5s ease-out 0.35s both;
+}
+@keyframes splash-pop {
+  from { transform: scale(0.55); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes splash-sweep {
+  from { left: -60%; }
+  to { left: 120%; }
+}
+@keyframes splash-rise {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes splash-out {
+  to { transform: translateY(-100%); visibility: hidden; }
+}
+
 /* Les « semences » : grains dorés qui montent dans la lumière */
 @keyframes seed-rise {
   0% { transform: translate3d(0, 0, 0) scale(0.6); opacity: 0; }
@@ -130,7 +191,8 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .seed {
+  .seed,
+  .splash {
     display: none;
   }
 

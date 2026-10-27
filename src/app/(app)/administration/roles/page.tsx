@@ -47,7 +47,7 @@ export default async function RolesPage() {
               name="role_id"
               required
               defaultValue=""
-              className="min-h-13 rounded-2xl border-2 border-line bg-surface px-3 text-base focus:border-royal"
+              className="min-h-13 rounded-2xl border-2 border-line bg-surface px-3 text-base focus:border-ink/40"
             >
               <option value="" disabled>
                 Choisir un rôle…

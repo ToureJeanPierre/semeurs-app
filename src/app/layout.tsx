@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Comfortaa, Dancing_Script, Figtree, Outfit } from "next/font/google";
 import { MotionProvider } from "@/components/MotionProvider";
 import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
+import { SplashScreen } from "@/components/SplashScreen";
 import "./globals.css";
 
 const figtree = Figtree({
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${figtree.variable} ${outfit.variable} ${script.variable} ${rounded.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <SplashScreen />
         <MotionProvider>{children}</MotionProvider>
         <RegisterServiceWorker />
       </body>

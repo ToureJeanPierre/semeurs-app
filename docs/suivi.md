@@ -202,7 +202,22 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
   « nouveau » déjà envoyé est sauté au retour. Vérifié en local sur 5 parcours.
 - Base réelle : Jean-Pierre et « Flore » (personne de test créée par Jean-Pierre, compte, Famille 2).
 
-Prochaine action : test de la navigation par Jean-Pierre, puis suite de l'étape 2. sur le test téléphone, puis validation du lot 0.
+- 27/10, retours de Jean-Pierre :
+  1. Lancement « comme Yango » : `SplashScreen.tsx` (CSS pur, rendu dans le HTML, une fois par
+     ouverture : logo, balayage de lumière, sortie vers le haut ; masqué si mouvement réduit) ;
+     `manifest.background_color` passé au bleu roi. Écran de déverrouillage épuré (fond bleu, logo,
+     grand bouton empreinte) ; la demande d'empreinte/schéma part d'elle-même une fois l'appli prête
+     (après le lancement, appli au premier plan) ; un refus de cette demande automatique n'affiche
+     plus « Opération annulée ».
+  2. Plus de cadre bleu dans les champs : contour gris discret (`border-ink/40`), pas d'`outline`
+     sur input/select/textarea (les boutons et liens gardent l'indicateur clavier).
+  3. Question : importer depuis le répertoire du téléphone → possible sur Android avec Chrome
+     (Contact Picker API, `navigator.contacts.select`) ; non codé, en attente de son accord.
+  4. Fiche après création : bannière « Fiche créée » (`?cree=1`), résumé en lecture, formulaire
+     derrière « Modifier la fiche » (bouton « Enregistrer les modifications »).
+- Base réelle : Jean-Pierre, Flore Zago, Jean Kouassi, Rodrigue Delo (saisis par Jean-Pierre).
+
+Prochaine action : retour de Jean-Pierre sur ces corrections et sur l'import depuis le répertoire. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { KeyRound, MessageCircle, Phone } from "lucide-react";
+import { CircleCheck, KeyRound, MessageCircle, Phone } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { ActionForm } from "@/components/people/ActionForm";
+import { EditToggle } from "@/components/people/EditToggle";
 import { PersonFields } from "@/components/people/PersonFields";
 import { Card } from "@/components/ui/Card";
 import { DoneLink } from "@/components/ui/DoneLink";
@@ -17,6 +18,8 @@ import { createAccount, resetPassword, transferFamily, updatePerson } from "../a
 
 export const metadata: Metadata = { title: "Fiche" };
 
+const dateFormat = new Intl.DateTimeFormat("fr-CI", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+
 type Membership = {
   id: string;
   group_id: string;
@@ -24,8 +27,9 @@ type Membership = {
   group_functions: { label: string } | null;
 };
 
-export default async function PersonPage({ params }: PageProps<"/fideles/[id]">) {
+export default async function PersonPage({ params, searchParams }: PageProps<"/fideles/[id]">) {
   const { id } = await params;
+  const justCreated = (await searchParams).cree === "1";
   const supabase = await createClient();
   // RLS : la fiche n'est renvoyée que si elle est dans le périmètre de la personne connectée.
   const { data: person } = await supabase.from("people").select(PERSON_COLUMNS).eq("id", id).maybeSingle();
@@ -65,6 +69,12 @@ export default async function PersonPage({ params }: PageProps<"/fideles/[id]">)
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-5 px-4 pb-8 pt-5">
+      {justCreated && (
+        <p role="status" className="flex items-start gap-2 rounded-2xl bg-ok-bg px-4 py-3 font-medium text-ok-text">
+          <CircleCheck aria-hidden className="mt-0.5 size-5 shrink-0" />
+          Fiche créée. Il reste, si vous le souhaitez, à créer son accès à l&apos;appli et à la rattacher à une famille.
+        </p>
+      )}
       <div className="flex items-center gap-4">
         <span className="grid size-16 shrink-0 place-items-center rounded-full bg-royal font-display text-xl font-semibold text-white">
           {`${person.first_name[0] ?? ""}${person.last_name[0] ?? ""}`.toUpperCase()}
@@ -115,10 +125,28 @@ export default async function PersonPage({ params }: PageProps<"/fideles/[id]">)
         </section>
       )}
 
-      {canManage ? (
+      <Card className="flex flex-col gap-1 shadow-card">
+        {[
+          ["Téléphone", phone ? formatPhone(phone) : null],
+          ["Domicile", [person.district, person.commune].filter(Boolean).join(", ")],
+          ["Repère", person.landmark],
+          ["Né(e) le", person.birth_date ? dateFormat.format(new Date(person.birth_date)) : null],
+          ["Arrivé(e) le", person.arrived_at ? dateFormat.format(new Date(person.arrived_at)) : null],
+          ["Baptisé(e) le", person.baptized_at ? dateFormat.format(new Date(person.baptized_at)) : null],
+        ]
+          .filter(([, v]) => v)
+          .map(([label, value]) => (
+            <p key={label}>
+              <span className="text-sm text-muted">{label} : </span>
+              <span className="font-semibold">{value}</span>
+            </p>
+          ))}
+        {person.weekday_exempt && <p className="text-sm text-muted">Dispensé(e) des cultes de semaine</p>}
+      </Card>
+
+      {canManage && (
         <>
-          <section aria-labelledby="fiche">
-            <h2 id="fiche" className="mb-2 text-lg font-semibold">Fiche</h2>
+          <EditToggle label="Modifier la fiche">
             <PersonFields
               action={updatePerson}
               values={{ ...person, id }}
@@ -127,9 +155,9 @@ export default async function PersonPage({ params }: PageProps<"/fideles/[id]">)
               maritalStatuses={maritalStatuses}
               unattachedReasons={unattachedReasons}
               showUnattached={!family}
-              submitLabel="Enregistrer la fiche"
+              submitLabel="Enregistrer les modifications"
             />
-          </section>
+          </EditToggle>
 
           <section aria-labelledby="acces">
             <h2 id="acces" className="mb-2 text-lg font-semibold">Accès à l&apos;application</h2>
@@ -162,7 +190,7 @@ export default async function PersonPage({ params }: PageProps<"/fideles/[id]">)
                     <select
                       name="family_id"
                       defaultValue={family?.group_id ?? ""}
-                      className="min-h-13 rounded-2xl border-2 border-line bg-surface px-3 text-base focus:border-royal"
+                      className="min-h-13 rounded-2xl border-2 border-line bg-surface px-3 text-base focus:border-ink/40"
                     >
                       <option value="">Sans famille</option>
                       {families.map((f) => (
@@ -180,21 +208,6 @@ export default async function PersonPage({ params }: PageProps<"/fideles/[id]">)
             </section>
           )}
         </>
-      ) : (
-        <Card className="flex flex-col gap-1 shadow-card">
-          {[
-            ["Quartier", [person.district, person.commune].filter(Boolean).join(", ")],
-            ["Repère", person.landmark],
-            ["Arrivé(e) le", person.arrived_at],
-          ]
-            .filter(([, v]) => v)
-            .map(([label, value]) => (
-              <p key={label}>
-                <span className="text-sm text-muted">{label} : </span>
-                <span className="font-semibold">{value}</span>
-              </p>
-            ))}
-        </Card>
       )}
       <DoneLink href="/fideles" label="Terminer et revenir à la liste" />
     </div>

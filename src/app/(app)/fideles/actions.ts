@@ -93,7 +93,7 @@ export async function createPersonRecord(_prev: FormState, formData: FormData): 
     .single();
   if (error || !data) return { error: explain(error) };
   revalidatePath("/fideles");
-  redirect(`/fideles/${data.id}`);
+  redirect(`/fideles/${data.id}?cree=1`);
 }
 
 export async function updatePerson(_prev: FormState, formData: FormData): Promise<FormState> {

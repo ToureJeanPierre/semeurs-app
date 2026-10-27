@@ -23,7 +23,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
       <div
         className={[
           "flex min-h-13 items-center rounded-2xl border-2 bg-surface px-4 transition-colors",
-          "focus-within:border-royal",
+          "focus-within:border-ink/40",
           error ? "border-alert-ring" : "border-line",
         ].join(" ")}
       >
