@@ -151,7 +151,18 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
 - Plus tard : désignation de l'administrateur « validée par le pasteur » (docs/01 §13) ;
   capacités toutes marquées « Bientôt » tant qu'elles ne sont pas livrées.
 
-Prochaine action : test de l'administration par Jean-Pierre, étape par étape. sur le test téléphone, puis validation du lot 0.
+- 27/10 : Jean-Pierre a désigné un père de famille (Famille 1) et créé « EQUIPE MÉDIA » avec
+  lui comme responsable : OK. **Étape 1 validée.**
+- Incident observé une fois : dans Groupes, toucher une équipe « ne faisait rien ». Les journaux
+  Vercel montrent les requêtes reçues et servies (200, ~0,2 s) ; non reproduit en local. Après
+  fermeture complète de l'appli, tout fonctionne. Hypothèse : appli restée ouverte pendant un
+  redéploiement (version du navigateur ≠ version du serveur). À surveiller ; si ça revient,
+  ajouter un rechargement automatique quand une nouvelle version est en ligne.
+- Question de Jean-Pierre : comment un membre voit son équipe → proposé : page « Mes groupes »
+  dans l'espace du fidèle dès l'étape 2, avec la création des comptes des membres.
+
+Prochaine action : étape 2 (fiche fidèle complète, familles, délégation, comptes des membres,
+« Mes groupes »), après accord de Jean-Pierre. sur le test téléphone, puis validation du lot 0.
 
 Pour que Claude Code fasse lui-même Vercel et Supabase, l'environnement cloud doit :
 
