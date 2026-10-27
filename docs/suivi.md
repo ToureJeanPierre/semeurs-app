@@ -273,7 +273,11 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
      écrans parlent de « verrouillage du téléphone (empreinte, schéma ou code) », icône cadenas, et
      le Profil explique qu'Android demande souvent le schéma à l'ajout d'un téléphone.
 
-Prochaine action : autres retours éventuels de Jean-Pierre sur le lot 1, puis lot 2.
+- Touré Béni (fiche saisie par Jean-Pierre dans la Famille de démonstration, vrai numéro WhatsApp)
+  rangé avec les données d'essai (`is_demo`) et rendu absent 11 jours pour l'essai WhatsApp.
+- 28/10 : WhatsApp avec message pré-rempli essayé par Jean-Pierre : « c'est bon ». **Lot 1 validé.**
+
+Prochaine action : présenter le lot 2 (âmes, équipes, cultes, cotisations) et attendre le feu vert.
 
 ## Accès de l'environnement cloud
 
