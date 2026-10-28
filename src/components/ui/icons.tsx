@@ -2,6 +2,13 @@ import { createElement, type ComponentType } from "react";
 import {
   BookOpen,
   BellRing,
+  Baby,
+  CalendarCheck,
+  ClipboardList,
+  Footprints,
+  Sprout,
+  Video,
+  Wallet,
   CalendarClock,
   CalendarDays,
   SquareCheck,
@@ -50,7 +57,14 @@ function HandsPraying({ size = 24, strokeWidth = 2, color = "currentColor", ...p
  * Pour proposer une nouvelle icône à l'administrateur, l'ajouter ici.
  */
 const ICONS: Record<string, ComponentType<LucideProps>> = {
+  baby: Baby,
   "book-open": BookOpen,
+  "calendar-check": CalendarCheck,
+  "clipboard-list": ClipboardList,
+  footprints: Footprints,
+  sprout: Sprout,
+  video: Video,
+  wallet: Wallet,
   "bell-ring": BellRing,
   "calendar-clock": CalendarClock,
   "calendar-days": CalendarDays,

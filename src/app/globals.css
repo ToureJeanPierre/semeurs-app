@@ -204,3 +204,15 @@ textarea:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Documents imprimables (reçus, bilans) : seule la page compte. */
+@media print {
+  header.sticky,
+  nav[aria-label],
+  .print\:hidden {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+}
