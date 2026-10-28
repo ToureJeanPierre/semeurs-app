@@ -8,6 +8,7 @@ import { getAccess } from "@/lib/access";
 import { loadValueList } from "@/lib/people";
 import { createClient } from "@/lib/supabase/server";
 import { HomeLocator } from "@/components/location/HomeLocator";
+import { MyPositions } from "@/components/my-space/MyPositions";
 import { removeAbsence, saveMyHome } from "./actions";
 
 export const metadata: Metadata = { title: "Mon espace" };
@@ -42,6 +43,8 @@ export default async function MySpacePage() {
     <div className="mx-auto flex w-full max-w-lg flex-col gap-5 px-4 pb-8 pt-5">
       <PageTitle title="Mon espace" />
 
+      <MyPositions personId={access.personId} />
+
       {qr && (
         <Card className="flex flex-col items-center gap-3 text-center shadow-card">
           <h2 className="text-lg font-semibold">Mon code de présence</h2>
@@ -66,7 +69,7 @@ export default async function MySpacePage() {
           <CalendarX2 aria-hidden className="size-5 text-royal" />
           Je serai absent(e)
         </h2>
-        <p className="-mt-1 text-sm text-muted">Voyage, maladie, travail : prévenez, et personne ne s&apos;inquiétera de votre absence.</p>
+        <p className="-mt-1 text-sm text-muted">Voyage, maladie, travail : prévenez, et personne ne s&apos;inquiétera de votre absence. Vous ne serez pas programmé(e) ces jours-là.</p>
         {(absences ?? []).length > 0 && (
           <ul className="flex flex-col divide-y divide-line">
             {(absences ?? []).map((a) => (
