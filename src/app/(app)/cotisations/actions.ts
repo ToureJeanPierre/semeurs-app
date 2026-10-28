@@ -60,11 +60,9 @@ export async function createHeading(_prev: FormState, formData: FormData): Promi
     recurrence: v.recurrence,
     due_date: v.due_date || null,
     description: v.description || null,
+    life_event_id: v.life_event_id || null,
   });
   if (error) return { error: explain(error) };
-  if (v.life_event_id) {
-    await supabase.from("life_events").update({ heading_id: id }).eq("id", v.life_event_id);
-  }
   revalidatePath("/cotisations");
   redirect(`/cotisations/${id}?lancee=1`);
 }
