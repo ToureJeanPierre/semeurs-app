@@ -5,7 +5,9 @@ import { ThresholdsForm } from "@/components/admin/ThresholdsForm";
 import { Card } from "@/components/ui/Card";
 import { requirePermission } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
-import { updateAlertThresholds, updateMessageTemplate } from "../actions";
+import { updateAlertThresholds, updateMessageTemplate, updateProgramPositions } from "../actions";
+import { ActionForm } from "@/components/people/ActionForm";
+import { TextAreaField } from "@/components/ui/SelectField";
 
 export const metadata: Metadata = { title: "Paramètres" };
 
@@ -16,6 +18,7 @@ export default async function SettingsPage() {
     supabase.from("settings").select("value").eq("key", "alert_thresholds").maybeSingle(),
     supabase.from("message_templates").select("code, label, body").order("label"),
   ]);
+  const { data: program } = await supabase.from("settings").select("value").eq("key", "program_positions").maybeSingle();
   const values = { attention: 7, urgent: 14, critical: 21, lost: 30, ...(data?.value as object | undefined) };
 
   return (
@@ -27,6 +30,13 @@ export default async function SettingsPage() {
           Nombre de jours sans venir au culte avant chaque niveau d&apos;alerte.
         </p>
         <ThresholdsForm action={updateAlertThresholds} values={values} />
+      </Card>
+      <Card className="flex flex-col gap-3 shadow-card">
+        <h2 className="text-lg font-semibold">Programme des cultes</h2>
+        <p className="text-sm text-muted">Postes répartis à tour de rôle par la génération (les autres postes d&apos;un culte sont tenus par les équipes).</p>
+        <ActionForm action={updateProgramPositions} submitLabel="Enregistrer les postes">
+          <TextAreaField label="Postes (un par ligne)" name="positions" rows={3} defaultValue={((program?.value as string[] | undefined) ?? []).join("\n")} />
+        </ActionForm>
       </Card>
       <Card className="flex flex-col gap-5 shadow-card">
         <div>

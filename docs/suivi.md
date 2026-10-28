@@ -277,7 +277,60 @@ maison » / anniversaires / messages / audiences, (6) RLS complètes + comptes d
   rangé avec les données d'essai (`is_demo`) et rendu absent 11 jours pour l'essai WhatsApp.
 - 28/10 : WhatsApp avec message pré-rempli essayé par Jean-Pierre : « c'est bon ». **Lot 1 validé.**
 
-Prochaine action : présenter le lot 2 (âmes, équipes, cultes, cotisations) et attendre le feu vert.
+## Lot 2 — âmes, équipes, cultes, cotisations (lancé le 28/10, livré d'un bloc)
+
+Feu vert de Jean-Pierre : « Lance ». Même méthode qu'au lot 1 (tout, testé avec les comptes
+d'essai, puis une seule liste de retours).
+
+- **Programme des cultes (M10)** — `20261029100000_service_program`, `…100100_program_helpers` :
+  cultes datés (récurrents + exceptionnels), postes, viviers (dimanche / semaine / les deux),
+  indisponibilités (et absences déclarées), génération 2/3/6 mois par roulement équitable
+  (`src/lib/rotation.ts`, testé), ajustement à la main avec contrôles (poste vide, deux postes le
+  même jour, indisponible), publication (notification), rappels J-3 et J-1 (cron), thème et texte
+  biblique par le prédicateur, échanges de tour validés par le chargé du programme. `/cultes`,
+  `/cultes/programme`, `/cultes/viviers`, « Mes passages » dans Mon espace.
+- **Cotisations (M5)** — `20261029200000_contributions` et suivantes : rubriques par famille, groupe
+  ou église (fixe/libre, minimum, objectif, échéance, mensuelle), saisie par la trésorière (validée,
+  reçu numéroté R-AAAA-NNNNN), déclaration Mobile Money par le fidèle puis validation ou refus
+  motivé, **aucune suppression ni modification après validation** (déclencheurs) : annulation par
+  contre-opération motivée (AN-…), relance (appli + liste WhatsApp), clôture, reçu et bilan
+  imprimables (PDF par le navigateur), montant en lettres.
+- **Réunions (M22)** — `20261029300000_meetings_life_events` : création par le pasteur, le père de
+  famille, les responsables ; invités en un geste (groupes + personnes), salle **Jitsi Meet**
+  gratuite créée d'office, réponses, rappel la veille, présences, compte rendu, décisions, tâches.
+- **Événements de vie (M14)** : signalement (pour soi ou un proche), père de famille et pasteur
+  prévenus, en un geste « cotisation de soutien » pré-remplie ou « visite » au journal de suivi.
+- **Âmes (M4)** — `20261029400000_souls` : fiche rapide (tout membre peut inscrire la personne qu'il
+  amène et en devient le gagneur), message de bienvenue WhatsApp, parcours d'intégration paramétrable
+  (8 étapes, délais, « famille » et « équipe » constatées d'elles-mêmes), assignation à un membre de
+  l'évangélisation, journal de suivi partagé, sorties d'évangélisation et contacts terrain convertis
+  en fiches, statistiques par gagneur. Le gagneur et l'assigné voient et suivent « leurs » âmes.
+- **Capacités des groupes (M6, M11)** — `20261029500000_group_capabilities` : page de chaque groupe
+  (`/mes-groupes/[id]`) où chaque capacité cochée apparaît d'elle-même : lieu et horaire de rencontre
+  (cellule : mardi), agenda (hebdomadaire), pointage des rencontres par le responsable, planning de
+  service et chaîne de prière (même moteur de roulement), répertoire (chants avec tonalité et paroles),
+  rapports de cellule (nouveaux venus envoyés dans le parcours), alerte « pas de rapport depuis 14
+  jours » (cron). Mur de prière `/priere` (confidentiel : auteur, pasteur, responsables
+  d'intercession ; « Je prie », « Prière exaucée »). « Mes engagements » dans Mon espace.
+- **Administration** : « Listes et parcours » (toutes les listes de valeurs et les étapes
+  d'intégration modifiables), postes du programme et messages préparés dans Paramètres.
+- Démonstration : compte « Trésorière de famille » (01 00 00 10 08), « Équipe de démonstration »
+  (responsable : Ruth EVANG-DEMO) et « Cellule de démonstration » (responsable : Paul PERE-DEMO) ;
+  `node scripts/seed-demo.mjs --completer` ajoute ce qui manque ; `--effacer` retire aussi les
+  essais du lot 2 (cotisations, programme, réunions, âmes inscrites par les comptes d'essai).
+- Tests : 82 unitaires, 20 scénarios RLS (5 nouveaux, `tests/rls/lot2.test.ts` ; ils ont révélé
+  que l'administrateur voyait les sujets de prière confidentiels : corrigé), parcours de chaque
+  rôle vérifiés en local.
+- **Choix prudents à confirmer** : chargé du programme + pasteur + assistant préparent le programme ;
+  postes répartis = Modérateur, Prédicateur ; caissiers gèrent les cotisations d'église, trésorière
+  et responsables celles de leur groupe, père/mère et pasteur suivent ; tout membre peut inscrire une
+  âme qu'il amène ; réunions organisées par pasteur, assistant, administrateur, père/mère, responsables ;
+  prières confidentielles : auteur, pasteur, responsables d'intercession ; planning de service tenu
+  par le responsable du groupe ; rapport de cellule attendu toutes les deux semaines au plus.
+- Reporté : envoi de fichiers (photos, audio) dans le répertoire ; engagements (lot 3) ; formations
+  et inventaire (lot 4) ; agenda consolidé de toute l'église.
+
+Prochaine action : retours de Jean-Pierre sur le lot 2 (une seule liste), puis lot 3.
 
 ## Accès de l'environnement cloud
 

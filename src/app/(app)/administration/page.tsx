@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { KeyRound, SlidersHorizontal, UsersRound, Network } from "lucide-react";
+import { KeyRound, ListChecks, SlidersHorizontal, UsersRound, Network } from "lucide-react";
 import { AdminLink, PageTitle } from "@/components/admin/AdminCard";
 import { hasAny, requirePermission } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
@@ -47,7 +47,16 @@ export default async function AdministrationPage() {
             href="/administration/parametres"
             icon={<SlidersHorizontal aria-hidden className="size-6" />}
             title="Paramètres"
-            detail="Seuils d'alerte d'absence"
+            detail="Seuils d'alerte, messages préparés, postes du programme"
+            accent="var(--color-night)"
+          />
+        )}
+        {hasAny(access, ["settings.manage"]) && (
+          <AdminLink
+            href="/administration/listes"
+            icon={<ListChecks aria-hidden className="size-6" />}
+            title="Listes et parcours"
+            detail="Statuts, types de cotisation, moyens de paiement, étapes d'intégration…"
             accent="var(--color-night)"
           />
         )}

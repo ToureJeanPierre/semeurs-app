@@ -24,6 +24,17 @@ avec la même version que le nom du fichier.
 | `20261028040000_sendable_groups.sql` | `my_message_targets` : groupes auxquels on peut écrire |
 | `20261028050000_demo_data_flag.sql` | Colonne `is_demo` (personnes, groupes, cultes) : la démonstration ne se mêle pas aux vraies données |
 | `20261029000000_absence_message.sql` | Message de prise de nouvelles choisi par Jean-Pierre (pré-rempli dans SMS et WhatsApp) |
+| `20261029100000_service_program.sql` | Lot 2 — programme des cultes : `services`, `service_positions`, viviers, indisponibilités, échanges, `program_view`, `publish_program`, rappels J-3/J-1 |
+| `20261029100100_program_helpers.sql` | `notify_position_change`, `swap_candidates` |
+| `20261029200000_contributions.sql` | Cotisations : rubriques, versements, reçus numérotés, garde-fous (pas de suppression, contre-opération), `contribution_status`, `remind_contribution` |
+| `20261029200100_groups_with_right.sql` | `my_groups_with(droit)` : groupes où l'on détient un droit |
+| `20261029200200_receipt_notification.sql` | Notification « reçu prêt » ou « déclaration refusée » |
+| `20261029200300_status_first_name.sql` | Suivi des cotisations avec le prénom (relances personnalisées) |
+| `20261029300000_meetings_life_events.sql` | Réunions (Jitsi, invités, réponses, compte rendu, tâches, rappels) et événements de vie |
+| `20261029300100_life_event_heading_link.sql` | Lien événement de vie → cotisation de soutien porté par la cotisation |
+| `20261029400000_souls.sql` | Âmes : parcours d'intégration, assignations, sorties d'évangélisation, `register_soul`, `souls_overview` ; périmètre élargi au gagneur et à l'assigné |
+| `20261029500000_group_capabilities.sql` | Capacités des groupes : agenda, présences de groupe, planning de service, chaîne de prière, répertoire, rapports, mur de prière, alerte sans rapport |
+| `20261029500100_prayer_confidentiality.sql` | Prières confidentielles : l'administrateur ne les voit pas |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

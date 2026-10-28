@@ -314,3 +314,77 @@ export async function updateMessageTemplate(_prev: FormState, formData: FormData
   revalidatePath("/famille");
   return { success: "Message enregistré." };
 }
+
+// --------------------------------------------------------------------------
+// Listes de valeurs et étapes d'intégration (tout se configure, rien ne se recode)
+// --------------------------------------------------------------------------
+
+/** Code technique tiré du libellé : « Cotisation de Noël » → « cotisation_de_noel ». */
+function slugify(label: string) {
+  return label
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "")
+    .slice(0, 40);
+}
+
+export async function updateValueItem(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const label = String(formData.get("label") ?? "").trim();
+  if (label.length < 2) return;
+  await supabase
+    .from("value_lists")
+    .update({ label, active: formData.get("active") === "on" })
+    .eq("id", String(formData.get("id") ?? ""));
+  revalidatePath("/administration/listes");
+}
+
+export async function addValueItem(_prev: FormState, formData: FormData): Promise<FormState> {
+  const listCode = String(formData.get("list_code") ?? "");
+  const label = String(formData.get("label") ?? "").trim();
+  if (label.length < 2) return { fieldErrors: { label: "Libellé trop court." } };
+  const supabase = await createClient();
+  const { data: last } = await supabase.from("value_lists").select("position").eq("list_code", listCode).order("position", { ascending: false }).limit(1).maybeSingle();
+  const { error } = await supabase
+    .from("value_lists")
+    .insert({ list_code: listCode, value: slugify(label) || `valeur_${Date.now()}`, label, position: (last?.position ?? 0) + 1 });
+  if (error) return { error: explain(error) };
+  revalidatePath("/administration/listes");
+  return { success: `« ${label} » ajouté.` };
+}
+
+export async function updateIntegrationStep(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const label = String(formData.get("label") ?? "").trim();
+  const due = String(formData.get("due_days") ?? "").trim();
+  if (label.length < 2) return;
+  await supabase
+    .from("integration_steps")
+    .update({ label, due_days: due === "" ? null : Math.max(0, Number(due) || 0), active: formData.get("active") === "on" })
+    .eq("id", String(formData.get("id") ?? ""));
+  revalidatePath("/administration/listes");
+}
+
+export async function addIntegrationStep(_prev: FormState, formData: FormData): Promise<FormState> {
+  const label = String(formData.get("label") ?? "").trim();
+  if (label.length < 2) return { fieldErrors: { label: "Libellé trop court." } };
+  const supabase = await createClient();
+  const { data: last } = await supabase.from("integration_steps").select("position").order("position", { ascending: false }).limit(1).maybeSingle();
+  const { error } = await supabase.from("integration_steps").insert({ code: slugify(label), label, position: (last?.position ?? 0) + 1 });
+  if (error) return { error: explain(error) };
+  revalidatePath("/administration/listes");
+  return { success: `Étape « ${label} » ajoutée au parcours.` };
+}
+
+export async function updateProgramPositions(_prev: FormState, formData: FormData): Promise<FormState> {
+  const positions = [...new Set(String(formData.get("positions") ?? "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean))];
+  if (positions.length === 0) return { fieldErrors: { positions: "Au moins un poste." } };
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("settings").update({ value: positions }).eq("key", "program_positions").select("key");
+  if (error) return { error: explain(error) };
+  if (!data?.length) return { error: "Vous n'avez pas le droit de modifier les paramètres." };
+  revalidatePath("/administration/parametres");
+  return { success: "Postes du programme enregistrés." };
+}
