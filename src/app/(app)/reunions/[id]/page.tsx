@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarClock, CheckCircle2, Circle, MapPin, Video } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
@@ -67,18 +68,14 @@ export default async function MeetingPage({ params }: PageProps<"/reunions/[id]"
           {m.place ? ` · ${m.place}` : ""}
         </p>
         {m.online_url && planned && (
-          <a
-            href={m.online_url}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            href={`/reunions/${id}/salle`}
             className="mt-1 flex min-h-13 items-center justify-center gap-2 rounded-full bg-[#1f8f4e] font-semibold text-white"
           >
-            <Video aria-hidden className="size-5" /> Rejoindre la salle en ligne
-          </a>
+            <Video aria-hidden className="size-5" /> Rejoindre la réunion en ligne
+          </Link>
         )}
-        {m.online_url && planned && (
-          <p className="text-xs text-muted">Gratuit, sans compte. Sur téléphone, autorisez la caméra et le micro (ou installez l&apos;appli Jitsi Meet).</p>
-        )}
+        {m.online_url && planned && <p className="text-xs text-muted">Gratuit, rien à installer : la réunion s&apos;ouvre dans l&apos;appli.</p>}
         {m.agenda && (
           <div className="mt-2 rounded-2xl bg-cloud p-3">
             <h2 className="text-sm font-semibold text-royal">Ordre du jour</h2>

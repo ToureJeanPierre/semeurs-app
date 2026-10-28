@@ -4,7 +4,8 @@ import { MultiPersonPicker } from "@/components/admin/MultiPersonPicker";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { ActionForm } from "@/components/people/ActionForm";
 import { Card } from "@/components/ui/Card";
-import { SelectField, TextAreaField } from "@/components/ui/SelectField";
+import { TextAreaField } from "@/components/ui/SelectField";
+import { MeetingModeFields } from "@/components/meetings/MeetingModeFields";
 import { TextField } from "@/components/ui/TextField";
 import { getAccess, hasAny } from "@/lib/access";
 import { loadPeopleOptions } from "@/lib/admin";
@@ -35,16 +36,7 @@ export default async function NewMeetingPage() {
             <TextField label="Début" name="start" type="time" defaultValue="19:00" required />
             <TextField label="Fin" name="end" type="time" defaultValue="20:30" />
           </div>
-          <SelectField
-            label="Comment"
-            name="mode"
-            options={[
-              { value: "in_person", label: "Sur place" },
-              { value: "online", label: "En ligne (salle gratuite créée pour vous)" },
-              { value: "hybrid", label: "Sur place et en ligne" },
-            ]}
-          />
-          <TextField label="Lieu" name="place" placeholder="Chez le père de famille, Niangon" />
+          <MeetingModeFields />
           <TextAreaField label="Ordre du jour" name="agenda" rows={4} placeholder={"1. Prière\n2. Nouvelles des familles\n3. Divers"} />
           {(groups ?? []).length > 0 && (
             <fieldset className="flex flex-col gap-1">

@@ -18,3 +18,14 @@ describe("liens de contact", () => {
     expect(whatsappHref("+2250102030405")).toBe("https://wa.me/2250102030405");
   });
 });
+
+describe("salle de réunion", () => {
+  it("ouvre directement la salle, sans proposer d'appli, avec le nom rempli", async () => {
+    const { roomUrl } = await import("@/lib/meeting-room");
+    const url = roomUrl("https://meet.ffmuc.net/Semeurs-abc", "Paul Kone");
+    expect(url.startsWith("https://meet.ffmuc.net/Semeurs-abc#")).toBe(true);
+    expect(url).toContain("config.disableDeepLinking=true");
+    expect(url).toContain("config.prejoinConfig.enabled=false");
+    expect(decodeURIComponent(url)).toContain('userInfo.displayName="Paul Kone"');
+  });
+});

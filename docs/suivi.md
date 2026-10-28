@@ -330,7 +330,19 @@ d'essai, puis une seule liste de retours).
 - Reporté : envoi de fichiers (photos, audio) dans le répertoire ; engagements (lot 3) ; formations
   et inventaire (lot 4) ; agenda consolidé de toute l'église.
 
-Prochaine action : retours de Jean-Pierre sur le lot 2 (une seule liste), puis lot 3.
+- 29/10, retours de Jean-Pierre (essais simplifiés à 3 : programme, cotisation, réunion) :
+  1. La salle Jitsi demandait « comment rejoindre » / d'installer une appli → la salle s'ouvre
+     désormais **dans l'appli** (`/reunions/[id]/salle`), sans proposition d'appli ni écran
+     d'attente, nom déjà rempli (`lib/meeting-room.ts`, testé) ; serveur Jitsi public sans compte
+     `meet.ffmuc.net` (meet.jit.si exige désormais que l'organisateur se connecte) — réglable
+     dans `settings.meeting_online_base_url` (migration `20261030000000`).
+  2. Réunion « En ligne » : le champ Lieu disparaît (`MeetingModeFields`).
+  3. Trop de comptes pour tester : Jean-Pierre veut tout essayer avec son compte administrateur →
+     il s'attribue lui-même les rôles (Administration → Rôles) ; l'attribution par Claude a été
+     refusée par le garde-fou (attribution de droits).
+  Demande générale : simplifier au maximum, prise en main intuitive.
+
+Prochaine action : retours de Jean-Pierre sur ces corrections, puis lot 3.
 
 ## Accès de l'environnement cloud
 
