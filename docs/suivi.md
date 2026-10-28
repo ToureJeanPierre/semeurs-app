@@ -342,6 +342,12 @@ d'essai, puis une seule liste de retours).
      refusée par le garde-fou (attribution de droits).
   Demande générale : simplifier au maximum, prise en main intuitive.
 
+- 29/10, suite : (1) le programme doit rester modifiable après publication → « Ajouter un culte »
+  (`/cultes/ajouter`, visible tout de suite) et « Retirer ce culte » (même publié, personnes
+  prévenues, `cancel_service`) sur chaque culte ; « Modifier » mène au culte dans « Préparer ».
+  (2) La salle ne s'affichait pas dans l'appli (le serveur vidéo interdit l'affichage intégré) ;
+  elle s'ouvre maintenant directement dans le navigateur, ce qui marchait chez Jean-Pierre.
+
 Prochaine action : retours de Jean-Pierre sur ces corrections, puis lot 3.
 
 ## Accès de l'environnement cloud

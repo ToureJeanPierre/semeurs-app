@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import type { FormState } from "@/app/actions/auth";
 import { explain, fieldErrors, optional } from "@/lib/action-helpers";
@@ -174,7 +175,11 @@ const exceptionalSchema = z.object({
   type_id: z.string().uuid("Choisissez le modèle de postes."),
 });
 
-/** Programme exceptionnel : veillée, croisade, convention, jeûne… (postes repris d'un type de culte). */
+/**
+ * Ajouter un culte à tout moment, même si le programme est déjà publié : culte de plus,
+ * veillée, croisade, convention, jeûne… (postes repris d'un type de culte). Il est visible
+ * tout de suite ; on choisit ensuite qui modère et qui prêche.
+ */
 export async function createExceptionalService(_prev: FormState, formData: FormData): Promise<FormState> {
   const parsed = exceptionalSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return fieldErrors(parsed.error.issues);
@@ -191,6 +196,7 @@ export async function createExceptionalService(_prev: FormState, formData: FormD
     ends_at: end ? `${date}T${end}:00Z` : null,
     place: place || type?.place || null,
     exceptional: true,
+    published_at: new Date().toISOString(),
   });
   if (error) return { error: explain(error) };
   const positions = (type?.positions as string[] | null) ?? [];
@@ -201,14 +207,15 @@ export async function createExceptionalService(_prev: FormState, formData: FormD
     if (posError) return { error: explain(posError) };
   }
   revalidatePath("/cultes", "layout");
-  return { success: `« ${title} » ajouté au programme (brouillon). Pensez à publier.` };
+  redirect(`/cultes/programme?du=${date}&ajoute=1#culte-${id}`);
 }
 
-/** Supprime un culte encore en brouillon (un culte publié reste dans l'historique). */
-export async function deleteDraftService(formData: FormData): Promise<void> {
+/** Retire un culte du programme, même publié ; les personnes programmées sont prévenues. */
+export async function cancelService(formData: FormData): Promise<void> {
   const supabase = await createClient();
-  await supabase.from("services").delete().eq("id", String(formData.get("service_id") ?? "")).is("published_at", null);
+  await supabase.rpc("cancel_service", { p_service: String(formData.get("service_id") ?? "") });
   revalidatePath("/cultes", "layout");
+  revalidatePath("/mon-espace");
 }
 
 const publishSchema = z.object({ from: isoDate, to: isoDate });

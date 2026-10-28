@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarClock, CheckCircle2, Circle, MapPin, Video } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
@@ -10,6 +9,7 @@ import { SelectField, TextAreaField } from "@/components/ui/SelectField";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { TextField } from "@/components/ui/TextField";
 import { getAccess, hasAny } from "@/lib/access";
+import { roomUrl } from "@/lib/meeting-room";
 import { formatHour, formatLongDay, formatShortDay } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import { addTask, cancelMeeting, respondMeeting, saveMinutes, toggleTask } from "../actions";
@@ -68,14 +68,18 @@ export default async function MeetingPage({ params }: PageProps<"/reunions/[id]"
           {m.place ? ` · ${m.place}` : ""}
         </p>
         {m.online_url && planned && (
-          <Link
-            href={`/reunions/${id}/salle`}
+          <a
+            href={roomUrl(m.online_url, nameOf(access.personId) || "Invité")}
+            target="_blank"
+            rel="noreferrer"
             className="mt-1 flex min-h-13 items-center justify-center gap-2 rounded-full bg-[#1f8f4e] font-semibold text-white"
           >
             <Video aria-hidden className="size-5" /> Rejoindre la réunion en ligne
-          </Link>
+          </a>
         )}
-        {m.online_url && planned && <p className="text-xs text-muted">Gratuit, rien à installer : la réunion s&apos;ouvre dans l&apos;appli.</p>}
+        {m.online_url && planned && (
+          <p className="text-xs text-muted">Gratuit, rien à installer : la réunion s&apos;ouvre dans le navigateur. Autorisez la caméra et le micro.</p>
+        )}
         {m.agenda && (
           <div className="mt-2 rounded-2xl bg-cloud p-3">
             <h2 className="text-sm font-semibold text-royal">Ordre du jour</h2>

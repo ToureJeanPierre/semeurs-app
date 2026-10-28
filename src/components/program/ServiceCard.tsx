@@ -10,7 +10,9 @@ export function ServiceCard({
   highlight,
   children,
   renderPosition,
+  anchorId,
 }: {
+  anchorId?: string;
   service: ProgramService;
   /** Personne à mettre en avant (soi-même). */
   highlight?: string | null;
@@ -20,7 +22,7 @@ export function ServiceCard({
 }) {
   const filled = service.positions.filter((p) => p.personId || renderPosition);
   return (
-    <Card className="flex flex-col gap-3 shadow-card">
+    <Card id={anchorId} className="flex scroll-mt-20 flex-col gap-3 shadow-card">
       <div className="flex items-start gap-3">
         <div className="grid size-14 shrink-0 place-items-center rounded-2xl bg-royal text-center text-white">
           <span className="text-xl font-extrabold leading-none">{Number(service.service_date.slice(8, 10))}</span>

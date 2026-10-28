@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { CircleAlert, Repeat2, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { CircleAlert, Plus, Repeat2 } from "lucide-react";
+import { CancelServiceButton } from "@/components/program/CancelServiceButton";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { ActionForm } from "@/components/people/ActionForm";
 import { PositionSelect } from "@/components/program/PositionSelect";
@@ -10,14 +12,12 @@ import { SubmitButton } from "@/components/ui/SubmitButton";
 import { TextField } from "@/components/ui/TextField";
 import { requirePermission } from "@/lib/access";
 import { personName } from "@/lib/admin";
-import { addDays, formatFullDate, formatShortDay, todayIso } from "@/lib/format";
+import { formatFullDate, formatShortDay, todayIso } from "@/lib/format";
 import { loadProgram, loadProgramSettings } from "@/lib/program";
 import { periodEnd } from "@/lib/rotation";
 import { createClient } from "@/lib/supabase/server";
 import {
-  createExceptionalService,
   decideSwap,
-  deleteDraftService,
   generateProgram,
   publishProgram,
   setPositionPerson,
@@ -44,7 +44,7 @@ export default async function ProgramPage({ searchParams }: PageProps<"/cultes/p
   const to = periodEnd(from, months);
 
   const supabase = await createClient();
-  const [services, { data: pool }, { data: unavailable }, { data: absences }, { data: swaps }, { data: types }] = await Promise.all([
+  const [services, { data: pool }, { data: unavailable }, { data: absences }, { data: swaps }] = await Promise.all([
     loadProgram(from, to),
     supabase.from("speaker_pools").select("person_id, position, people(first_name, last_name)"),
     supabase.from("unavailabilities").select("person_id, starts_on, ends_on").gte("ends_on", from),
@@ -56,7 +56,6 @@ export default async function ProgramPage({ searchParams }: PageProps<"/cultes/p
       )
       .eq("status", "pending")
       .order("created_at"),
-    supabase.from("service_types").select("id, name").eq("active", true).order("weekday"),
   ]);
 
   const options = new Map<string, { id: string; name: string }[]>();
@@ -84,6 +83,14 @@ export default async function ProgramPage({ searchParams }: PageProps<"/cultes/p
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-5 px-4 pb-8 pt-5">
       <PageTitle title="Préparer le programme" intro="Générer, ajuster, puis publier : les fidèles ne voient que le programme publié." />
+      {params.ajoute === "1" && (
+        <p role="status" className="rounded-2xl bg-ok-bg px-4 py-3 font-medium text-ok-text">
+          Culte ajouté au programme. Choisissez ci-dessous qui modère et qui prêche.
+        </p>
+      )}
+      <Link href="/cultes/ajouter" className="flex min-h-13 items-center justify-center gap-2 rounded-card bg-gold font-semibold text-night shadow-card">
+        <Plus aria-hidden className="size-5" /> Ajouter un culte ou un programme
+      </Link>
 
       <Card className="flex flex-col gap-3 shadow-card">
         <h2 className="text-lg font-semibold">1. Générer</h2>
@@ -136,6 +143,7 @@ export default async function ProgramPage({ searchParams }: PageProps<"/cultes/p
           <ServiceCard
             key={s.service_id}
             service={s}
+            anchorId={`culte-${s.service_id}`}
             renderPosition={(p) =>
               programPositions.includes(p.position) || p.personId ? (
                 <PositionSelect
@@ -159,14 +167,7 @@ export default async function ProgramPage({ searchParams }: PageProps<"/cultes/p
               )
             }
           >
-            {!s.published && (
-              <form action={deleteDraftService} className="self-end">
-                <input type="hidden" name="service_id" value={s.service_id} />
-                <SubmitButton className="flex min-h-11 items-center gap-1 rounded-full px-3 text-sm font-semibold text-alert-text hover:bg-alert-bg">
-                  <Trash2 aria-hidden className="size-4" /> Retirer ce culte
-                </SubmitButton>
-              </form>
-            )}
+            <CancelServiceButton serviceId={s.service_id} published={s.published} />
           </ServiceCard>
         ))}
       </section>
@@ -209,20 +210,6 @@ export default async function ProgramPage({ searchParams }: PageProps<"/cultes/p
         ))}
       </section>
 
-      <Card className="flex flex-col gap-3 shadow-card">
-        <h2 className="text-lg font-semibold">Programme exceptionnel</h2>
-        <p className="text-sm text-muted">Veillée, croisade, convention, jeûne, action de grâce…</p>
-        <ActionForm action={createExceptionalService} submitLabel="Ajouter au programme">
-          <TextField label="Nom" name="title" placeholder="Veillée de prière" required />
-          <div className="grid grid-cols-2 gap-3">
-            <TextField label="Date" name="date" type="date" defaultValue={addDays(today, 7)} required />
-            <TextField label="Lieu (facultatif)" name="place" />
-            <TextField label="Début" name="start" type="time" defaultValue="21:00" required />
-            <TextField label="Fin (facultatif)" name="end" type="time" />
-          </div>
-          <SelectField label="Mêmes postes que" name="type_id" options={(types ?? []).map((t) => ({ value: t.id, label: t.name }))} />
-        </ActionForm>
-      </Card>
     </div>
   );
 }
