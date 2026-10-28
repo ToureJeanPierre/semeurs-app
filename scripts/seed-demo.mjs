@@ -5,6 +5,7 @@
  * d'un coup avec `node scripts/seed-demo.mjs --effacer`.
  *
  * Lancement : NEXT_PUBLIC_SUPABASE_URL=… SUPABASE_SECRET_KEY=… node scripts/seed-demo.mjs
+ * `--completer` ajoute ce qui manque (lot 2 : trésorière, équipe, cellule) sans rien effacer.
  * Le script affiche les numéros et les mots de passe des comptes de démonstration.
  */
 import { randomInt } from "node:crypto";
@@ -35,10 +36,34 @@ function password() {
 async function wipe() {
   const people = check(await db.from("people").select("id").eq("is_demo", true), "lecture");
   const ids = people.map((p) => p.id);
-  if (ids.length) {
-    const links = check(await db.from("users").select("user_id").in("person_id", ids), "comptes");
-    for (const { user_id } of links) await db.auth.admin.deleteUser(user_id);
+  const groups = check(await db.from("groups").select("id").eq("is_demo", true), "groupes").map((g) => g.id);
+  const links = ids.length ? check(await db.from("users").select("user_id").in("person_id", ids), "comptes") : [];
+  const users = links.map((l) => l.user_id);
+  // Personnes inscrites pendant les essais par les comptes de démonstration (âmes, contacts convertis).
+  const souls = ids.length ? check(await db.from("people").select("id").in("brought_by", ids).eq("is_demo", false), "âmes").map((p) => p.id) : [];
+  const everyone = [...ids, ...souls];
+
+  // Cotisations d'essai : les contre-opérations d'abord (elles pointent vers les versements).
+  // Ce sont des données fictives : la règle « jamais de suppression » vaut pour les vraies finances.
+  const headings = check(
+    await db.from("contribution_headings").select("id").or(
+      [groups.length && `group_id.in.(${groups})`, users.length && `created_by.in.(${users})`].filter(Boolean).join(",") || "id.is.null",
+    ),
+    "cotisations",
+  ).map((h) => h.id);
+  const paymentFilter = [headings.length && `heading_id.in.(${headings})`, everyone.length && `person_id.in.(${everyone})`].filter(Boolean).join(",");
+  if (paymentFilter) {
+    check(await db.from("contribution_payments").delete().or(paymentFilter).not("reverses_id", "is", null), "annulations");
+    check(await db.from("contribution_payments").delete().or(paymentFilter), "versements");
   }
+  if (headings.length) check(await db.from("contribution_headings").delete().in("id", headings), "rubriques");
+  if (users.length) {
+    check(await db.from("services").delete().in("created_by", users), "programme");
+    check(await db.from("outreach_outings").delete().in("created_by", users), "sorties");
+  }
+  if (everyone.length) check(await db.from("meetings").delete().in("organizer_id", everyone), "réunions");
+  if (souls.length) check(await db.from("people").delete().in("id", souls), "âmes d'essai");
+  for (const user_id of users) await db.auth.admin.deleteUser(user_id);
   check(await db.from("sessions").delete().eq("is_demo", true), "cultes");
   check(await db.from("people").delete().eq("is_demo", true), "personnes");
   check(await db.from("groups").delete().eq("is_demo", true), "groupes");
@@ -53,6 +78,7 @@ const ACCOUNTS = [
   { phone: "0100001005", first: "Joël", last: "PROTOCOLE-DEMO", sex: "M", role: "protocol", label: "Agent du protocole" },
   { phone: "0100001006", first: "Ruth", last: "EVANG-DEMO", sex: "F", role: "evangelism_lead", label: "Responsable évangélisation" },
   { phone: "0100001007", first: "Marc", last: "FIDELE-DEMO", sex: "M", family: "member", label: "Simple fidèle" },
+  { phone: "0100001008", first: "Grâce", last: "TRESORIERE-DEMO", sex: "F", family: "treasurer", label: "Trésorière de famille" },
 ];
 
 // Fidèles sans compte : `absent` = jours depuis la dernière présence (pour voir chaque niveau d'alerte).
@@ -77,6 +103,7 @@ async function seed() {
     db.from("service_types").select("id, weekday, start_time, short_name, name"),
   ]);
   const { data: head } = await db.from("group_functions").select("id").eq("type_id", familyType.id).eq("rank", 1).single();
+  const { data: treasurer } = await db.from("group_functions").select("id").eq("type_id", familyType.id).eq("label", "Trésorière").single();
 
   const family = check(
     await db.from("groups").insert({ type_id: familyType.id, name: FAMILY, is_demo: true, description: "Fidèles fictifs pour les essais" }).select("id").single(),
@@ -102,7 +129,11 @@ async function seed() {
     }
     if (a.family) {
       check(
-        await db.from("group_memberships").insert({ group_id: family.id, person_id: person.id, function_id: a.family === "head" ? head.id : null }),
+        await db.from("group_memberships").insert({
+          group_id: family.id,
+          person_id: person.id,
+          function_id: a.family === "head" ? head.id : a.family === "treasurer" ? treasurer.id : null,
+        }),
         "famille",
       );
     }
@@ -160,6 +191,7 @@ async function seed() {
     }
   }
 
+  await seedGroups(accounts, members);
   check(await db.rpc("compute_alerts", { p_today: today }), "calcul des alertes");
 
   console.log("\nComptes de démonstration (connexion : numéro + mot de passe)\n");
@@ -167,9 +199,113 @@ async function seed() {
   console.log(`\n${members.length} fidèles fictifs dans « ${FAMILY} », cultes des 7 dernières semaines, alertes calculées.`);
 }
 
+/**
+ * Lot 2 : une équipe et une cellule fictives, avec leurs capacités (agenda, présences,
+ * planning de service, chaîne de prière, répertoire, rapports), pour essayer chaque écran.
+ */
+async function seedGroups(accounts, members) {
+  const byLast = (last) => [...accounts, ...members].find((p) => p.last === last)?.id;
+  const [{ data: types }, { data: functions }] = await Promise.all([
+    db.from("group_types").select("id, slug, default_capabilities").in("slug", ["team", "cell"]),
+    db.from("group_functions").select("id, type_id, rank"),
+  ]);
+  const leaderOf = (typeId) => functions.find((f) => f.type_id === typeId && f.rank === 1).id;
+  const defs = [
+    {
+      slug: "team",
+      name: "Équipe de démonstration",
+      description: "Équipe fictive pour essayer le planning, la chaîne de prière et le répertoire",
+      extra: ["prayer_chain", "resources"],
+      leader: "EVANG-DEMO",
+      members: ["FIDELE-DEMO", "PROTOCOLE-DEMO", "DELEGUEE-DEMO"],
+      settings: {},
+      caps: {
+        service_planning: { labels: ["Accueil", "Placement", "Offrandes"], weekdays: [0, 5] },
+        prayer_chain: { labels: ["5 h – 6 h", "21 h – 22 h"], weekdays: [0, 1, 2, 3, 4, 5, 6] },
+      },
+    },
+    {
+      slug: "cell",
+      name: "Cellule de démonstration",
+      description: "Cellule fictive : rapports de rencontre et nouveaux venus",
+      extra: [],
+      leader: "PERE-DEMO",
+      members: ["KONE", "KOUASSI", "FIDELE-DEMO"],
+      settings: { meeting: { weekday: 2, time: "18:00", place: "Niangon, cour de la famille Kone", landmark: "Près du maquis", host_id: null } },
+      caps: {},
+    },
+  ];
+  for (const d of defs) {
+    const exists = await db.from("groups").select("id").eq("name", d.name).maybeSingle();
+    if (exists.data) continue;
+    const type = types.find((t) => t.slug === d.slug);
+    const group = check(
+      await db.from("groups").insert({ type_id: type.id, name: d.name, description: d.description, is_demo: true, settings: d.settings }).select("id").single(),
+      d.name,
+    );
+    const caps = [...new Set([...type.default_capabilities, ...d.extra])];
+    check(
+      await db.from("group_capabilities").insert(caps.map((c) => ({ group_id: group.id, capability_code: c, settings: d.caps[c] ?? {} }))),
+      "capacités",
+    );
+    check(
+      await db.from("group_memberships").insert([
+        { group_id: group.id, person_id: byLast(d.leader), function_id: leaderOf(type.id) },
+        ...d.members.map((m) => ({ group_id: group.id, person_id: byLast(m) })),
+      ]),
+      "membres",
+    );
+    if (d.slug === "team") {
+      check(
+        await db.from("group_events").insert({
+          group_id: group.id, title: "Répétition", starts_at: `${isoDaysAgo(3)}T18:00:00Z`, ends_at: `${isoDaysAgo(3)}T20:00:00Z`,
+          place: "Salle de l'église", recurrence: "weekly",
+        }),
+        "agenda",
+      );
+      check(
+        await db.from("group_resources").insert({
+          group_id: group.id, title: "À toi la gloire", kind: "song", music_key: "Ré majeur",
+          body: "À toi la gloire, ô Ressuscité !\nÀ toi la victoire pour l'éternité !",
+        }),
+        "répertoire",
+      );
+    }
+  }
+}
+
+/** Complète des données de démonstration existantes (lot 2) sans rien effacer. */
+async function complete() {
+  const { data: family } = await db.from("groups").select("id, type_id").eq("is_demo", true).eq("name", FAMILY).single();
+  const { data: people } = await db.from("people").select("id, last_name").eq("is_demo", true);
+  const known = people.map((p) => ({ id: p.id, last: p.last_name }));
+  const created = [];
+  for (const a of ACCOUNTS.filter((x) => !known.some((k) => k.last === x.last))) {
+    const person = check(
+      await db.from("people").insert({ first_name: a.first, last_name: a.last, sex: a.sex, phone: `+225${a.phone}`, status: "member", is_demo: true, arrived_at: isoDaysAgo(400) }).select("id").single(),
+      a.label,
+    );
+    const pw = password();
+    const { data: u, error } = await db.auth.admin.createUser({ email: EMAIL(a.phone), password: pw, email_confirm: true });
+    if (error) throw new Error(`Compte ${a.label} : ${error.message}`);
+    check(await db.from("users").insert({ user_id: u.user.id, person_id: person.id }), "lien du compte");
+    if (a.family) {
+      const { data: fn } = await db.from("group_functions").select("id").eq("type_id", family.type_id).eq("label", "Trésorière").single();
+      check(await db.from("group_memberships").insert({ group_id: family.id, person_id: person.id, function_id: a.family === "treasurer" ? fn.id : null }), "famille");
+    }
+    known.push({ id: person.id, last: a.last });
+    created.push(`${a.label.padEnd(28)} ${a.phone.replace(/(\d{2})(?=\d)/g, "$1 ")}   ${pw}`);
+  }
+  await seedGroups(known, known);
+  console.log(created.length ? `Comptes ajoutés :\n${created.join("\n")}` : "Aucun compte à ajouter.");
+  console.log("Équipe et cellule de démonstration en place.");
+}
+
 const existing = await db.from("groups").select("id").eq("is_demo", true).limit(1);
 if (process.argv.includes("--effacer")) {
   await wipe();
+} else if (process.argv.includes("--completer")) {
+  await complete();
 } else if (existing.data?.length) {
   console.log("Les données de démonstration existent déjà. Pour recommencer : --effacer, puis relancer.");
 } else {

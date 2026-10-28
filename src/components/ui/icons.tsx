@@ -83,6 +83,11 @@ const ICONS: Record<string, ComponentType<LucideProps>> = {
   "users-round": UsersRound,
 };
 
+/** Mains jointes, utilisable directement (bouton « Je prie »). */
+export function HandsPrayingIcon(props: LucideProps) {
+  return createElement(HandsPraying, { "aria-hidden": true, ...props });
+}
+
 export function ModuleIcon({ name, ...props }: LucideProps & { name: string }) {
   return createElement(ICONS[name] ?? Sparkles, { "aria-hidden": true, ...props });
 }

@@ -8,6 +8,7 @@ import { getAccess } from "@/lib/access";
 import { loadValueList } from "@/lib/people";
 import { createClient } from "@/lib/supabase/server";
 import { HomeLocator } from "@/components/location/HomeLocator";
+import { MyCommitments } from "@/components/my-space/MyCommitments";
 import { MyPositions } from "@/components/my-space/MyPositions";
 import { removeAbsence, saveMyHome } from "./actions";
 
@@ -43,6 +44,7 @@ export default async function MySpacePage() {
     <div className="mx-auto flex w-full max-w-lg flex-col gap-5 px-4 pb-8 pt-5">
       <PageTitle title="Mon espace" />
 
+      <MyCommitments personId={access.personId} />
       <MyPositions personId={access.personId} />
 
       {qr && (

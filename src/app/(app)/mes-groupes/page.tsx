@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { Card } from "@/components/ui/Card";
 import { ModuleIcon } from "@/components/ui/icons";
@@ -66,9 +68,10 @@ export default async function MyGroupsPage() {
               <p className="mt-1 text-sm">{g.members.join(", ")}</p>
             </div>
           )}
-          <p className="rounded-xl bg-royal/5 px-3 py-2 text-sm text-muted">
-            Agenda, annonces et activités du groupe arrivent bientôt ici.
-          </p>
+          <Link href={`/mes-groupes/${g.id}`} className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-royal/10 font-semibold text-royal">
+            Ouvrir : agenda, planning, répertoire…
+            <ChevronRight aria-hidden className="size-5" />
+          </Link>
         </Card>
       ))}
     </div>

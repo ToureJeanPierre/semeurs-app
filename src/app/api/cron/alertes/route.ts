@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * alertes d'absence (docs/02 §6.1), anniversaires, rappels de passage, de réunion, etc.
  * Vercel envoie le secret CRON_SECRET ; sans lui, refus. Chaque calcul est dans la base.
  */
-const JOBS = ["compute_alerts", "notify_birthdays", "notify_program_reminders", "notify_meeting_reminders"] as const;
+const JOBS = ["compute_alerts", "notify_birthdays", "notify_program_reminders", "notify_meeting_reminders", "notify_missing_reports"] as const;
 
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
