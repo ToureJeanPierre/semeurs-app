@@ -53,6 +53,7 @@ avec la même version que le nom du fichier.
 | `20261101000200_module_images.sql` | Illustration de chaque module (cartes du menu) |
 | `20261101000300_more_module_images.sql` | Illustrations : actes, sondages, administration, annonces, prédications |
 | `20261101000400_module_images_3.sql` | Illustrations : prières, cultes, événements |
+| `20261101000500_module_images_4.sql` | Illustrations : caisse, mes groupes, inventaire, formations |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.
