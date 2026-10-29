@@ -41,6 +41,15 @@ avec la même version que le nom du fichier.
 | `20261030030000_family_fraternity.sql` | Fraternité : numéro masquable, bienvenue aux nouveaux, anniversaires |
 | `20261030040000_group_chat.sql` | Discussion de groupe en temps réel, non-lus |
 | `20261030040100_group_chat_privacy.sql` | Discussion réservée aux membres du groupe |
+| `20261031000000_cash.sql` | Caisse : comptes, opérations à quatre yeux, comptages, engagements, arrêtés, budget |
+| `20261031000100_cash_guard_fix.sql` | Correctif du garde-fou de caisse (confirmation de comptage) |
+| `20261031000200_anonymous_tithe.sql` | Dîme anonyme |
+| `20261031000300_giving_instructions.sql` | Consignes de don (numéro Mobile Money) en paramètre |
+| `20261031100000_pastoral_youth.sql` | Cure d'âme chiffrée, Jeunesse par l'âge, inscriptions, idées, tableau de bord |
+| `20261031100100_readable_settings.sql` | Paramètres lisibles par tous les connectés |
+| `20261031200000_web_push.sql` | Notifications push sur le téléphone |
+| `20261101000000_lot4_modules.sql` | Prédications, événements, formations, actes, liens, inventaire, sondages |
+| `20261101000100_children_capability.sql` | Capacité « Enfants confiés » (école du dimanche) |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

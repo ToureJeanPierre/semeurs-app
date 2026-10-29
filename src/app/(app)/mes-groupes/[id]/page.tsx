@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarDays, CheckSquare, ClipboardList, Lightbulb, Megaphone, MapPin, Music, ThumbsUp, Trash2, Wallet } from "lucide-react";
+import { CalendarDays, CheckSquare, ClipboardList, GraduationCap, Lightbulb, Megaphone, MapPin, Music, Package, ThumbsUp, Trash2, Wallet } from "lucide-react";
+import { ClassChildren } from "@/components/groups/ClassChildren";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PersonPicker } from "@/components/admin/PersonPicker";
 import { ChatEntry } from "@/components/groups/ChatEntry";
@@ -368,7 +369,19 @@ export default async function GroupHubPage({ params }: PageProps<"/mes-groupes/[
         </Card>
       )}
 
+      {has("children") && (leader || canRecord) && <ClassChildren groupId={id} />}
+
       <div className="grid grid-cols-2 gap-3">
+        {has("trainings") && (
+          <Link href="/formations" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-surface px-2 text-center text-sm font-semibold text-royal shadow-card">
+            <GraduationCap aria-hidden className="size-5 shrink-0" /> Formations
+          </Link>
+        )}
+        {has("inventory") && leader && (
+          <Link href={`/inventaire?groupe=${id}`} className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-surface px-2 text-center text-sm font-semibold text-royal shadow-card">
+            <Package aria-hidden className="size-5 shrink-0" /> Matériel du groupe
+          </Link>
+        )}
         {has("announcements") && canSend && (
           <Link href="/messages" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-surface px-2 text-center text-sm font-semibold text-royal shadow-card">
             <Megaphone aria-hidden className="size-5 shrink-0" /> Écrire au groupe

@@ -10,6 +10,7 @@ import { loadValueList } from "@/lib/people";
 import { createClient } from "@/lib/supabase/server";
 import { HomeLocator } from "@/components/location/HomeLocator";
 import { MyCommitments } from "@/components/my-space/MyCommitments";
+import { MyPath } from "@/components/my-space/MyPath";
 import { MyPositions } from "@/components/my-space/MyPositions";
 import { removeAbsence, saveMyHome } from "./actions";
 
@@ -47,6 +48,7 @@ export default async function MySpacePage() {
 
       <MyCommitments personId={access.personId} />
       <MyPositions personId={access.personId} />
+      <MyPath personId={access.personId} />
 
       {qr && (
         <Card className="flex flex-col items-center gap-3 text-center shadow-card">

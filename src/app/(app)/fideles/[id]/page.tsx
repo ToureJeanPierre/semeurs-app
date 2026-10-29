@@ -9,6 +9,7 @@ import { PersonHome } from "@/components/location/PersonHome";
 import { ActionForm } from "@/components/people/ActionForm";
 import { EditToggle } from "@/components/people/EditToggle";
 import { PersonFields } from "@/components/people/PersonFields";
+import { PersonRelations } from "@/components/people/PersonRelations";
 import { Card } from "@/components/ui/Card";
 import { DoneLink } from "@/components/ui/DoneLink";
 import { ModuleIcon } from "@/components/ui/icons";
@@ -150,6 +151,7 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
       {hasAny(access, ["care.notes"]) && <CareNotes personId={id} />}
 
       <PersonHome personId={id} firstName={person.first_name} phone={person.whatsapp ?? person.phone} canManage={Boolean(canManage)} />
+      <PersonRelations personId={id} canManage={Boolean(canManage)} people={people} />
 
       {canManage && (
         <>

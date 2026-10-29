@@ -369,7 +369,34 @@ d'essai, puis une seule liste de retours).
   (révélé par le test RLS, corrigé). Pas de notification par message (pour ne pas importuner).
   `/mes-groupes/[id]/discussion`, composant `ChatRoom`.
 
-Prochaine action : retours de Jean-Pierre, puis lot 3.
+## Lots 3 et 4 — fin de l'application (29/10, livrés d'un bloc à la demande de Jean-Pierre)
+
+« Construis l'application, finie, je vais tout tester » : lots 3 et 4 enchaînés, une seule liste d'essais.
+
+- **Caisse** (`20261031000000_cash` et correctifs) : comptes, recettes et dépenses, quatre yeux
+  (celui qui saisit ne valide pas), plafond de dépense au-delà duquel le pasteur approuve, justificatif
+  photographié (stockage privé `justificatifs`), comptage d'offrande à deux, annulation par
+  contre-opération motivée (rien ne s'efface), arrêté mensuel (mois clos = plus de saisie),
+  rapport mensuel, budget, export CSV, dîmes nominatives et attestation annuelle.
+- **Dons** (`/dons`) : le fidèle prévient la caisse (dîme, don, action de grâce ; anonyme possible),
+  suit ses engagements de campagne, imprime son attestation. Distinct des cotisations.
+- **Tableau de bord du pasteur**, **cure d'âme chiffrée** (AES-256-GCM côté serveur, clé
+  `CARE_NOTES_KEY` dans Vercel, lisible du seul pasteur), **Jeunesse** synchronisée par l'âge,
+  inscriptions aux activités, boîte à idées (`20261031100000_pastoral_youth`).
+- **Notifications sur le téléphone** (`20261031200000_web_push`) : chaque notification de l'appli part
+  aussi en push (clés VAPID dans Vercel ; activation par la personne dans Profil ou sur l'accueil).
+- **Lot 4** (`20261101000000_lot4_modules`) : prédications (audio ou lien), agenda de l'église
+  (`/evenements` : cultes, événements avec inscription, mes groupes, mes réunions), formations
+  (leçons, grille de validation, attestation numérotée F-…, étape d'intégration cochée à la fin),
+  registre des actes (baptême, mariage, présentation ; certificat B-/M-/P-… ; fiche mise à jour),
+  liens de parenté sur la fiche (personnes autorisées à récupérer un enfant), capacité « Enfants
+  confiés » pour l'école du dimanche (`20261101000100_children_capability`), inventaire (prêts,
+  état, rappel d'entretien 7 jours avant), sondages ciblés et anonymes (carte sur l'accueil),
+  « Mon parcours » dans Mon espace.
+- **Tests** : 88 tests unitaires, 25 tests RLS (dont `tests/rls/lot34.test.ts` : caisse à quatre
+  yeux, cure d'âme, sondages, actes, inventaire), parcours vérifiés dans le navigateur.
+
+Prochaine action : essais de Jean-Pierre, corrections groupées.
 
 ## Accès de l'environnement cloud
 

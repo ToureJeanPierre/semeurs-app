@@ -11,6 +11,7 @@ export async function runScenario(body: string): Promise<Record<string, unknown>
 declare
   r jsonb := '{}'::jsonb;
   n int;
+  seq_last bigint; seq_called boolean;
   t_family uuid := (select id from public.group_types where slug = 'family');
   f_head uuid := (select id from public.group_functions where type_id = t_family and rank = 1);
   fam_x uuid := gen_random_uuid();

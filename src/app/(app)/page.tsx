@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight, LockKeyhole } from "lucide-react";
 import { HomeBanner } from "@/components/home/HomeBanner";
+import { PendingPolls } from "@/components/home/PendingPolls";
 import { NextServiceCard } from "@/components/home/NextServiceCard";
 import { ShortcutGrid } from "@/components/home/ShortcutGrid";
 import { isDeviceLockedFor, requireUser } from "@/lib/auth/session";
@@ -53,6 +54,8 @@ export default async function HomePage() {
             serverNow={now.toISOString()}
           />
         )}
+
+        <PendingPolls />
 
         <ShortcutGrid items={shortcuts} />
 
