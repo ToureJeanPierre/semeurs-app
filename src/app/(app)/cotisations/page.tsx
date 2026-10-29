@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronRight, Plus, Receipt } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { DeclareForm } from "@/components/contributions/DeclareForm";
 import { ProgressBar } from "@/components/contributions/ProgressBar";
 import { Card } from "@/components/ui/Card";
 import { getAccess, hasAny } from "@/lib/access";
 import { collected, recentPeriods, remaining, type Heading, type Payment } from "@/lib/contributions";
-import { formatFullDate, formatMoney, formatShortDay, todayIso } from "@/lib/format";
+import { formatMoney, formatShortDay, todayIso } from "@/lib/format";
 import { loadValueList } from "@/lib/people";
 import { createClient } from "@/lib/supabase/server";
 
@@ -44,9 +44,6 @@ export default async function ContributionsPage() {
     (h) => h.status === "open" && h.beneficiary_id !== access.personId && (h.group_id === null || mine.has(h.group_id)),
   );
   const following = headings.filter((h) => (h.group_id === null ? churchFollow : churchFollow || followIds.has(h.group_id)));
-  const myReceipts = headings
-    .flatMap((h) => h.contribution_payments.filter((p) => p.person_id === access.personId && p.receipt_no && p.amount > 0).map((p) => ({ ...p, title: h.title })))
-    .sort((a, b) => b.created_at.localeCompare(a.created_at));
   const periods = recentPeriods(today, 3);
 
   return (
@@ -140,27 +137,6 @@ export default async function ContributionsPage() {
         })}
       </section>
 
-      {myReceipts.length > 0 && (
-        <section className="flex flex-col gap-2" aria-labelledby="recus">
-          <h2 id="recus" className="text-lg font-semibold">Mes reçus</h2>
-          <ul className="flex flex-col divide-y divide-line rounded-card bg-surface px-4 shadow-card">
-            {myReceipts.map((r) => (
-              <li key={r.id}>
-                <Link href={`/cotisations/recu/${r.id}`} className="flex min-h-14 items-center gap-3">
-                  <Receipt aria-hidden className="size-5 shrink-0 text-royal" />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold">{r.title}</span>
-                    <span className="block text-sm text-muted">
-                      N° {r.receipt_no} · {formatFullDate(r.created_at)}
-                    </span>
-                  </span>
-                  <span className="font-semibold">{formatMoney(r.amount)}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
     </div>
   );
 }

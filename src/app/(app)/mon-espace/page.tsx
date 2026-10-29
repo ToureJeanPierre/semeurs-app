@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import QRCode from "qrcode";
-import { CalendarX2, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { Baby, CalendarX2, ChevronRight, Trash2 } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { AbsenceForm } from "@/components/people/AbsenceForm";
 import { Card } from "@/components/ui/Card";
@@ -97,6 +98,14 @@ export default async function MySpacePage() {
         )}
         <AbsenceForm reasons={reasons} />
       </Card>
+      <Link href="/evenements-de-vie" className="flex items-center gap-3 rounded-card bg-surface p-4 shadow-card active:scale-[0.99]">
+        <Baby aria-hidden className="size-6 shrink-0 text-royal" />
+        <span className="flex-1">
+          <span className="block font-semibold">Une naissance, un mariage, un deuil, une maladie ?</span>
+          <span className="block text-sm text-muted">Prévenez l&apos;église : votre père de famille et le pasteur seront avertis.</span>
+        </span>
+        <ChevronRight aria-hidden className="size-5 shrink-0 text-muted" />
+      </Link>
     </div>
   );
 }

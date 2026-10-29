@@ -8,6 +8,7 @@ import { Barometer } from "@/components/alerts/Barometer";
 import { Birthdays } from "@/components/alerts/Birthdays";
 import { daysUntilBirthday } from "@/lib/birthdays";
 import { ContactList, type ContactRow } from "@/components/alerts/ContactList";
+import { MemberFamily } from "@/components/people/MemberFamily";
 import { ContactPickerButton } from "@/components/people/ContactPickerButton";
 import { DelegationForm } from "@/components/people/DelegationForm";
 import { Card } from "@/components/ui/Card";
@@ -144,11 +145,8 @@ export default async function FamilyPage() {
   const myDelegations = (myDelegationsRes.data ?? []) as unknown as (Delegation & { groups: { name: string } | null })[];
 
   if (families.length === 0 && myDelegations.length === 0) {
-    return (
-      <div className="mx-auto w-full max-w-lg px-4 pt-5">
-        <PageTitle title="Ma famille" intro="Vous n'êtes responsable d'aucune famille et aucun fidèle ne vous est confié." />
-      </div>
-    );
+    // Simple membre : sa famille, en lecture (noms, et le contact du père / de la mère).
+    return <MemberFamily />;
   }
 
   return (

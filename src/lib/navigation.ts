@@ -55,11 +55,14 @@ export function bottomNavLinks(modules: AppModule[]): NavLink[] {
   ];
 }
 
-/** Menu complet (trois points) : Accueil, tous les modules, Profil. */
+/**
+ * Menu complet (trois traits) : Accueil, les modules, Profil. Un module pas encore livré
+ * n'y figure que s'il est aussi dans la barre du bas (pour éviter les fausses pistes).
+ */
 export function menuLinks(modules: AppModule[]): (NavLink & { soon: boolean; description: string | null })[] {
   return [
     { href: "/", label: "Accueil", icon: "house", soon: false, description: null },
-    ...modules.map((m) => ({
+    ...modules.filter((m) => m.enabled || m.nav_position !== null).map((m) => ({
       href: moduleHref(m),
       label: m.label,
       icon: m.icon,

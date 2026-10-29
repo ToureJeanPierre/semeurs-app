@@ -348,7 +348,17 @@ d'essai, puis une seule liste de retours).
   (2) La salle ne s'affichait pas dans l'appli (le serveur vidéo interdit l'affichage intégré) ;
   elle s'ouvre maintenant directement dans le navigateur, ce qui marchait chez Jean-Pierre.
 
-Prochaine action : retours de Jean-Pierre sur ces corrections, puis lot 3.
+- 29/10, menu du simple fidèle raccourci (demande de Jean-Pierre ; migration `20261030020000`) :
+  Accueil, Prédications, Cultes, Prières, Événements, Audiences, Cotisations, Ma famille,
+  Mes groupes, Mon espace, Profil. Annonces, Réunions, Âmes, Événements de vie n'apparaissent
+  qu'à ceux qui en ont l'usage (réunions et annonces arrivent par notification ; un fidèle signale
+  un événement de vie depuis Mon espace). « Ma famille » ouverte à tous les membres (noms, contact
+  du bureau) ; les membres d'une famille se voient (choix confirmé). « Dons » (pas encore livré)
+  retiré du menu, décrit pour ne pas le confondre avec les cotisations. Liste « Mes reçus » retirée
+  pour le fidèle (le reçu reste accessible par sa notification).
+  À venir, demandé : liens familiaux entre membres (conjoint, enfants…).
+
+Prochaine action : retours de Jean-Pierre, puis lot 3.
 
 ## Accès de l'environnement cloud
 
