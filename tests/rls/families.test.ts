@@ -76,7 +76,7 @@ ${as("ua")}
     expect(r).toEqual({ added_in_own_family: 1, other_family: "denied", simple_member: "denied" });
   });
 
-  it("« Mes groupes » : un membre de famille voit le bureau, pas la liste des membres", async () => {
+  it("« Mes groupes » : un membre de famille voit le bureau et ses frères et sœurs", async () => {
     const r = await runScenario(`
   insert into auth.users (id, email, aud, role) values ('00000000-0000-4000-8000-0000000000c1', 'c@rls.invalid', 'authenticated', 'authenticated');
   insert into public.users (user_id, person_id) values ('00000000-0000-4000-8000-0000000000c1', pc);
@@ -88,8 +88,9 @@ ${as("ub")}
   r := r || jsonb_build_object('head_sees_members', (select jsonb_array_length(g -> 'members')
     from jsonb_array_elements(public.my_groups()) g where g ->> 'name' = 'Test X'));`);
 
+    // Depuis le 29/10/2026 (choix de Jean-Pierre), les membres d'une famille se voient entre eux.
     expect(r).toEqual({
-      groups: [{ name: "Test X", bureau: 1, members: null, count: 2 }],
+      groups: [{ name: "Test X", bureau: 1, members: ["B Test", "C Test"], count: 2 }],
       head_sees_members: 2,
     });
   });

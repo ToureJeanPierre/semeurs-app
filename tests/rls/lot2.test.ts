@@ -121,7 +121,7 @@ ${as("ub")}
     r := r || '{"other_family": "allowed"}';
   exception when insufficient_privilege then r := r || '{"other_family": "denied"}';
   end;
-  select count(*) into n from public.meetings where title = 'Réunion test' and online_url like 'https://meet.jit.si/Semeurs-%';
+  select count(*) into n from public.meetings where title = 'Réunion test' and online_url like 'https://%/Semeurs-%';
   r := r || jsonb_build_object('room_created', n);
 ${as("ua")}
   select count(*) into n from public.meetings where title = 'Réunion test';

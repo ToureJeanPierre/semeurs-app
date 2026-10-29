@@ -118,7 +118,8 @@ ${as("ua")}
 ${as("ub")}
   r := r || jsonb_build_object('b_unread', public.unread_notifications());`);
 
-    expect(r).toEqual({ a_sees: 0, a_marks: 0, b_unread: 1 });
+    // B reçoit aussi « Accueillons C Test ! » (arrivée de C dans sa famille, données communes).
+    expect(r).toEqual({ a_sees: 0, a_marks: 0, b_unread: 2 });
   });
 
   it("messages groupés : un père écrit à sa famille, pas aux autres ni à toute l'église", async () => {
