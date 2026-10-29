@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronRight, LogOut, X } from "lucide-react";
+import { LogOut, X } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { Logo } from "@/components/Logo";
 import { ModuleIcon } from "@/components/ui/icons";
@@ -52,7 +52,7 @@ export function MenuSheet({
           />
           <motion.nav
             aria-label="Menu complet"
-            className={`absolute inset-y-0 ${side === "left" ? "left-0" : "right-0"} flex w-[min(22rem,88vw)] flex-col bg-cloud shadow-float`}
+            className={`absolute inset-y-0 ${side === "left" ? "left-0" : "right-0"} flex w-[min(24rem,92vw)] flex-col bg-cloud shadow-float`}
             initial={{ x: side === "left" ? "-100%" : "100%" }}
             animate={{ x: 0 }}
             exit={{ x: side === "left" ? "-100%" : "100%" }}
@@ -74,7 +74,7 @@ export function MenuSheet({
             </div>
 
             <motion.ul
-              className="grid flex-1 auto-rows-min grid-cols-2 gap-3 overflow-y-auto p-3"
+              className="grid flex-1 auto-rows-min grid-cols-3 gap-2 overflow-y-auto p-3"
               initial="hidden"
               animate="show"
               variants={{ show: { transition: { staggerChildren: 0.035, delayChildren: 0.08 } } }}
@@ -96,27 +96,26 @@ export function MenuSheet({
                         onClose();
                       }}
                       aria-current={active ? "page" : undefined}
-                      className={`flex h-full flex-col overflow-hidden rounded-card bg-surface p-1.5 shadow-card transition-transform active:scale-95 ${
+                      className={`flex h-full flex-col overflow-hidden rounded-2xl bg-surface p-1 shadow-card transition-transform active:scale-95 ${
                         active ? "ring-2 ring-royal" : ""
                       }`}
                     >
-                      <span className="relative block aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-b from-[#dceefe] to-[#c4defc]">
+                      <span className="relative block aspect-[4/3] overflow-hidden rounded-xl bg-gradient-to-b from-[#dceefe] to-[#c4defc]">
                         {item.image ? (
-                          <Image src={item.image} alt="" fill sizes="160px" unoptimized className="object-cover" />
+                          <Image src={item.image} alt="" fill sizes="110px" unoptimized className="object-cover" />
                         ) : (
                           <span className="grid size-full place-items-center text-royal">
-                            <ModuleIcon name={item.icon} className="size-12 drop-shadow-md" strokeWidth={1.6} />
+                            <ModuleIcon name={item.icon} className="size-8 drop-shadow-md" strokeWidth={1.7} />
                           </span>
                         )}
                         {item.soon && (
-                          <span className="absolute right-1.5 top-1.5 rounded-full bg-gold px-2 py-0.5 text-xs font-semibold text-night">
+                          <span className="absolute right-1 top-1 rounded-full bg-gold px-1.5 text-[10px] font-semibold text-night">
                             Bientôt
                           </span>
                         )}
                       </span>
-                      <span className="flex min-h-12 flex-1 items-center gap-1 px-1.5 pt-1">
-                        <span className="min-w-0 flex-1 font-display text-[15px] font-bold leading-tight text-night">{item.label}</span>
-                        <ChevronRight aria-hidden className="size-4 shrink-0 text-night" />
+                      <span className="flex min-h-10 flex-1 items-center justify-center px-0.5 pt-1 text-center font-display text-xs font-bold leading-tight text-night">
+                        {item.label}
                       </span>
                     </Link>
                   </motion.li>
