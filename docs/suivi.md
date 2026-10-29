@@ -356,7 +356,13 @@ d'essai, puis une seule liste de retours).
   du bureau) ; les membres d'une famille se voient (choix confirmé). « Dons » (pas encore livré)
   retiré du menu, décrit pour ne pas le confondre avec les cotisations. Liste « Mes reçus » retirée
   pour le fidèle (le reçu reste accessible par sa notification).
-  À venir, demandé : liens familiaux entre membres (conjoint, enfants…).
+- 29/10, fraternité (Jean-Pierre : « les liens de fraternité doivent être développés ») — migration
+  `20261030030000_family_fraternity` : dans Ma famille, chaque membre est joignable (appel,
+  WhatsApp) ; « Bienvenue aux nouveaux » (arrivés depuis 30 jours) avec message prêt
+  (`family_welcome`) et notification « Accueillons … ! » à tous les membres à chaque arrivée ;
+  anniversaires de la semaine pour tous ; chacun peut masquer son numéro (Profil, `hide_phone`),
+  le bureau reste joignable. Discussion de famille dans l'appli : prévue au lot 4 (à avancer ou
+  non, question posée à Jean-Pierre).
 
 Prochaine action : retours de Jean-Pierre, puis lot 3.
 

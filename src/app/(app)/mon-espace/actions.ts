@@ -80,3 +80,11 @@ export async function saveMyHome(input: { lat: number; lng: number; accuracy?: n
   revalidatePath("/mon-espace");
   return { success: "Votre maison est enregistrée. Seuls votre père de famille, votre délégué et le pasteur la voient." };
 }
+
+/** Montrer ou masquer mon numéro aux membres de ma famille. */
+export async function setPhoneVisibility(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  await supabase.rpc("set_my_phone_visibility", { p_hidden: formData.get("hidden") === "1" });
+  revalidatePath("/profil");
+  revalidatePath("/famille");
+}

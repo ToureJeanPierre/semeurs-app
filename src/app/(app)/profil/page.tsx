@@ -9,6 +9,9 @@ import { Reveal } from "@/components/ui/Reveal";
 import { isDeviceLockedFor, requireUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { formatPhone } from "@/lib/phone";
+import { setPhoneVisibility } from "../mon-espace/actions";
+import { SubmitButton } from "@/components/ui/SubmitButton";
+import { getAccess } from "@/lib/access";
 
 export const metadata: Metadata = { title: "Profil" };
 
@@ -25,10 +28,13 @@ export default async function ProfilePage() {
   const supabase = await createClient();
   const thisPhoneEnrolled = await isDeviceLockedFor(user.id);
   // RLS : la personne ne reçoit que ses propres clés.
-  const { data: passkeys } = await supabase
-    .from("webauthn_credentials")
-    .select("id, device_label, created_at, last_used_at")
-    .order("created_at", { ascending: false });
+  const [{ data: passkeys }, access] = await Promise.all([
+    supabase.from("webauthn_credentials").select("id, device_label, created_at, last_used_at").order("created_at", { ascending: false }),
+    getAccess(),
+  ]);
+  const { data: me } = access.personId
+    ? await supabase.from("people").select("hide_phone").eq("id", access.personId).maybeSingle()
+    : { data: null };
 
   return (
     <>
@@ -44,6 +50,27 @@ export default async function ProfilePage() {
             </div>
           </Card>
         </Reveal>
+
+        {me && (
+          <Reveal delay={0.04}>
+            <Card className="flex flex-col gap-3 shadow-card">
+              <div>
+                <h2 className="text-lg font-semibold">Mon numéro dans ma famille</h2>
+                <p className="text-sm text-muted">
+                  {me.hide_phone
+                    ? "Masqué : les membres de votre famille ne voient pas votre numéro."
+                    : "Visible des membres de votre famille, pour qu'ils puissent vous appeler ou vous écrire."}
+                </p>
+              </div>
+              <form action={setPhoneVisibility}>
+                <input type="hidden" name="hidden" value={me.hide_phone ? "0" : "1"} />
+                <SubmitButton className="min-h-12 w-full rounded-full bg-royal/10 font-semibold text-royal">
+                  {me.hide_phone ? "Montrer mon numéro" : "Masquer mon numéro"}
+                </SubmitButton>
+              </form>
+            </Card>
+          </Reveal>
+        )}
 
         <Reveal delay={0.08}>
           <Card className="flex flex-col gap-4 shadow-card">
