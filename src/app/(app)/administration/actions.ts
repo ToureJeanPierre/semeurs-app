@@ -388,3 +388,35 @@ export async function updateProgramPositions(_prev: FormState, formData: FormDat
   revalidatePath("/administration/parametres");
   return { success: "Postes du programme enregistrés." };
 }
+
+/** Réglages simples (texte, nombre, oui/non) : liste blanche, pour ne pas toucher aux réglages structurés. */
+const SIMPLE_SETTINGS: Record<string, "text" | "number" | "boolean"> = {
+  giving_instructions: "text",
+  expense_ceiling: "number",
+  report_alert_days: "number",
+  pledge_delay_notify_family_head: "boolean",
+  meeting_online_base_url: "text",
+};
+
+export async function updateSimpleSetting(_prev: FormState, formData: FormData): Promise<FormState> {
+  const key = String(formData.get("key") ?? "");
+  const kind = SIMPLE_SETTINGS[key];
+  if (!kind) return { error: "Réglage inconnu." };
+  const raw = String(formData.get("value") ?? "").trim();
+  let value: unknown = raw;
+  if (kind === "number") {
+    const n = Number(raw.replace(/\s/g, ""));
+    if (!Number.isFinite(n) || n < 0) return { fieldErrors: { value: "Nombre invalide." } };
+    value = n;
+  } else if (kind === "boolean") {
+    value = formData.get("value") === "on";
+  } else if (key === "meeting_online_base_url" && !/^https:\/\/.+\/$/.test(raw)) {
+    return { fieldErrors: { value: "Adresse en https://…/ (avec la barre finale)." } };
+  }
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("settings").update({ value }).eq("key", key).select("key");
+  if (error) return { error: explain(error) };
+  if (!data?.length) return { error: "Vous n'avez pas le droit de modifier les paramètres." };
+  revalidatePath("/administration/parametres");
+  return { success: "Enregistré." };
+}

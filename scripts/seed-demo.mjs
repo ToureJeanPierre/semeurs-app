@@ -57,7 +57,15 @@ async function wipe() {
     check(await db.from("contribution_payments").delete().or(paymentFilter), "versements");
   }
   if (headings.length) check(await db.from("contribution_headings").delete().in("id", headings), "rubriques");
+  // Caisse d'essai (comptes de démonstration) : comptages, opérations, engagements.
+  if (everyone.length) {
+    check(await db.from("offering_counts").delete().in("counter_1", everyone), "comptages");
+    check(await db.from("cash_operations").delete().or(`entered_by.in.(${everyone}),person_id.in.(${everyone})`).not("reverses_id", "is", null), "annulations de caisse");
+    check(await db.from("cash_operations").delete().or(`entered_by.in.(${everyone}),person_id.in.(${everyone})`), "opérations de caisse");
+    check(await db.from("pledges").delete().or(`created_by.in.(${everyone}),person_id.in.(${everyone})`), "engagements");
+  }
   if (users.length) {
+    check(await db.from("campaigns").delete().in("created_by", users), "campagnes");
     check(await db.from("services").delete().in("created_by", users), "programme");
     check(await db.from("outreach_outings").delete().in("created_by", users), "sorties");
   }
@@ -79,6 +87,8 @@ const ACCOUNTS = [
   { phone: "0100001006", first: "Ruth", last: "EVANG-DEMO", sex: "F", role: "evangelism_lead", label: "Responsable évangélisation" },
   { phone: "0100001007", first: "Marc", last: "FIDELE-DEMO", sex: "M", family: "member", label: "Simple fidèle" },
   { phone: "0100001008", first: "Grâce", last: "TRESORIERE-DEMO", sex: "F", family: "treasurer", label: "Trésorière de famille" },
+  { phone: "0100001009", first: "Jacob", last: "CAISSIER-DEMO", sex: "M", role: "cashier", label: "Caissier 1" },
+  { phone: "0100001010", first: "Débora", last: "CAISSIERE-DEMO", sex: "F", role: "cashier", label: "Caissière 2" },
 ];
 
 // Fidèles sans compte : `absent` = jours depuis la dernière présence (pour voir chaque niveau d'alerte).
@@ -289,6 +299,10 @@ async function complete() {
     const { data: u, error } = await db.auth.admin.createUser({ email: EMAIL(a.phone), password: pw, email_confirm: true });
     if (error) throw new Error(`Compte ${a.label} : ${error.message}`);
     check(await db.from("users").insert({ user_id: u.user.id, person_id: person.id }), "lien du compte");
+    if (a.role) {
+      const { data: role } = await db.from("roles").select("id").eq("code", a.role).single();
+      check(await db.from("role_assignments").insert({ person_id: person.id, role_id: role.id }), "rôle");
+    }
     if (a.family) {
       const { data: fn } = await db.from("group_functions").select("id").eq("type_id", family.type_id).eq("label", "Trésorière").single();
       check(await db.from("group_memberships").insert({ group_id: family.id, person_id: person.id, function_id: a.family === "treasurer" ? fn.id : null }), "famille");

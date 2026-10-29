@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
     // Un écran déjà vu ou préchargé est réaffiché sans attendre le serveur
     // pendant 60 s (navigation instantanée entre les onglets).
     staleTimes: { dynamic: 60, static: 300 },
+    // Justificatifs photographiés (caisse) et fichiers audio courts : jusqu'à 6 Mo par envoi.
+    serverActions: { bodySizeLimit: "6mb" },
   },
   turbopack: {
     rules: {
