@@ -5,7 +5,7 @@ import { ThresholdsForm } from "@/components/admin/ThresholdsForm";
 import { Card } from "@/components/ui/Card";
 import { requirePermission } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
-import { updateAlertThresholds, updateMessageTemplate, updateProgramPositions, updateSimpleSetting } from "../actions";
+import { updateAlertThresholds, updateMessageTemplate, updateProgramPositions, updateSimpleSetting, updateDashboardWidgets } from "../actions";
 import { TextField } from "@/components/ui/TextField";
 import { ActionForm } from "@/components/people/ActionForm";
 import { TextAreaField } from "@/components/ui/SelectField";
@@ -20,6 +20,18 @@ export default async function SettingsPage() {
     supabase.from("message_templates").select("code, label, body").order("label"),
   ]);
   const { data: program } = await supabase.from("settings").select("value").eq("key", "program_positions").maybeSingle();
+  const { data: widgetSetting } = await supabase.from("settings").select("value").eq("key", "dashboard_widgets").maybeSingle();
+  const widgets = (widgetSetting?.value as string[] | undefined) ?? [];
+  const WIDGETS: [string, string][] = [
+    ["members", "Effectif"],
+    ["attendance", "Présences aux cultes"],
+    ["alerts", "Absences par famille"],
+    ["souls", "Âmes et intégration"],
+    ["cells", "Cellules (rapports)"],
+    ["finances", "Finances du mois"],
+    ["pledges", "Engagements"],
+    ["audiences", "Audiences"],
+  ];
   const { data: simple } = await supabase
     .from("settings")
     .select("key, label, value")
@@ -35,6 +47,17 @@ export default async function SettingsPage() {
           Nombre de jours sans venir au culte avant chaque niveau d&apos;alerte.
         </p>
         <ThresholdsForm action={updateAlertThresholds} values={values} />
+      </Card>
+      <Card className="flex flex-col gap-3 shadow-card">
+        <h2 className="text-lg font-semibold">Vue d&apos;ensemble du pasteur</h2>
+        <ActionForm action={updateDashboardWidgets} submitLabel="Enregistrer les indicateurs">
+          {WIDGETS.map(([code, label]) => (
+            <label key={code} className="flex min-h-11 items-center gap-3">
+              <input type="checkbox" name="widgets" value={code} defaultChecked={widgets.includes(code)} className="size-5 accent-royal" />
+              {label}
+            </label>
+          ))}
+        </ActionForm>
       </Card>
       <Card className="flex flex-col gap-4 shadow-card">
         <h2 className="text-lg font-semibold">Réglages divers</h2>

@@ -420,3 +420,13 @@ export async function updateSimpleSetting(_prev: FormState, formData: FormData):
   revalidatePath("/administration/parametres");
   return { success: "Enregistré." };
 }
+
+export async function updateDashboardWidgets(_prev: FormState, formData: FormData): Promise<FormState> {
+  const widgets = formData.getAll("widgets").map(String);
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("settings").update({ value: widgets }).eq("key", "dashboard_widgets").select("key");
+  if (error) return { error: explain(error) };
+  if (!data?.length) return { error: "Vous n'avez pas le droit de modifier les paramètres." };
+  revalidatePath("/tableau-de-bord");
+  return { success: "Indicateurs enregistrés." };
+}

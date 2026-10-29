@@ -4,6 +4,7 @@ import { CircleCheck, KeyRound } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { ContactButtons } from "@/components/alerts/ContactButtons";
 import { PersonFollowUp } from "@/components/alerts/PersonFollowUp";
+import { CareNotes } from "@/components/people/CareNotes";
 import { PersonHome } from "@/components/location/PersonHome";
 import { ActionForm } from "@/components/people/ActionForm";
 import { EditToggle } from "@/components/people/EditToggle";
@@ -146,6 +147,7 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
       </Card>
 
       <PersonFollowUp personId={id} name={personName(person)} canManage={Boolean(canManage)} />
+      {hasAny(access, ["care.notes"]) && <CareNotes personId={id} />}
 
       <PersonHome personId={id} firstName={person.first_name} phone={person.whatsapp ?? person.phone} canManage={Boolean(canManage)} />
 

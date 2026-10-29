@@ -38,6 +38,12 @@ export const serverEnv = {
     }
     return secret;
   },
+  /** Clé (32 octets en base64) qui chiffre les notes de cure d'âme. Jamais en base, jamais dans Git. */
+  get careNotesKey() {
+    const key = Buffer.from(required("CARE_NOTES_KEY", process.env.CARE_NOTES_KEY), "base64");
+    if (key.length !== 32) throw new Error("CARE_NOTES_KEY doit faire 32 octets (base64).");
+    return key;
+  },
   /**
    * Minutes d'inactivité avant de redemander l'empreinte ou le schéma.
    * Provisoire : passera dans la table `settings` (administrable) au lot 1.

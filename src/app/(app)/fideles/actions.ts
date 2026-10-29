@@ -381,3 +381,21 @@ export async function createLocationLink(_prev: FormState, formData: FormData): 
   if (error || !data) return { error: explain(error) };
   return { success: `LIEN:${data.token}` };
 }
+
+/** Note de cure d'âme : chiffrée ici, sur le serveur ; la base ne voit que le texte chiffré. */
+export async function addCareNote(_prev: FormState, formData: FormData): Promise<FormState> {
+  const body = String(formData.get("body") ?? "").trim();
+  const personId = String(formData.get("person_id") ?? "");
+  if (body.length < 3) return { fieldErrors: { body: "La note est vide." } };
+  const { seal } = await import("@/lib/care-crypto");
+  const { serverEnv } = await import("@/lib/env");
+  const supabase = await createClient();
+  const { data: me } = await supabase.rpc("my_access");
+  const sealed = seal(body, serverEnv.careNotesKey);
+  const { error } = await supabase
+    .from("care_notes")
+    .insert({ person_id: personId, ...sealed, author_id: (me as { person_id?: string } | null)?.person_id });
+  if (error) return { error: error.code === "42501" ? "Réservé au pasteur." : "La note n'a pas pu être enregistrée." };
+  revalidatePath(`/fideles/${personId}`);
+  return { success: "Note enregistrée (chiffrée)." };
+}

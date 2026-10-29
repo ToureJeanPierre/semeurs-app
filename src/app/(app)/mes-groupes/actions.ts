@@ -323,3 +323,40 @@ export async function submitReport(_prev: FormState, formData: FormData): Promis
     success: `Rapport envoyé.${created ? ` ${created} nouveau${created > 1 ? "x" : ""} venu${created > 1 ? "s" : ""} inscrit${created > 1 ? "s" : ""} dans le parcours d'intégration.` : ""}`,
   };
 }
+
+// --------------------------------------------------------------------------
+// « Je participe » et boîte à idées
+// --------------------------------------------------------------------------
+export async function toggleRsvp(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const me = await myPersonId();
+  const row = { event_id: String(formData.get("event_id") ?? ""), occurrence_date: String(formData.get("date") ?? ""), person_id: me };
+  if (formData.get("going") === "1") await supabase.from("group_event_rsvps").insert(row);
+  else await supabase.from("group_event_rsvps").delete().match(row);
+  revalidatePath(hub(String(formData.get("group_id") ?? "")));
+}
+
+export async function addIdea(_prev: FormState, formData: FormData): Promise<FormState> {
+  const body = String(formData.get("body") ?? "").trim();
+  const groupId = String(formData.get("group_id") ?? "");
+  if (body.length < 3) return { fieldErrors: { body: "Écrivez votre idée." } };
+  const supabase = await createClient();
+  const { error } = await supabase.from("group_ideas").insert({ group_id: groupId, author_id: await myPersonId(), body });
+  if (error) return { error: explain(error) };
+  revalidatePath(hub(groupId));
+  return { success: "Merci pour votre idée !" };
+}
+
+export async function toggleIdeaVote(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  const row = { idea_id: String(formData.get("idea_id") ?? ""), person_id: await myPersonId() };
+  if (formData.get("vote") === "1") await supabase.from("group_idea_votes").insert(row);
+  else await supabase.from("group_idea_votes").delete().match(row);
+  revalidatePath(hub(String(formData.get("group_id") ?? "")));
+}
+
+export async function setIdeaStatus(formData: FormData): Promise<void> {
+  const supabase = await createClient();
+  await supabase.from("group_ideas").update({ status: String(formData.get("status") ?? "open") }).eq("id", String(formData.get("idea_id") ?? ""));
+  revalidatePath(hub(String(formData.get("group_id") ?? "")));
+}

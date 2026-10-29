@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarDays, CheckSquare, ClipboardList, Megaphone, MapPin, Music, Trash2, Wallet } from "lucide-react";
+import { CalendarDays, CheckSquare, ClipboardList, Lightbulb, Megaphone, MapPin, Music, ThumbsUp, Trash2, Wallet } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PersonPicker } from "@/components/admin/PersonPicker";
 import { ChatEntry } from "@/components/groups/ChatEntry";
@@ -17,7 +17,7 @@ import { addDays, formatHour, formatLongDay, formatShortDay, todayIso } from "@/
 import { expandEvents, WEEKDAYS, type GroupEvent } from "@/lib/group-agenda";
 import { loadValueList } from "@/lib/people";
 import { createClient } from "@/lib/supabase/server";
-import { addGroupEvent, addResource, deleteGroupEvent, deleteResource, openGroupSession, saveMeetingInfo, submitReport } from "../actions";
+import { addIdea, setIdeaStatus, toggleIdeaVote, toggleRsvp, addGroupEvent, addResource, deleteGroupEvent, deleteResource, openGroupSession, saveMeetingInfo, submitReport } from "../actions";
 
 export const metadata: Metadata = { title: "Mon groupe" };
 
@@ -78,6 +78,16 @@ export default async function GroupHubPage({ params }: PageProps<"/mes-groupes/[
     loadValueList("resource_kind"),
   ]);
   const occurrences = expandEvents((events ?? []) as GroupEvent[], today, addDays(today, 42));
+  const [{ data: rsvps }, { data: ideas }] = await Promise.all([
+    occurrences.length
+      ? supabase.from("group_event_rsvps").select("event_id, occurrence_date, person_id").in("event_id", [...new Set(occurrences.map((o) => o.id))])
+      : Promise.resolve({ data: [] }),
+    has("ideas")
+      ? supabase.from("group_ideas").select("id, body, status, created_at, group_idea_votes(person_id)").eq("group_id", id).order("created_at", { ascending: false })
+      : Promise.resolve({ data: [] }),
+  ]);
+  const going = (eventId: string, date: string) =>
+    ((rsvps ?? []) as { event_id: string; occurrence_date: string; person_id: string }[]).filter((r) => r.event_id === eventId && r.occurrence_date === date);
   const lastReport = ((reports ?? []) as { meeting_date: string }[])[0]?.meeting_date;
 
   return (
@@ -159,8 +169,22 @@ export default async function GroupHubPage({ params }: PageProps<"/mes-groupes/[
                     {formatLongDay(o.date)} · {formatHour(o.startsAt)}
                     {o.place ? ` · ${o.place}` : ""}
                     {o.recurrence === "weekly" ? " · chaque semaine" : ""}
+                    {going(o.id, o.date).length ? ` · ${going(o.id, o.date).length} participant${going(o.id, o.date).length > 1 ? "s" : ""}` : ""}
                   </span>
                 </span>
+                {mine && (
+                  <form action={toggleRsvp}>
+                    <input type="hidden" name="event_id" value={o.id} />
+                    <input type="hidden" name="date" value={o.date} />
+                    <input type="hidden" name="group_id" value={id} />
+                    <input type="hidden" name="going" value={going(o.id, o.date).some((r) => r.person_id === access.personId) ? "0" : "1"} />
+                    <SubmitButton
+                      className={`min-h-11 rounded-full px-3 text-sm font-semibold ${going(o.id, o.date).some((r) => r.person_id === access.personId) ? "bg-ok-bg text-ok-text" : "bg-royal/10 text-royal"}`}
+                    >
+                      {going(o.id, o.date).some((r) => r.person_id === access.personId) ? "J'y serai ✓" : "Je participe"}
+                    </SubmitButton>
+                  </form>
+                )}
                 {leader && (
                   <form action={deleteGroupEvent}>
                     <input type="hidden" name="event_id" value={o.id} />
@@ -294,6 +318,53 @@ export default async function GroupHubPage({ params }: PageProps<"/mes-groupes/[
               {r.theme ? ` · ${r.theme}` : ""}
             </p>
           ))}
+        </Card>
+      )}
+
+      {has("ideas") && (
+        <Card className="flex flex-col gap-2 shadow-card">
+          <h2 className="flex items-center gap-2 text-lg font-semibold">
+            <Lightbulb aria-hidden className="size-5 text-gold" /> Boîte à idées
+          </h2>
+          {(ideas ?? []).length === 0 && <p className="text-sm text-muted">Pas encore d&apos;idée : lancez-vous !</p>}
+          {((ideas ?? []) as { id: string; body: string; status: string; group_idea_votes: { person_id: string }[] }[])
+            .sort((a, b) => b.group_idea_votes.length - a.group_idea_votes.length)
+            .map((idea) => {
+              const voted = idea.group_idea_votes.some((v) => v.person_id === access.personId);
+              return (
+                <div key={idea.id} className="flex items-start gap-2 rounded-2xl bg-cloud p-3">
+                  <p className="flex-1 text-sm">
+                    {idea.body}
+                    {idea.status !== "open" && (
+                      <span className="ml-2 rounded-full bg-ok-bg px-2 py-0.5 text-xs font-semibold text-ok-text">{idea.status === "retained" ? "Retenue" : "Réalisée"}</span>
+                    )}
+                  </p>
+                  {mine && (
+                    <form action={toggleIdeaVote}>
+                      <input type="hidden" name="idea_id" value={idea.id} />
+                      <input type="hidden" name="group_id" value={id} />
+                      <input type="hidden" name="vote" value={voted ? "0" : "1"} />
+                      <SubmitButton aria-label={voted ? "Retirer mon vote" : "Voter pour cette idée"} className={`flex min-h-11 items-center gap-1 rounded-full px-3 text-sm font-semibold ${voted ? "bg-royal text-white" : "bg-surface text-royal"}`}>
+                        <ThumbsUp aria-hidden className="size-4" /> {idea.group_idea_votes.length}
+                      </SubmitButton>
+                    </form>
+                  )}
+                  {leader && idea.status === "open" && (
+                    <form action={setIdeaStatus}>
+                      <input type="hidden" name="idea_id" value={idea.id} />
+                      <input type="hidden" name="group_id" value={id} />
+                      <input type="hidden" name="status" value="retained" />
+                      <SubmitButton className="min-h-11 rounded-full px-2 text-xs font-semibold text-ok-text">Retenir</SubmitButton>
+                    </form>
+                  )}
+                </div>
+              );
+            })}
+          {mine && (
+            <ActionForm action={addIdea} hidden={{ group_id: id }} submitLabel="Proposer">
+              <TextField label="Mon idée" name="body" placeholder="Une sortie détente à Grand-Bassam" />
+            </ActionForm>
+          )}
         </Card>
       )}
 
