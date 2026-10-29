@@ -23,8 +23,9 @@ type MyGroup = {
 
 export default async function MyGroupsPage() {
   const supabase = await createClient();
-  const { data } = await supabase.rpc("my_groups");
+  const [{ data }, { data: unreadRows }] = await Promise.all([supabase.rpc("my_groups"), supabase.rpc("my_unread_messages")]);
   const groups = (data ?? []) as MyGroup[];
+  const unread = new Map(((unreadRows ?? []) as { group_id: string; unread: number }[]).map((u) => [u.group_id, u.unread]));
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
@@ -69,7 +70,10 @@ export default async function MyGroupsPage() {
             </div>
           )}
           <Link href={`/mes-groupes/${g.id}`} className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-royal/10 font-semibold text-royal">
-            Ouvrir : agenda, planning, répertoire…
+            Ouvrir : discussion, agenda, planning…
+            {(unread.get(g.id) ?? 0) > 0 && (
+              <span className="rounded-full bg-gold px-2 py-0.5 text-xs font-bold text-night">{unread.get(g.id)} non lu{(unread.get(g.id) ?? 0) > 1 ? "s" : ""}</span>
+            )}
             <ChevronRight aria-hidden className="size-5" />
           </Link>
         </Card>

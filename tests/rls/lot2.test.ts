@@ -191,4 +191,30 @@ ${as("ue")}
     // le père de famille n'a pas ce droit par défaut.
     expect(r).toEqual({ other_sees: 1, admin_sees: 1, head_plans: "denied", admin_plans: "allowed" });
   });
+  it("discussion : seuls les membres de la famille lisent et écrivent", async () => {
+    const r = await runScenario(`
+  insert into public.group_capabilities (group_id, capability_code) values (fam_x, 'chat'), (fam_y, 'chat');
+${as("ub")}
+  insert into public.group_messages (group_id, author_id, body) values (fam_x, pb, 'Bonsoir la famille');
+  r := r || '{"member_writes": "allowed"}';
+  begin
+    insert into public.group_messages (group_id, author_id, body) values (fam_y, pb, 'Intrus');
+    r := r || '{"other_family_write": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"other_family_write": "denied"}';
+  end;
+  begin
+    insert into public.group_messages (group_id, author_id, body) values (fam_x, pc, 'Usurpation');
+    r := r || '{"spoof_author": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"spoof_author": "denied"}';
+  end;
+${as("ua")}
+  select count(*) into n from public.group_messages where group_id = fam_x;
+  r := r || jsonb_build_object('stranger_reads', n);
+${as("ue")}
+  select count(*) into n from public.group_messages where group_id = fam_x;
+  r := r || jsonb_build_object('admin_reads', n);`);
+
+    // L'administrateur ne lit pas les conversations des familles (vie privée).
+    expect(r).toEqual({ member_writes: "allowed", other_family_write: "denied", spoof_author: "denied", stranger_reads: 0, admin_reads: 0 });
+  });
 });

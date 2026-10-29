@@ -35,6 +35,12 @@ avec la même version que le nom du fichier.
 | `20261029400000_souls.sql` | Âmes : parcours d'intégration, assignations, sorties d'évangélisation, `register_soul`, `souls_overview` ; périmètre élargi au gagneur et à l'assigné |
 | `20261029500000_group_capabilities.sql` | Capacités des groupes : agenda, présences de groupe, planning de service, chaîne de prière, répertoire, rapports, mur de prière, alerte sans rapport |
 | `20261029500100_prayer_confidentiality.sql` | Prières confidentielles : l'administrateur ne les voit pas |
+| `20261030000000_meeting_room_no_login.sql` | Salle en ligne sur un serveur Jitsi public sans compte |
+| `20261030010000_cancel_service.sql` | Retirer un culte du programme, même publié (personnes prévenues) |
+| `20261030020000_simple_member_menu.sql` | Menu du simple fidèle raccourci, `my_family`, familles visibles entre membres |
+| `20261030030000_family_fraternity.sql` | Fraternité : numéro masquable, bienvenue aux nouveaux, anniversaires |
+| `20261030040000_group_chat.sql` | Discussion de groupe en temps réel, non-lus |
+| `20261030040100_group_chat_privacy.sql` | Discussion réservée aux membres du groupe |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

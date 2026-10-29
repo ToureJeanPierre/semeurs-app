@@ -9,6 +9,7 @@ import { Birthdays } from "@/components/alerts/Birthdays";
 import { daysUntilBirthday } from "@/lib/birthdays";
 import { ContactList, type ContactRow } from "@/components/alerts/ContactList";
 import { MemberFamily } from "@/components/people/MemberFamily";
+import { ChatEntry } from "@/components/groups/ChatEntry";
 import { ContactPickerButton } from "@/components/people/ContactPickerButton";
 import { DelegationForm } from "@/components/people/DelegationForm";
 import { Card } from "@/components/ui/Card";
@@ -159,6 +160,7 @@ export default async function FamilyPage() {
         return (
           <section key={family.id} aria-labelledby={`f-${family.id}`} className="flex flex-col gap-4">
             <PageTitle title={family.name} intro={`${list.length} membre${list.length > 1 ? "s" : ""}`} />
+            <ChatEntry groupId={family.id} label="Discussion de la famille" />
 
             <Barometer
               {...barometer(list.map((m) => alerts.get(m.person_id)?.level ?? "ok"))}

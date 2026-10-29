@@ -361,8 +361,13 @@ d'essai, puis une seule liste de retours).
   WhatsApp) ; « Bienvenue aux nouveaux » (arrivés depuis 30 jours) avec message prêt
   (`family_welcome`) et notification « Accueillons … ! » à tous les membres à chaque arrivée ;
   anniversaires de la semaine pour tous ; chacun peut masquer son numéro (Profil, `hide_phone`),
-  le bureau reste joignable. Discussion de famille dans l'appli : prévue au lot 4 (à avancer ou
-  non, question posée à Jean-Pierre).
+  le bureau reste joignable. Discussion de famille dans l'appli : avancée à la demande de Jean-Pierre (« Il faut lancer »).
+- **Discussion de groupe** — `20261030040000_group_chat`, `…040100_group_chat_privacy` : capacité
+  « Discussion » cochée d'office pour familles, équipes, cellules, Jeunesse ; messages en temps réel
+  (Supabase Realtime sous RLS), compteur de non-lus (Ma famille, Mes groupes), retrait de son message
+  (ou par le bureau du groupe). Réservée aux membres : l'administrateur ne lit pas les conversations
+  (révélé par le test RLS, corrigé). Pas de notification par message (pour ne pas importuner).
+  `/mes-groupes/[id]/discussion`, composant `ChatRoom`.
 
 Prochaine action : retours de Jean-Pierre, puis lot 3.
 

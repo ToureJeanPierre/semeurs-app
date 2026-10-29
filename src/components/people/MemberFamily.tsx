@@ -1,5 +1,6 @@
 import { CakeSlice, MessageCircle, Phone, Sparkles } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
+import { ChatEntry } from "@/components/groups/ChatEntry";
 import { ContactButtons } from "@/components/alerts/ContactButtons";
 import { Card } from "@/components/ui/Card";
 import { daysUntilBirthday } from "@/lib/birthdays";
@@ -74,6 +75,7 @@ export async function MemberFamily() {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
       <PageTitle title={family.name} intro={`${family.members.length} frères et sœurs`} />
+      <ChatEntry groupId={family.id} label="Discussion de la famille" />
 
       {newcomers.length > 0 && (
         <Card className="flex flex-col gap-2 border-2 border-gold/60 shadow-card">

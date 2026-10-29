@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CalendarDays, CheckSquare, ClipboardList, Megaphone, MapPin, Music, Trash2, Wallet } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PersonPicker } from "@/components/admin/PersonPicker";
+import { ChatEntry } from "@/components/groups/ChatEntry";
 import { DutiesSection } from "@/components/groups/DutiesSection";
 import { ActionForm } from "@/components/people/ActionForm";
 import { Card } from "@/components/ui/Card";
@@ -90,6 +91,7 @@ export default async function GroupHubPage({ params }: PageProps<"/mes-groupes/[
         </div>
       </div>
       {group.description && <p className="-mt-3">{group.description}</p>}
+      {has("chat") && mine && <ChatEntry groupId={id} label="Discussion du groupe" />}
 
       {/* Rencontre habituelle */}
       {(meeting?.place || meeting?.weekday != null || leader) && (

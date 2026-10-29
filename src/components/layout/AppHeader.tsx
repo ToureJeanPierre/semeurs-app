@@ -35,7 +35,9 @@ export function AppHeader({ menu, unread }: { menu: ReturnType<typeof menuLinks>
   const title =
     pathname === "/"
       ? undefined
-      : (menu
+      : pathname.endsWith("/discussion")
+        ? "Discussion"
+        : (menu
           .filter((m) => m.href !== "/" && (pathname === m.href || pathname.startsWith(`${m.href}/`)))
           .sort((a, b) => b.href.length - a.href.length)[0]?.label ??
         FALLBACK_TITLES[`/${pathname.split("/")[1]}`] ??
