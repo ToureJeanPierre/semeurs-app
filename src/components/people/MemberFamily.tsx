@@ -8,6 +8,8 @@ import { fillTemplate, telHref, whatsappHref } from "@/lib/contact-links";
 import { addDays, todayIso } from "@/lib/format";
 import { loadMessageTemplate } from "@/lib/message-templates";
 import { createClient } from "@/lib/supabase/server";
+import { signPhotos } from "@/lib/photos";
+import { Avatar } from "@/components/people/Avatar";
 
 type Member = {
   id: string;
@@ -18,6 +20,7 @@ type Member = {
   birthday: string | null; // MM-JJ
   joined_on: string | null;
   is_me: boolean;
+  photo_path: string | null;
 };
 type Family = { id: string; name: string; members: Member[] };
 
@@ -54,6 +57,8 @@ export async function MemberFamily() {
     loadMessageTemplate("birthday", "Joyeux anniversaire {prénom} !"),
   ]);
   const family = data as Family | null;
+  const photos = await signPhotos((family?.members ?? []).map((m) => m.photo_path));
+  const face = (m: Member) => <Avatar name={m.name} url={m.photo_path ? photos.get(m.photo_path) : null} size={44} />;
   if (!family) {
     return (
       <div className="mx-auto w-full max-w-lg px-4 pt-5">
@@ -85,6 +90,7 @@ export async function MemberFamily() {
           <ul className="flex flex-col divide-y divide-line">
             {newcomers.map((m) => (
               <li key={m.id} className="flex items-center gap-2 py-2">
+                {face(m)}
                 <span className="min-w-0 flex-1 font-semibold">{m.name}</span>
                 {m.phone && (
                   <a
@@ -110,6 +116,7 @@ export async function MemberFamily() {
           <ul className="flex flex-col divide-y divide-line">
             {birthdays.map(({ m, inDays }) => (
               <li key={m.id} className="flex items-center gap-2 py-2">
+                {face(m)}
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold">{m.name}</span>
                   <span className="block text-sm text-muted">{inDays === 0 ? "Aujourd'hui !" : inDays === 1 ? "Demain" : `Dans ${inDays} jours`}</span>
@@ -145,6 +152,7 @@ export async function MemberFamily() {
         <ul className="flex flex-col divide-y divide-line">
           {others.map((m) => (
             <li key={m.id} className="flex min-h-14 items-center gap-2 py-1">
+              {face(m)}
               <span className="min-w-0 flex-1 font-semibold">
                 {m.name}
                 {m.is_me && <span className="ml-2 text-sm font-normal text-muted">(moi)</span>}

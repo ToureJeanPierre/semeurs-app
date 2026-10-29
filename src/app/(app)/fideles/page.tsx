@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { getAccess, hasAny } from "@/lib/access";
 import { personName } from "@/lib/admin";
 import { formatPhone, parseIvorianPhone } from "@/lib/phone";
+import { signPhotos } from "@/lib/photos";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Fidèles" };
@@ -19,6 +20,7 @@ type Row = {
   commune: string | null;
   district: string | null;
   status: string;
+  photo_path: string | null;
   group_memberships: { end_date: string | null; groups: { name: string; group_types: { slug: string } | null } | null }[];
 };
 
@@ -31,11 +33,12 @@ export default async function PeoplePage({ searchParams }: PageProps<"/fideles">
   const supabase = await createClient();
   const { data } = await supabase
     .from("people")
-    .select("id, first_name, last_name, phone, commune, district, status, group_memberships(end_date, groups(name, group_types(slug)))")
+    .select("id, first_name, last_name, phone, photo_path, commune, district, status, group_memberships(end_date, groups(name, group_types(slug)))")
     .is("deleted_at", null)
     .order("last_name")
     .order("first_name");
 
+  const photos = await signPhotos(((data ?? []) as unknown as Row[]).map((p) => p.photo_path));
   const rows: PeopleRow[] = ((data ?? []) as unknown as Row[]).map((p) => {
     const phone = p.phone ? parseIvorianPhone(p.phone) : null;
     const family = p.group_memberships.find((m) => !m.end_date && m.groups?.group_types?.slug === "family");
@@ -45,6 +48,7 @@ export default async function PeoplePage({ searchParams }: PageProps<"/fideles">
       detail: [phone ? formatPhone(phone) : null, p.district ?? p.commune].filter(Boolean).join(" · "),
       family: family?.groups?.name ?? null,
       phone: phone?.e164 ?? null,
+      photo: p.photo_path ? (photos.get(p.photo_path) ?? null) : null,
       status: p.status,
     };
   });

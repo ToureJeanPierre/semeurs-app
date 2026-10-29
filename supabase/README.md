@@ -57,6 +57,9 @@ avec la même version que le nom du fichier.
 | `20261101000600_module_images_5.sql` | Illustrations : pointage, nouvelle image des événements de vie |
 | `20261102000000_evangelism_tab_and_removals.sql` | Onglet Évangélisation (saisie terrain, invitations, rappel la veille), visite des nouvelles âmes, suppression (archivage) d'une fiche ou d'un groupe |
 | `20261102000100_quick_contact_fix.sql` | Correctif de la saisie terrain |
+| `20261102000200_profile_photos.sql` | Photo de profil (stockage privé « photos », `set_person_photo`) |
+| `20261102000300_photo_column_guard.sql` | La photo ne change que par `set_person_photo` |
+| `20261102000400_family_photos.sql` | Photos dans « Ma famille » |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

@@ -10,6 +10,9 @@ import { ActionForm } from "@/components/people/ActionForm";
 import { EditToggle } from "@/components/people/EditToggle";
 import { PersonFields } from "@/components/people/PersonFields";
 import { PersonRelations } from "@/components/people/PersonRelations";
+import { Avatar } from "@/components/people/Avatar";
+import { PhotoPicker } from "@/components/people/PhotoPicker";
+import { signPhotos } from "@/lib/photos";
 import { Card } from "@/components/ui/Card";
 import { TextField } from "@/components/ui/TextField";
 import { DoneLink } from "@/components/ui/DoneLink";
@@ -41,7 +44,7 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
   const justCreated = (await searchParams).cree === "1";
   const supabase = await createClient();
   // RLS : la fiche n'est renvoyée que si elle est dans le périmètre de la personne connectée.
-  const { data: person } = await supabase.from("people").select(PERSON_COLUMNS).eq("id", id).is("deleted_at", null).maybeSingle();
+  const { data: person } = await supabase.from("people").select(`${PERSON_COLUMNS}, photo_path`).eq("id", id).is("deleted_at", null).maybeSingle();
   if (!person) notFound();
 
   const [access, { data: canManage }, { data: memberships }, statuses, { data: alert }] = await Promise.all([
@@ -56,6 +59,7 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
     supabase.from("alerts").select("level").eq("person_id", id).maybeSingle(),
   ]);
   const groups = (memberships ?? []) as unknown as Membership[];
+  const photo = person.photo_path ? (await signPhotos([person.photo_path])).get(person.photo_path) ?? null : null;
   const family = groups.find((m) => m.groups?.group_types?.slug === "family");
   const statusLabel = statuses.find((s) => s.value === person.status)?.label ?? person.status;
   const phone = person.phone ? parseIvorianPhone(person.phone) : null;
@@ -90,11 +94,13 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
           Fiche créée. Il reste, si vous le souhaitez, à créer son accès à l&apos;appli et à la rattacher à une famille.
         </p>
       )}
-      <div className="flex items-center gap-4">
-        <span className="grid size-16 shrink-0 place-items-center rounded-full bg-royal font-display text-xl font-semibold text-white">
-          {`${person.first_name[0] ?? ""}${person.last_name[0] ?? ""}`.toUpperCase()}
-        </span>
-        <div className="min-w-0">
+      <div className="flex flex-col items-center gap-3 text-center">
+        {canManage || access.personId === id ? (
+          <PhotoPicker personId={id} name={`${person.first_name} ${person.last_name}`} url={photo} size={72} />
+        ) : (
+          <Avatar name={`${person.first_name} ${person.last_name}`} url={photo} size={72} className="bg-royal text-white" />
+        )}
+        <div className="min-w-0 [&_h1]:text-center">
           <PageTitle title={personName(person)} intro={`${statusLabel} · ${family?.groups?.name ?? "Sans famille"}`} />
         </div>
       </div>

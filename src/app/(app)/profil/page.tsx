@@ -13,6 +13,8 @@ import { setPhoneVisibility } from "../mon-espace/actions";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { getAccess } from "@/lib/access";
 import { PushToggle } from "@/components/layout/PushToggle";
+import { PhotoPicker } from "@/components/people/PhotoPicker";
+import { signPhotos } from "@/lib/photos";
 
 export const metadata: Metadata = { title: "Profil" };
 
@@ -34,19 +36,25 @@ export default async function ProfilePage() {
     getAccess(),
   ]);
   const { data: me } = access.personId
-    ? await supabase.from("people").select("hide_phone").eq("id", access.personId).maybeSingle()
+    ? await supabase.from("people").select("hide_phone, first_name, last_name, photo_path").eq("id", access.personId).maybeSingle()
     : { data: null };
+
+  const photo = me?.photo_path ? (await signPhotos([me.photo_path])).get(me.photo_path) ?? null : null;
 
   return (
     <>
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pt-5">
         <Reveal>
-          <Card className="flex items-center gap-4 shadow-card">
-            <span className="grid size-16 shrink-0 place-items-center rounded-full bg-royal text-white">
-              <UserRound aria-hidden className="size-8" strokeWidth={1.8} />
-            </span>
+          <Card className="flex flex-col items-center gap-3 text-center shadow-card">
+            {me && access.personId ? (
+              <PhotoPicker personId={access.personId} name={`${me.first_name} ${me.last_name}`} url={photo} />
+            ) : (
+              <span className="grid size-16 shrink-0 place-items-center rounded-full bg-royal text-white">
+                <UserRound aria-hidden className="size-8" strokeWidth={1.8} />
+              </span>
+            )}
             <div>
-              <p className="font-display text-lg font-semibold text-royal">Mon compte</p>
+              <p className="font-display text-lg font-semibold text-royal">{me ? `${me.first_name} ${me.last_name}` : "Mon compte"}</p>
               <p className="text-muted">{user.phone ? formatPhone(user.phone) : "Numéro inconnu"}</p>
             </div>
           </Card>

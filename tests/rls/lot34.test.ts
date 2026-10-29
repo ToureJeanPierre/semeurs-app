@@ -181,4 +181,28 @@ ${as("ue")}
       members_left_group: 0,
     });
   });
+
+  it("photo de profil : la sienne, ou celle des fiches que l'on gère ; jamais celle d'un autre", async () => {
+    const r = await runScenario(`
+${as("ua")}
+  perform public.set_person_photo(pa, pa || '/moi.jpg');
+  select count(*) into n from public.people where id = pa and photo_path = pa || '/moi.jpg';
+  r := r || jsonb_build_object('own_photo', n);
+  begin
+    perform public.set_person_photo(pc, pc || '/x.jpg');
+    r := r || '{"other_photo": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"other_photo": "denied"}';
+  end;
+  begin
+    perform public.set_person_photo(pa, pc || '/x.jpg');
+    r := r || '{"foreign_folder": "allowed"}';
+  exception when raise_exception then r := r || '{"foreign_folder": "denied"}';
+  end;
+${as("ub")}
+  perform public.set_person_photo(pc, pc || '/c.jpg');
+  select count(*) into n from public.people where id = pc and photo_path is not null;
+  r := r || jsonb_build_object('father_sets_member_photo', n);`);
+
+    expect(r).toEqual({ own_photo: 1, other_photo: "denied", foreign_folder: "denied", father_sets_member_photo: 1 });
+  });
 });

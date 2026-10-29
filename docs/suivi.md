@@ -412,6 +412,9 @@ d'essai, puis une seule liste de retours).
   « Évangélisation » (cochée pour l'équipe Évangélisation).
 - **Pasteur** : boutons Appeler et WhatsApp sur chaque ligne de la liste des fidèles.
 - Familles renommées : Ruben, Siméon, Lévi, Juda, Zabulon.
+- **Photo de profil** : chacun ajoute, change ou retire sa photo (Profil) ; ceux qui gèrent une fiche
+  aussi. Photo recadrée et allégée dans le téléphone (≈ 30 Ko), stockage privé, liens signés.
+  Visible sur le Profil, la fiche, la liste des fidèles et Ma famille.
 
 Prochaine action : essais de Jean-Pierre, corrections groupées.
 

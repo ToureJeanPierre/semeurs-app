@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { MessageCircle, Phone, Search } from "lucide-react";
+import { Avatar } from "@/components/people/Avatar";
 import { telHref, whatsappHref } from "@/lib/contact-links";
 
 export type PeopleRow = {
@@ -13,20 +14,13 @@ export type PeopleRow = {
   status: string;
   /** Numéro au format +225… : boutons Appeler et WhatsApp directement dans la liste. */
   phone?: string | null;
+  photo?: string | null;
 };
 
 function normalize(text: string) {
   return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 }
 
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase())
-    .join("");
-}
 
 /** Registre avec recherche instantanée et filtre « sans famille ». */
 export function PeopleList({ rows }: { rows: PeopleRow[] }) {
@@ -79,9 +73,7 @@ export function PeopleList({ rows }: { rows: PeopleRow[] }) {
           {visible.map((r) => (
             <li key={r.id} className="flex items-center gap-1 pr-2">
               <Link href={`/fideles/${r.id}`} className="flex min-h-16 min-w-0 flex-1 items-center gap-3 px-3 py-2">
-                <span className="grid size-11 shrink-0 place-items-center rounded-full bg-royal/10 font-display font-semibold text-night">
-                  {initials(r.name)}
-                </span>
+                <Avatar name={r.name} url={r.photo} size={44} />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-semibold">{r.name}</span>
                   <span className="block truncate text-sm text-muted">
