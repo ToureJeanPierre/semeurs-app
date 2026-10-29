@@ -8,6 +8,7 @@ import { loadHomeData } from "@/lib/home";
 import { loadModules, moduleHref } from "@/lib/navigation";
 import { formatTime, nextService } from "@/lib/services";
 import { pickDailyVerse } from "@/lib/verses";
+import { PushToggle } from "@/components/layout/PushToggle";
 
 // Abidjan = UTC toute l'année.
 const dayLabel = new Intl.DateTimeFormat("fr-CI", {
@@ -54,6 +55,8 @@ export default async function HomePage() {
         )}
 
         <ShortcutGrid items={shortcuts} />
+
+        <PushToggle banner />
 
         {!passkeyActive && (
           <Link

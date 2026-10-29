@@ -12,6 +12,7 @@ import { formatPhone } from "@/lib/phone";
 import { setPhoneVisibility } from "../mon-espace/actions";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { getAccess } from "@/lib/access";
+import { PushToggle } from "@/components/layout/PushToggle";
 
 export const metadata: Metadata = { title: "Profil" };
 
@@ -48,6 +49,13 @@ export default async function ProfilePage() {
               <p className="font-display text-lg font-semibold text-royal">Mon compte</p>
               <p className="text-muted">{user.phone ? formatPhone(user.phone) : "Numéro inconnu"}</p>
             </div>
+          </Card>
+        </Reveal>
+
+        <Reveal delay={0.02}>
+          <Card className="flex flex-col gap-2 shadow-card">
+            <h2 className="text-lg font-semibold">Notifications sur ce téléphone</h2>
+            <PushToggle />
           </Card>
         </Reveal>
 
