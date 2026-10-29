@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Search } from "lucide-react";
+import { MessageCircle, Phone, Search } from "lucide-react";
+import { telHref, whatsappHref } from "@/lib/contact-links";
 
 export type PeopleRow = {
   id: string;
@@ -10,6 +11,8 @@ export type PeopleRow = {
   detail: string;
   family: string | null;
   status: string;
+  /** Numéro au format +225… : boutons Appeler et WhatsApp directement dans la liste. */
+  phone?: string | null;
 };
 
 function normalize(text: string) {
@@ -74,8 +77,8 @@ export function PeopleList({ rows }: { rows: PeopleRow[] }) {
       ) : (
         <ul className="flex flex-col divide-y divide-line rounded-card bg-surface shadow-card">
           {visible.map((r) => (
-            <li key={r.id}>
-              <Link href={`/fideles/${r.id}`} className="flex min-h-16 items-center gap-3 px-3 py-2">
+            <li key={r.id} className="flex items-center gap-1 pr-2">
+              <Link href={`/fideles/${r.id}`} className="flex min-h-16 min-w-0 flex-1 items-center gap-3 px-3 py-2">
                 <span className="grid size-11 shrink-0 place-items-center rounded-full bg-royal/10 font-display font-semibold text-night">
                   {initials(r.name)}
                 </span>
@@ -86,8 +89,23 @@ export function PeopleList({ rows }: { rows: PeopleRow[] }) {
                     {r.detail ? ` · ${r.detail}` : ""}
                   </span>
                 </span>
-                <ChevronRight aria-hidden className="size-5 shrink-0 text-muted" />
               </Link>
+              {r.phone && (
+                <>
+                  <a href={telHref(r.phone)} aria-label={`Appeler ${r.name}`} className="grid size-11 shrink-0 place-items-center rounded-full bg-royal/10 text-royal">
+                    <Phone aria-hidden className="size-5" />
+                  </a>
+                  <a
+                    href={whatsappHref(r.phone)}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Écrire à ${r.name} sur WhatsApp`}
+                    className="grid size-11 shrink-0 place-items-center rounded-full bg-[#1f8f4e]/10 text-[#1f8f4e]"
+                  >
+                    <MessageCircle aria-hidden className="size-5" />
+                  </a>
+                </>
+              )}
             </li>
           ))}
         </ul>

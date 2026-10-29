@@ -21,7 +21,8 @@ type GroupRow = {
   }[];
 };
 
-export default async function GroupsPage() {
+export default async function GroupsPage({ searchParams }: PageProps<"/administration/groupes">) {
+  const removed = (await searchParams).supprime === "1";
   await requirePermission("settings.manage", "groups.manage");
   const supabase = await createClient();
   const [{ types }, { data }] = await Promise.all([
@@ -41,6 +42,11 @@ export default async function GroupsPage() {
         title="Groupes"
         intro="Familles, équipes, cellules, Jeunesse, classes : chaque groupe fonctionne dès sa création."
       />
+      {removed && (
+        <p role="status" className="mb-4 rounded-2xl bg-ok-bg px-4 py-3 font-medium text-ok-text">
+          Groupe supprimé. Ses anciens membres restent dans l&apos;église.
+        </p>
+      )}
       <div className="flex flex-col gap-7">
         {types.map((type) => {
           const list = groups.filter((g) => g.type_id === type.id);

@@ -399,3 +399,23 @@ export async function addCareNote(_prev: FormState, formData: FormData): Promise
   revalidatePath(`/fideles/${personId}`);
   return { success: "Note enregistrée (chiffrée)." };
 }
+
+/**
+ * Supprimer une fiche : elle est archivée (jamais effacée), retirée de ses groupes, et son accès
+ * à l'appli est fermé. Les opérations passées (caisse, cotisations, présences) restent dans l'historique.
+ */
+export async function archivePerson(_prev: FormState, formData: FormData): Promise<FormState> {
+  const id = uuid.safeParse(formData.get("person_id"));
+  if (!id.success) return { error: "Fiche inconnue." };
+  const reason = String(formData.get("reason") ?? "").trim();
+  if (reason.length < 3) return { fieldErrors: { reason: "Indiquez le motif (doublon, erreur de saisie, départ…)." } };
+  const admin = createAdminClient();
+  const { data: account } = await admin.from("users").select("user_id").eq("person_id", id.data).maybeSingle();
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("archive_person", { p_person: id.data, p_reason: reason });
+  if (error) return { error: explain(error) };
+  // Le compte ne peut plus se connecter (bloqué, non effacé : réversible par l'administrateur).
+  if (account?.user_id) await admin.auth.admin.updateUserById(account.user_id, { ban_duration: "876000h" });
+  revalidatePath("/fideles");
+  redirect("/fideles?supprime=1");
+}

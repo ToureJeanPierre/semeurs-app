@@ -22,7 +22,8 @@ type Row = {
   group_memberships: { end_date: string | null; groups: { name: string; group_types: { slug: string } | null } | null }[];
 };
 
-export default async function PeoplePage() {
+export default async function PeoplePage({ searchParams }: PageProps<"/fideles">) {
+  const removed = (await searchParams).supprime === "1";
   // Rôle d'église : tout le registre ; père de famille, délégué… : seulement ses fidèles (RLS).
   const access = await getAccess();
   if (!hasAny(access, ["people.view"], "any")) redirect("/");
@@ -31,6 +32,7 @@ export default async function PeoplePage() {
   const { data } = await supabase
     .from("people")
     .select("id, first_name, last_name, phone, commune, district, status, group_memberships(end_date, groups(name, group_types(slug)))")
+    .is("deleted_at", null)
     .order("last_name")
     .order("first_name");
 
@@ -42,6 +44,7 @@ export default async function PeoplePage() {
       name: personName(p),
       detail: [phone ? formatPhone(phone) : null, p.district ?? p.commune].filter(Boolean).join(" · "),
       family: family?.groups?.name ?? null,
+      phone: phone?.e164 ?? null,
       status: p.status,
     };
   });
@@ -63,6 +66,11 @@ export default async function PeoplePage() {
           </Link>
         )}
       </div>
+      {removed && (
+        <p role="status" className="rounded-2xl bg-ok-bg px-4 py-3 font-medium text-ok-text">
+          Fiche supprimée de la liste. Son historique est conservé.
+        </p>
+      )}
       <PeopleList rows={rows} />
     </div>
   );

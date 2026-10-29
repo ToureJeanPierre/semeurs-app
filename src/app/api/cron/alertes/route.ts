@@ -16,6 +16,7 @@ const JOBS = [
   "notify_pledge_reminders",
   "sync_youth",
   "notify_inventory_maintenance",
+  "notify_outreach_invites",
 ] as const;
 
 export async function GET(request: NextRequest) {

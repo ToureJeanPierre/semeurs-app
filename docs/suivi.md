@@ -396,6 +396,23 @@ d'essai, puis une seule liste de retours).
 - **Tests** : 88 tests unitaires, 25 tests RLS (dont `tests/rls/lot34.test.ts` : caisse à quatre
   yeux, cure d'âme, sondages, actes, inventaire), parcours vérifiés dans le navigateur.
 
+### Retours du 29/10 (soir)
+
+- Menu en cartes illustrées (images de Jean-Pierre, `modules.image_url`), trois par ligne.
+- **Supprimer** : une fiche (`archive_person`, motif obligatoire, accès fermé, historique gardé),
+  un groupe ou une famille (`archive_group`, confirmation « SUPPRIMER ») ; bouton « Retirer » visible
+  sur les membres d'un groupe ; « Sans famille » pour retirer quelqu'un de sa famille.
+- **Nouvelles âmes** : bloc « Contacter » (appel, SMS, WhatsApp), messages prêts (bienvenue,
+  invitation au prochain culte), « Lui rendre visite » (quartier, carte, demande de position).
+  Le domicile d'une nouvelle âme est visible de ceux qui l'accompagnent (gagneur, membre à qui elle
+  est confiée, responsable de l'évangélisation) : extension de la règle de confidentialité.
+- **Onglet Évangélisation** (`/evangelisation`) : saisie express sur le terrain, liste « à inviter
+  au prochain culte » avec message déjà écrit (modèle `outreach_invite`), « invité(e) » coché,
+  rappel aux évangélistes la veille d'un culte (`notify_outreach_invites`). Capacité de groupe
+  « Évangélisation » (cochée pour l'équipe Évangélisation).
+- **Pasteur** : boutons Appeler et WhatsApp sur chaque ligne de la liste des fidèles.
+- Familles renommées : Ruben, Siméon, Lévi, Juda, Zabulon.
+
 Prochaine action : essais de Jean-Pierre, corrections groupées.
 
 ## Accès de l'environnement cloud

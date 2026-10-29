@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { UserMinus } from "lucide-react";
+import { Trash2, UserMinus } from "lucide-react";
 import { GroupForm } from "@/components/admin/GroupForm";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PickPersonForm } from "@/components/admin/PickPersonForm";
 import { Card } from "@/components/ui/Card";
+import { ActionForm } from "@/components/people/ActionForm";
+import { TextField } from "@/components/ui/TextField";
 import { DoneLink } from "@/components/ui/DoneLink";
 import { requirePermission } from "@/lib/access";
 import { loadGroupConfig, loadPeopleOptions, personName } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
-import { addGroupMember, endGroupMembership, setGroupFunction, updateGroup } from "../../actions";
+import { addGroupMember, archiveGroup, endGroupMembership, setGroupFunction, updateGroup } from "../../actions";
 
 export const metadata: Metadata = { title: "Groupe" };
 
@@ -103,10 +105,10 @@ export default async function GroupPage({ params }: PageProps<"/administration/g
                     <input type="hidden" name="group_id" value={group.id} />
                     <button
                       type="submit"
-                      className="grid size-11 place-items-center rounded-full text-alert-text hover:bg-alert-bg"
+                      className="flex min-h-11 items-center gap-1 rounded-full bg-alert-bg px-3 text-sm font-semibold text-alert-text"
                       aria-label={`Retirer ${personName(m.people!)} du groupe`}
                     >
-                      <UserMinus aria-hidden className="size-5" />
+                      <UserMinus aria-hidden className="size-4" /> Retirer
                     </button>
                   </form>
                 </li>
@@ -128,6 +130,18 @@ export default async function GroupPage({ params }: PageProps<"/administration/g
           submitLabel="Enregistrer"
         />
       </section>
+      <details className="rounded-card bg-surface px-4 shadow-card">
+        <summary className="flex min-h-12 cursor-pointer items-center gap-2 font-semibold text-alert-text">
+          <Trash2 aria-hidden className="size-5" /> Supprimer ce groupe
+        </summary>
+        <ActionForm action={archiveGroup} hidden={{ group_id: group.id }} submitLabel="Supprimer le groupe" className="flex flex-col gap-3 pb-4">
+          <p className="text-sm text-muted">
+            « {group.name} » disparaîtra des listes et ses {members.length} membre{members.length > 1 ? "s" : ""} en sortiront (ils restent dans
+            l&apos;église, sans ce groupe). L&apos;historique est conservé.
+          </p>
+          <TextField label="Pour confirmer, écrivez SUPPRIMER" name="confirm" autoComplete="off" required />
+        </ActionForm>
+      </details>
       <DoneLink href="/administration/groupes" label="Terminer et revenir aux groupes" />
     </div>
   );

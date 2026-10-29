@@ -21,6 +21,7 @@ const FALLBACK_TITLES: Record<string, string> = {
   "/inventaire": "Inventaire",
   "/evenements": "Événements",
   "/predications": "Prédications",
+  "/evangelisation": "Évangélisation",
 };
 
 const iconButton =

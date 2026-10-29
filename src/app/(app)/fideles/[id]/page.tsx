@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CircleCheck, KeyRound } from "lucide-react";
+import { CircleCheck, KeyRound, Trash2 } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { ContactButtons } from "@/components/alerts/ContactButtons";
 import { PersonFollowUp } from "@/components/alerts/PersonFollowUp";
@@ -11,6 +11,7 @@ import { EditToggle } from "@/components/people/EditToggle";
 import { PersonFields } from "@/components/people/PersonFields";
 import { PersonRelations } from "@/components/people/PersonRelations";
 import { Card } from "@/components/ui/Card";
+import { TextField } from "@/components/ui/TextField";
 import { DoneLink } from "@/components/ui/DoneLink";
 import { ModuleIcon } from "@/components/ui/icons";
 import { getAccess, hasAny } from "@/lib/access";
@@ -22,7 +23,7 @@ import { loadFamilies, loadValueList, PERSON_COLUMNS } from "@/lib/people";
 import { formatPhone, parseIvorianPhone } from "@/lib/phone";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { createAccount, resetPassword, transferFamily, updatePerson } from "../actions";
+import { archivePerson, createAccount, resetPassword, transferFamily, updatePerson } from "../actions";
 
 export const metadata: Metadata = { title: "Fiche" };
 
@@ -40,7 +41,7 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
   const justCreated = (await searchParams).cree === "1";
   const supabase = await createClient();
   // RLS : la fiche n'est renvoyée que si elle est dans le périmètre de la personne connectée.
-  const { data: person } = await supabase.from("people").select(PERSON_COLUMNS).eq("id", id).maybeSingle();
+  const { data: person } = await supabase.from("people").select(PERSON_COLUMNS).eq("id", id).is("deleted_at", null).maybeSingle();
   if (!person) notFound();
 
   const [access, { data: canManage }, { data: memberships }, statuses, { data: alert }] = await Promise.all([
@@ -195,7 +196,7 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
               <Card className="shadow-card">
                 <ActionForm action={transferFamily} hidden={{ person_id: id }} submitLabel="Enregistrer">
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-sm font-semibold">Rattacher à une famille</span>
+                    <span className="text-sm font-semibold">Famille (choisir « Sans famille » pour l&apos;en retirer)</span>
                     <select
                       name="family_id"
                       defaultValue={family?.group_id ?? ""}
@@ -215,6 +216,21 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
                 </ActionForm>
               </Card>
             </section>
+          )}
+
+          {hasAny(access, ["people.manage"]) && access.personId !== id && (
+            <details className="rounded-card bg-surface px-4 shadow-card">
+              <summary className="flex min-h-12 cursor-pointer items-center gap-2 font-semibold text-alert-text">
+                <Trash2 aria-hidden className="size-5" /> Supprimer cette fiche
+              </summary>
+              <ActionForm action={archivePerson} hidden={{ person_id: id }} submitLabel="Supprimer définitivement de la liste" className="flex flex-col gap-3 pb-4">
+                <p className="text-sm text-muted">
+                  {person.first_name} disparaîtra de la liste et de ses groupes, et ne pourra plus se connecter. Son historique (cotisations,
+                  dons, présences) est conservé : la fiche peut être restaurée sur demande.
+                </p>
+                <TextField label="Motif" name="reason" placeholder="Doublon, erreur de saisie, départ de l'église…" required />
+              </ActionForm>
+            </details>
           )}
         </>
       )}

@@ -430,3 +430,17 @@ export async function updateDashboardWidgets(_prev: FormState, formData: FormDat
   revalidatePath("/tableau-de-bord");
   return { success: "Indicateurs enregistrés." };
 }
+
+/** Supprimer un groupe (famille, équipe, cellule…) : archivé, ses membres en sortent ; l'historique reste. */
+export async function archiveGroup(_prev: FormState, formData: FormData): Promise<FormState> {
+  const id = uuid.safeParse(formData.get("group_id"));
+  if (!id.success) return { error: "Groupe inconnu." };
+  if (String(formData.get("confirm") ?? "").trim().toUpperCase() !== "SUPPRIMER") {
+    return { fieldErrors: { confirm: "Écrivez SUPPRIMER pour confirmer." } };
+  }
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("archive_group", { p_group: id.data });
+  if (error) return { error: explain(error) };
+  revalidatePath("/administration/groupes");
+  redirect("/administration/groupes?supprime=1");
+}

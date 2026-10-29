@@ -127,4 +127,58 @@ ${as("ua")}
       outsider_sees_act: 0,
     });
   });
+
+  it("évangélisation, visite des âmes, suppression : chacun dans son rôle", async () => {
+    const r = await runScenario(`
+  insert into public.groups (id, type_id, name) values ('00000000-0000-4000-8000-0000000000e1', (select id from public.group_types where slug = 'team'), 'Évangélisation test');
+${as("ua")}
+  begin
+    perform public.quick_outreach_contact('Awa', 'Test', null, 'Niangon', 'interested', null, 'Marché');
+    r := r || '{"outsider_records": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"outsider_records": "denied"}';
+  end;
+  reset role;
+  insert into public.group_capabilities (group_id, capability_code) values ('00000000-0000-4000-8000-0000000000e1', 'evangelism');
+  insert into public.group_memberships (group_id, person_id) values ('00000000-0000-4000-8000-0000000000e1', pa);
+  update public.people set status = 'visitor', brought_by = pa where id = pd;
+  insert into public.people_locations (person_id, lat, lng) values (pd, 5.33, -4.07);
+${as("ua")}
+  perform public.quick_outreach_contact('Awa', 'Test', null, 'Niangon', 'interested', null, 'Marché');
+  select count(*) into n from public.outreach_contacts where first_name = 'Awa' and last_name = 'Test';
+  r := r || jsonb_build_object('evangelist_sees_contact', n);
+  select count(*) into n from public.people_locations where person_id = pd;
+  r := r || jsonb_build_object('soul_winner_sees_home', n);
+  begin
+    perform public.archive_person(pc, 'essai');
+    r := r || '{"member_deletes": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"member_deletes": "denied"}';
+  end;
+  begin
+    perform public.archive_group(fam_x);
+    r := r || '{"member_deletes_group": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"member_deletes_group": "denied"}';
+  end;
+${as("ub")}
+  select count(*) into n from public.people_locations where person_id = pd;
+  r := r || jsonb_build_object('other_father_sees_home', n);
+${as("ue")}
+  perform public.archive_person(pc, 'doublon');
+  perform public.archive_group(fam_y);
+  reset role;
+  select count(*) into n from public.people where id = pc and deleted_at is not null;
+  r := r || jsonb_build_object('person_archived', n);
+  select count(*) into n from public.group_memberships where group_id = fam_y and end_date is null;
+  r := r || jsonb_build_object('members_left_group', n);`);
+
+    expect(r).toEqual({
+      outsider_records: "denied",
+      evangelist_sees_contact: 1,
+      soul_winner_sees_home: 1,
+      member_deletes: "denied",
+      member_deletes_group: "denied",
+      other_father_sees_home: 0,
+      person_archived: 1,
+      members_left_group: 0,
+    });
+  });
 });

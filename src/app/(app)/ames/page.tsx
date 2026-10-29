@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronRight, Footprints, UserPlus } from "lucide-react";
+import { ChevronRight, Footprints, MessageCircle, Phone, UserPlus } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { Card } from "@/components/ui/Card";
 import { getAccess, hasAny } from "@/lib/access";
+import { telHref, whatsappHref } from "@/lib/contact-links";
 import { addDays, formatShortDay, todayIso } from "@/lib/format";
 import { loadValueList } from "@/lib/people";
 import { isStepDone, nextStep, type Soul, type Step } from "@/lib/souls";
@@ -38,8 +39,8 @@ export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
         <Link href="/ames/nouvelle" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-royal px-3 text-center font-semibold text-white shadow-card">
           <UserPlus aria-hidden className="size-5 shrink-0" /> Nouvelle âme
         </Link>
-        <Link href="/ames/sorties" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-surface px-3 text-center font-semibold text-royal shadow-card">
-          <Footprints aria-hidden className="size-5 shrink-0" /> Sorties
+        <Link href="/evangelisation" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-surface px-3 text-center font-semibold text-royal shadow-card">
+          <Footprints aria-hidden className="size-5 shrink-0" /> Évangélisation
         </Link>
       </div>
 
@@ -82,8 +83,8 @@ export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
         const next = nextStep(s, stepList, today);
         const done = stepList.filter((st) => isStepDone(s, st.code)).length;
         return (
-          <Link key={s.id} href={`/ames/${s.id}`} className="active:scale-[0.99]">
-            <Card className="flex flex-col gap-2 shadow-card">
+          <Card key={s.id} className="flex flex-col gap-2 shadow-card">
+            <Link href={`/ames/${s.id}`} className="flex flex-col gap-2 active:scale-[0.99]">
               <span className="flex items-start gap-2">
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold">
@@ -110,8 +111,23 @@ export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
                   <span className="font-semibold text-ok-text">Parcours terminé, gloire à Dieu !</span>
                 )}
               </span>
-            </Card>
-          </Link>
+            </Link>
+            {s.phone && (
+              <div className="grid grid-cols-2 gap-2">
+                <a href={telHref(s.phone)} className="flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-royal text-sm font-semibold text-white">
+                  <Phone aria-hidden className="size-4" /> Appeler
+                </a>
+                <a
+                  href={whatsappHref(s.phone)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-[#1f8f4e] text-sm font-semibold text-white"
+                >
+                  <MessageCircle aria-hidden className="size-4" /> WhatsApp
+                </a>
+              </div>
+            )}
+          </Card>
         );
       })}
 

@@ -55,6 +55,8 @@ avec la même version que le nom du fichier.
 | `20261101000400_module_images_3.sql` | Illustrations : prières, cultes, événements |
 | `20261101000500_module_images_4.sql` | Illustrations : caisse, mes groupes, inventaire, formations |
 | `20261101000600_module_images_5.sql` | Illustrations : pointage, nouvelle image des événements de vie |
+| `20261102000000_evangelism_tab_and_removals.sql` | Onglet Évangélisation (saisie terrain, invitations, rappel la veille), visite des nouvelles âmes, suppression (archivage) d'une fiche ou d'un groupe |
+| `20261102000100_quick_contact_fix.sql` | Correctif de la saisie terrain |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

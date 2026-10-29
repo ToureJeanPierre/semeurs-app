@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle2, Circle, CircleCheck, IdCard, X } from "lucide-react";
+import { CheckCircle2, Circle, CircleCheck, IdCard, MapPin, X } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PersonPicker } from "@/components/admin/PersonPicker";
 import { ContactButtons } from "@/components/alerts/ContactButtons";
 import { PersonFollowUp } from "@/components/alerts/PersonFollowUp";
+import { PersonHome } from "@/components/location/PersonHome";
 import { ActionForm } from "@/components/people/ActionForm";
 import { Card } from "@/components/ui/Card";
 import { SubmitButton } from "@/components/ui/SubmitButton";
@@ -13,7 +14,9 @@ import { getAccess, hasAny } from "@/lib/access";
 import { loadPeopleOptions } from "@/lib/admin";
 import { fillTemplate } from "@/lib/contact-links";
 import { formatFullDate, formatShortDay, todayIso } from "@/lib/format";
+import { loadHomeData } from "@/lib/home";
 import { loadMessageTemplate } from "@/lib/message-templates";
+import { INVITE_FALLBACK, inviteMessage, nextServicePhrase } from "@/lib/outreach";
 import { loadValueList } from "@/lib/people";
 import { isStepDone, nextStep, type Soul, type Step } from "@/lib/souls";
 import { createClient } from "@/lib/supabase/server";
@@ -28,7 +31,7 @@ export default async function SoulPage({ params, searchParams }: PageProps<"/ame
   const supabase = await createClient();
   const access = await getAccess();
   const manager = hasAny(access, ["souls.manage"]);
-  const [{ data: souls }, { data: steps }, { data: done }, { data: canManage }, statuses, welcome, { data: assignments }, people] = await Promise.all([
+  const [{ data: souls }, { data: steps }, { data: done }, { data: canManage }, statuses, welcome, { data: assignments }, people, invite, home, { data: place }] = await Promise.all([
     supabase.rpc("souls_overview"),
     supabase.from("integration_steps").select("id, code, label, position, due_days").eq("active", true).order("position"),
     supabase.from("person_steps").select("step_id, done_on").eq("person_id", id),
@@ -37,6 +40,9 @@ export default async function SoulPage({ params, searchParams }: PageProps<"/ame
     loadMessageTemplate("welcome", "Bonjour {prénom}, merci d'être venu(e) aux Semeurs de la Parole. Jésus-Christ t'aime."),
     supabase.from("soul_assignments").select("id, assignee_id").eq("person_id", id).is("end_date", null),
     manager ? loadPeopleOptions() : Promise.resolve([]),
+    loadMessageTemplate("outreach_invite", INVITE_FALLBACK),
+    loadHomeData(),
+    supabase.from("people").select("district, commune, landmark").eq("id", id).maybeSingle(),
   ]);
   const soul = ((souls ?? []) as Soul[]).find((s) => s.id === id);
   if (!soul) notFound();
@@ -44,6 +50,11 @@ export default async function SoulPage({ params, searchParams }: PageProps<"/ame
   const doneOn = new Map(((done ?? []) as { step_id: string; done_on: string }[]).map((d) => [d.step_id, d.done_on]));
   const next = nextStep(soul, stepList, todayIso());
   const name = `${soul.last_name.toUpperCase()} ${soul.first_name}`;
+  // Ceux qui accompagnent cette âme (gagneur, membre à qui elle est confiée, responsable) peuvent la visiter.
+  const follows =
+    manager || soul.brought_by === access.personId || ((assignments ?? []) as { assignee_id: string }[]).some((a) => a.assignee_id === access.personId);
+  const culte = nextServicePhrase(home.services, new Date());
+  const where = [place?.district, place?.commune].filter(Boolean).join(", ");
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
@@ -58,12 +69,55 @@ export default async function SoulPage({ params, searchParams }: PageProps<"/ame
         intro={`${statuses.find((s) => s.value === soul.status)?.label ?? soul.status}${soul.arrived_at ? ` · arrivé(e) le ${formatFullDate(soul.arrived_at)}` : ""}${soul.brought_by_name ? ` · amené(e) par ${soul.brought_by_name}` : ""}`}
       />
 
-      {soul.phone && (
-        <Card className="flex flex-col gap-2 shadow-card">
-          <h2 className="font-semibold">Message de bienvenue</h2>
-          <p className="rounded-2xl bg-[#e7f6ec] p-3 text-sm">{fillTemplate(welcome, soul.first_name)}</p>
-          <ContactButtons name={name} phone={soul.phone} message={fillTemplate(welcome, soul.first_name)} />
+      {soul.phone ? (
+        <Card className="flex flex-col gap-3 shadow-card">
+          <h2 className="font-semibold">Contacter {soul.first_name}</h2>
+          <ContactButtons large name={name} phone={soul.phone} />
+          <details className="rounded-xl bg-cloud px-3">
+            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-royal">Message de bienvenue (déjà écrit)</summary>
+            <div className="flex flex-col gap-2 pb-3">
+              <p className="rounded-2xl bg-[#e7f6ec] p-3 text-sm">{fillTemplate(welcome, soul.first_name)}</p>
+              <ContactButtons name={name} phone={soul.phone} message={fillTemplate(welcome, soul.first_name)} />
+            </div>
+          </details>
+          {culte && (
+            <details className="rounded-xl bg-cloud px-3">
+              <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-royal">Inviter au prochain culte (déjà écrit)</summary>
+              <div className="flex flex-col gap-2 pb-3">
+                <p className="rounded-2xl bg-[#e7f6ec] p-3 text-sm">{inviteMessage(invite, soul.first_name, culte.phrase)}</p>
+                <ContactButtons name={name} phone={soul.phone} message={inviteMessage(invite, soul.first_name, culte.phrase)} />
+              </div>
+            </details>
+          )}
         </Card>
+      ) : (
+        <p className="rounded-2xl bg-warn-bg px-4 py-3 text-sm text-warn-text">Pas de numéro de téléphone : ajoutez-le sur la fiche complète pour pouvoir l&apos;appeler.</p>
+      )}
+
+      {follows && (
+        <section className="flex flex-col gap-2">
+          <Card className="flex flex-col gap-2 shadow-card">
+            <h2 className="font-semibold">Lui rendre visite</h2>
+            <p className="flex items-start gap-2 text-sm">
+              <MapPin aria-hidden className="mt-0.5 size-4 shrink-0 text-alert-ring" />
+              <span>
+                {where || "Quartier non renseigné"}
+                {place?.landmark ? ` · repère : ${place.landmark}` : ""}
+              </span>
+            </p>
+            {where && (
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${where}, Abidjan`)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex min-h-11 items-center justify-center rounded-full bg-royal/10 text-sm font-semibold text-royal"
+              >
+                Voir le quartier sur la carte
+              </a>
+            )}
+          </Card>
+          <PersonHome personId={id} firstName={soul.first_name} phone={soul.phone} canManage />
+        </section>
       )}
 
       <Card className="flex flex-col gap-1 shadow-card">
