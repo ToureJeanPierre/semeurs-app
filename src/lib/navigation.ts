@@ -8,6 +8,7 @@ export type AppModule = {
   label: string;
   description: string | null;
   icon: string;
+  image_url: string | null;
   href: string | null;
   enabled: boolean;
   home_position: number | null;
@@ -36,7 +37,7 @@ export const loadModules = cache(async (): Promise<AppModule[]> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("modules")
-    .select("code, label, description, icon, href, enabled, home_position, nav_position, required_permissions, required_scope")
+    .select("code, label, description, icon, image_url, href, enabled, home_position, nav_position, required_permissions, required_scope")
     .order("home_position", { nullsFirst: false })
     .order("label");
   return (data ?? []) as AppModule[];
@@ -59,16 +60,17 @@ export function bottomNavLinks(modules: AppModule[]): NavLink[] {
  * Menu complet (trois traits) : Accueil, les modules, Profil. Un module pas encore livré
  * n'y figure que s'il est aussi dans la barre du bas (pour éviter les fausses pistes).
  */
-export function menuLinks(modules: AppModule[]): (NavLink & { soon: boolean; description: string | null })[] {
+export function menuLinks(modules: AppModule[]): (NavLink & { soon: boolean; description: string | null; image: string | null })[] {
   return [
-    { href: "/", label: "Accueil", icon: "house", soon: false, description: null },
+    { href: "/", label: "Accueil", icon: "house", soon: false, description: null, image: null },
     ...modules.filter((m) => m.enabled || m.nav_position !== null).map((m) => ({
       href: moduleHref(m),
       label: m.label,
       icon: m.icon,
       soon: !m.enabled,
       description: m.description,
+      image: m.image_url,
     })),
-    { href: "/profil", label: "Profil", icon: "user-round", soon: false, description: "Mon compte, verrouillage" },
+    { href: "/profil", label: "Profil", icon: "user-round", soon: false, description: "Mon compte, verrouillage", image: "/images/modules/profile.webp" },
   ];
 }

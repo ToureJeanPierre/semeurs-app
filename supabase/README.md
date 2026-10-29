@@ -50,6 +50,7 @@ avec la même version que le nom du fichier.
 | `20261031200000_web_push.sql` | Notifications push sur le téléphone |
 | `20261101000000_lot4_modules.sql` | Prédications, événements, formations, actes, liens, inventaire, sondages |
 | `20261101000100_children_capability.sql` | Capacité « Enfants confiés » (école du dimanche) |
+| `20261101000200_module_images.sql` | Illustration de chaque module (cartes du menu) |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

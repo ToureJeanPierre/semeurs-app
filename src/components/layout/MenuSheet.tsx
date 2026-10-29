@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -51,7 +52,7 @@ export function MenuSheet({
           />
           <motion.nav
             aria-label="Menu complet"
-            className={`absolute inset-y-0 ${side === "left" ? "left-0" : "right-0"} flex w-[min(20rem,86vw)] flex-col bg-cloud shadow-float`}
+            className={`absolute inset-y-0 ${side === "left" ? "left-0" : "right-0"} flex w-[min(22rem,88vw)] flex-col bg-cloud shadow-float`}
             initial={{ x: side === "left" ? "-100%" : "100%" }}
             animate={{ x: 0 }}
             exit={{ x: side === "left" ? "-100%" : "100%" }}
@@ -73,7 +74,7 @@ export function MenuSheet({
             </div>
 
             <motion.ul
-              className="flex-1 overflow-y-auto p-3"
+              className="grid flex-1 auto-rows-min grid-cols-2 gap-3 overflow-y-auto p-3"
               initial="hidden"
               animate="show"
               variants={{ show: { transition: { staggerChildren: 0.035, delayChildren: 0.08 } } }}
@@ -84,8 +85,8 @@ export function MenuSheet({
                   <motion.li
                     key={item.href}
                     variants={{
-                      hidden: { opacity: 0, x: side === "left" ? -24 : 24 },
-                      show: { opacity: 1, x: 0 },
+                      hidden: { opacity: 0, y: 16 },
+                      show: { opacity: 1, y: 0 },
                     }}
                   >
                     <Link
@@ -95,26 +96,28 @@ export function MenuSheet({
                         onClose();
                       }}
                       aria-current={active ? "page" : undefined}
-                      className={`flex min-h-14 items-center gap-3 rounded-2xl px-3 py-2 ${
-                        active ? "bg-royal/10" : "hover:bg-surface"
+                      className={`flex h-full flex-col overflow-hidden rounded-card bg-surface p-1.5 shadow-card transition-transform active:scale-95 ${
+                        active ? "ring-2 ring-royal" : ""
                       }`}
                     >
-                      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-royal text-white">
-                        <ModuleIcon name={item.icon} className="size-5" strokeWidth={1.9} />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block font-semibold text-ink">{item.label}</span>
-                        {item.description && (
-                          <span className="block truncate text-xs text-muted">{item.description}</span>
+                      <span className="relative block aspect-[4/3] overflow-hidden rounded-2xl bg-gradient-to-b from-[#dceefe] to-[#c4defc]">
+                        {item.image ? (
+                          <Image src={item.image} alt="" fill sizes="160px" unoptimized className="object-cover" />
+                        ) : (
+                          <span className="grid size-full place-items-center text-royal">
+                            <ModuleIcon name={item.icon} className="size-12 drop-shadow-md" strokeWidth={1.6} />
+                          </span>
+                        )}
+                        {item.soon && (
+                          <span className="absolute right-1.5 top-1.5 rounded-full bg-gold px-2 py-0.5 text-xs font-semibold text-night">
+                            Bientôt
+                          </span>
                         )}
                       </span>
-                      {item.soon ? (
-                        <span className="shrink-0 rounded-full bg-gold/20 px-2 py-0.5 text-xs font-semibold text-night">
-                          Bientôt
-                        </span>
-                      ) : (
-                        <ChevronRight aria-hidden className="size-5 shrink-0 text-muted" />
-                      )}
+                      <span className="flex min-h-12 flex-1 items-center gap-1 px-1.5 pt-1">
+                        <span className="min-w-0 flex-1 font-display text-[15px] font-bold leading-tight text-night">{item.label}</span>
+                        <ChevronRight aria-hidden className="size-4 shrink-0 text-night" />
+                      </span>
                     </Link>
                   </motion.li>
                 );
