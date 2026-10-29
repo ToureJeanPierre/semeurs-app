@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { CalendarDays, MapPin, Trash2 } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { ActionForm } from "@/components/people/ActionForm";
 import { Card } from "@/components/ui/Card";
+import { FilterChips } from "@/components/ui/FilterChips";
+import { ListItem, type Meta, type Tone } from "@/components/ui/ListItem";
+import { loadModules } from "@/lib/navigation";
 import { SelectField, TextAreaField } from "@/components/ui/SelectField";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { TextField } from "@/components/ui/TextField";
@@ -25,15 +27,17 @@ type Item = {
   kind: "culte" | "evenement" | "groupe" | "reunion";
   title: string;
   detail?: string | null;
+  people?: string | null;
   href?: string;
   event?: { id: string; registration: boolean; capacity: number | null; count: number; mine: boolean; names: string[]; description: string | null };
 };
 
-const KIND_LABEL: Record<Item["kind"], { label: string; cls: string }> = {
-  culte: { label: "Culte", cls: "bg-royal text-white" },
-  evenement: { label: "Événement", cls: "bg-gold text-night" },
-  groupe: { label: "Mon groupe", cls: "bg-ok-bg text-ok-text" },
-  reunion: { label: "Réunion", cls: "bg-cloud text-ink" },
+/** Chaque nature a sa couleur et l'illustration de son module (table « modules »). */
+const KIND: Record<Item["kind"], { label: string; tone: Tone; module: string; icon: string }> = {
+  culte: { label: "Culte", tone: "gold", module: "services", icon: "circle-play" },
+  evenement: { label: "Événement", tone: "teal", module: "events", icon: "calendar-days" },
+  groupe: { label: "Mon groupe", tone: "green", module: "my_groups", icon: "network" },
+  reunion: { label: "Réunion", tone: "violet", module: "meetings", icon: "video" },
 };
 
 /** Agenda de l'église : cultes, événements, activités de mes groupes, mes réunions (30 jours). */
@@ -44,7 +48,7 @@ export default async function EventsPage({ searchParams }: PageProps<"/evenement
   const supabase = await createClient();
   const today = todayIso();
   const until = addDays(today, 30);
-  const [{ data: events }, services, { data: myGroups }, { data: meetings }, kinds] = await Promise.all([
+  const [{ data: events }, services, { data: myGroups }, { data: meetings }, kinds, modules] = await Promise.all([
     supabase
       .from("church_events")
       .select("id, title, kind, description, starts_at, ends_at, place, registration, capacity, event_registrations(person_id, people(first_name, last_name))")
@@ -55,7 +59,9 @@ export default async function EventsPage({ searchParams }: PageProps<"/evenement
     supabase.rpc("my_groups"),
     supabase.from("meetings").select("id, title, starts_at, place, mode").eq("status", "planned").gte("starts_at", today).lte("starts_at", `${until}T23:59:59Z`),
     loadValueList("event_kind"),
+    loadModules(),
   ]);
+  const art = (code: string) => modules.find((m) => m.code === code)?.image_url ?? null;
   const groupIds = ((myGroups ?? []) as { id: string; name: string }[]).map((g) => g.id);
   const { data: groupEvents } = groupIds.length
     ? await supabase.from("group_events").select("*, groups(name)").in("group_id", groupIds)
@@ -90,7 +96,8 @@ export default async function EventsPage({ searchParams }: PageProps<"/evenement
         startsAt: s.starts_at,
         kind: "culte" as const,
         title: s.title,
-        detail: s.positions.filter((p) => p.personName && ["Prédicateur", "Modérateur"].includes(p.position)).map((p) => `${p.position} : ${p.personName}`).join(" · ") || s.place,
+        people: s.positions.filter((p) => p.personName && ["Prédicateur", "Modérateur"].includes(p.position)).map((p) => `${p.position} : ${p.personName}`).join(" · ") || null,
+        detail: s.place,
         href: "/cultes",
       })),
     ...expandEvents(((groupEvents ?? []) as (GroupEvent & { group_id: string; groups: { name: string } | null })[]), today, until).map((o) => ({
@@ -121,42 +128,32 @@ export default async function EventsPage({ searchParams }: PageProps<"/evenement
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
       <PageTitle title="Événements" intro="Tout ce qui se passe dans les 30 prochains jours." />
-      <nav aria-label="Filtre" className="-mx-4 flex gap-2 overflow-x-auto px-4">
-        {[
-          ["tout", "Tout"],
-          ["cultes", "Cultes"],
-          ["evenements", "Événements"],
-          ["groupes", "Mes groupes"],
-        ].map(([v, label]) => (
-          <Link key={v} href={`/evenements?vue=${v}`} className={`flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold ${vue === v ? "bg-royal text-white" : "bg-surface text-royal shadow-card"}`}>
-            {label}
-          </Link>
-        ))}
-      </nav>
+      <FilterChips
+        items={[
+          { v: "tout", label: "Tout", icon: "calendar-days" },
+          { v: "cultes", label: "Cultes", icon: "circle-play" },
+          { v: "evenements", label: "Événements", icon: "sparkles" },
+          { v: "groupes", label: "Mes groupes", icon: "users-round" },
+        ].map((c) => ({ href: `/evenements?vue=${c.v}`, label: c.label, icon: c.icon, active: vue === c.v }))}
+      />
       {days.size === 0 && <p className="rounded-card bg-surface p-4 text-muted">Rien de prévu pour l&apos;instant.</p>}
       {[...days.entries()].map(([date, list]) => (
         <section key={date} className="flex flex-col gap-2">
-          <h2 className="flex items-center gap-2 font-display font-semibold first-letter:uppercase">
-            <CalendarDays aria-hidden className="size-5 text-royal" /> {formatLongDay(date)}
+          <h2 className="mt-1 flex items-center gap-2 font-display text-lg font-bold text-night first-letter:uppercase">
+            <span className="grid size-8 place-items-center rounded-lg bg-royal/10">
+              <CalendarDays aria-hidden className="size-4 text-royal" />
+            </span>
+            {formatLongDay(date)}
           </h2>
           {list.map((i) => {
-            const body = (
-              <>
-                <span className="flex items-start justify-between gap-2">
-                  <span className="min-w-0">
-                    <span className="block font-semibold">{i.title}</span>
-                    <span className="block text-sm text-muted">
-                      {formatHour(i.startsAt)}
-                      {i.detail ? ` · ${i.detail}` : ""}
-                    </span>
-                  </span>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${KIND_LABEL[i.kind].cls}`}>{KIND_LABEL[i.kind].label}</span>
-                </span>
-              </>
-            );
+            const k = KIND[i.kind];
+            const meta: Meta[] = [
+              { icon: "clock", text: [formatHour(i.startsAt), i.kind === "culte" ? null : i.detail].filter(Boolean).join(" · ") },
+              ...(i.people ? [{ icon: "person" as const, text: i.people }] : []),
+              ...(i.kind === "culte" && i.detail ? [{ icon: "place" as const, text: i.detail }] : []),
+            ];
             return i.event ? (
-              <Card key={i.key} className="flex flex-col gap-2 shadow-card">
-                {body}
+              <ListItem key={i.key} title={i.title} meta={meta} badge={k.label} tone={k.tone} image={art(k.module)} icon={k.icon}>
                 {i.event.description && <p className="whitespace-pre-wrap text-sm">{i.event.description}</p>}
                 {i.event.registration && (
                   <form action={toggleRegistration} className="flex items-center gap-3">
@@ -188,11 +185,9 @@ export default async function EventsPage({ searchParams }: PageProps<"/evenement
                     </SubmitButton>
                   </form>
                 )}
-              </Card>
+              </ListItem>
             ) : (
-              <Link key={i.key} href={i.href ?? "#"} className="flex flex-col gap-1 rounded-card bg-surface p-4 shadow-card active:scale-[0.99]">
-                {body}
-              </Link>
+              <ListItem key={i.key} href={i.href} title={i.title} meta={meta} badge={k.label} tone={k.tone} image={art(k.module)} icon={k.icon} />
             );
           })}
         </section>

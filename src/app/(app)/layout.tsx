@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { requireUser } from "@/lib/auth/session";
 import { getAccess } from "@/lib/access";
-import { bottomNavLinks, loadModules, menuLinks, visibleModules } from "@/lib/navigation";
+import { bottomNavLinks, loadModules, menuLinks, pageArts, visibleModules } from "@/lib/navigation";
+import { PageArtProvider } from "@/components/layout/PageArt";
 import { createClient } from "@/lib/supabase/server";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { NavTrailTracker } from "@/components/layout/NavTrail";
@@ -24,11 +25,11 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const modules = visibleModules(allModules, access);
 
   return (
-    <>
+    <PageArtProvider arts={pageArts(allModules)}>
       <AppHeader menu={menuLinks(modules)} unread={unread ?? 0} />
       <main className="flex flex-1 flex-col pb-24">{children}</main>
       <BottomNav items={bottomNavLinks(modules)} />
       <NavTrailTracker />
-    </>
+    </PageArtProvider>
   );
 }

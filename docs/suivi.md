@@ -415,6 +415,11 @@ d'essai, puis une seule liste de retours).
 - **Photo de profil** : chacun ajoute, change ou retire sa photo (Profil) ; ceux qui gèrent une fiche
   aussi. Photo recadrée et allégée dans le téléphone (≈ 30 Ko), stockage privé, liens signés.
   Visible sur le Profil, la fiche, la liste des fidèles et Ma famille.
+- **Nouveau style des onglets** (maquette de Jean-Pierre) : barre du haut claire ; bandeau illustré en
+  tête de chaque onglet (illustration du module, accroche, verset — colonnes `hero_title`,
+  `verse_text`, `verse_ref` de `modules`) ; filtres en pastilles avec icônes ; listes en cartes à
+  bordure de couleur avec vignette, informations à icônes et pastille (`ListItem`) : Événements,
+  Prédications, Réunions, Formations, Sondages, Âmes, Cultes ; volets dépliables avec chevron.
 
 Prochaine action : essais de Jean-Pierre, corrections groupées.
 

@@ -25,7 +25,7 @@ const FALLBACK_TITLES: Record<string, string> = {
 };
 
 const iconButton =
-  "grid size-11 place-items-center rounded-full text-white transition-colors hover:bg-white/10 active:bg-white/20";
+  "grid size-11 place-items-center rounded-full transition-colors hover:bg-current/10 active:bg-current/20";
 
 /**
  * Barre du haut, bleu roi (maquette du 26/10/2026).
@@ -72,14 +72,19 @@ export function AppHeader({ menu, unread }: { menu: ReturnType<typeof menuLinks>
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-royal pt-[env(safe-area-inset-top)] text-white">
+      {/* Accueil : barre bleu roi avec le logo. Onglets : barre claire et translucide (maquette du 29/10). */}
+      <header
+        className={`sticky top-0 z-30 pt-[env(safe-area-inset-top)] ${
+          title ? "border-b border-line/60 bg-white/85 text-royal backdrop-blur-md" : "bg-royal text-white"
+        }`}
+      >
         <div className="mx-auto flex h-16 max-w-lg items-center gap-2 px-2">
           {title ? (
             <>
               <button type="button" onClick={back} className={iconButton} aria-label="Retour">
                 <ArrowLeft aria-hidden className="size-6" />
               </button>
-              <h1 className="min-w-0 flex-1 truncate font-display text-xl font-semibold">{title}</h1>
+              <p className="min-w-0 flex-1 truncate font-display text-xl font-bold text-night">{title}</p>
             </>
           ) : (
             <>
@@ -106,7 +111,7 @@ export function AppHeader({ menu, unread }: { menu: ReturnType<typeof menuLinks>
             {unread > 0 && (
               <span
                 aria-hidden
-                className="absolute right-1.5 top-1.5 grid min-w-5 place-items-center rounded-full bg-alert-ring px-1 text-[0.6875rem] font-bold leading-5 text-white ring-2 ring-royal"
+                className={`absolute right-1.5 top-1.5 grid min-w-5 place-items-center rounded-full bg-alert-ring px-1 text-[0.6875rem] font-bold leading-5 text-white ring-2 ${title ? "ring-white" : "ring-royal"}`}
               >
                 {unread > 9 ? "9+" : unread}
               </span>

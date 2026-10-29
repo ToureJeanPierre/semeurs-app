@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Award, GraduationCap } from "lucide-react";
+import { Award } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
+import { ListItem } from "@/components/ui/ListItem";
+import { moduleImage } from "@/lib/navigation";
 import { LessonBar } from "@/components/trainings/LessonBar";
 import { ActionForm } from "@/components/people/ActionForm";
-import { Card } from "@/components/ui/Card";
 import { SelectField, TextAreaField } from "@/components/ui/SelectField";
 import { TextField } from "@/components/ui/TextField";
 import { getAccess, hasAny } from "@/lib/access";
@@ -42,6 +43,7 @@ export default async function TrainingsPage() {
   const groups = (myGroups ?? []) as { id: string; name: string }[];
   const canCreate = churchManager || groups.length > 0;
   const done = new Set((progress ?? []).map((p) => p.lesson_id));
+  const art = await moduleImage("trainings");
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
@@ -52,35 +54,34 @@ export default async function TrainingsPage() {
         const mine = t.training_enrollments.find((e) => e.person_id === access.personId);
         const myDone = t.training_lessons.filter((l) => done.has(l.id)).length;
         return (
-          <Card key={t.id} className="flex flex-col gap-2 shadow-card">
-            <Link href={`/formations/${t.id}`} className="flex items-start gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-royal/10 text-royal">
-                <GraduationCap aria-hidden className="size-5" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block font-semibold">{t.title}</span>
-                <span className="block text-sm text-muted">
-                  {t.training_lessons.length} leçon{t.training_lessons.length > 1 ? "s" : ""} · {t.training_enrollments.length} inscrit
-                  {t.training_enrollments.length > 1 ? "s" : ""}
-                  {t.groups ? ` · ${t.groups.name}` : ""}
-                </span>
-              </span>
-            </Link>
+          <ListItem
+            key={t.id}
+            title={<Link href={`/formations/${t.id}`}>{t.title}</Link>}
+            tone="royal"
+            image={art}
+            icon="graduation-cap"
+            badge={mine ? (mine.completed_on ? "Terminée" : "Inscrit(e)") : undefined}
+            meta={[
+              { icon: "clock", text: `${t.training_lessons.length} leçon${t.training_lessons.length > 1 ? "s" : ""} · ${t.training_enrollments.length} inscrit${t.training_enrollments.length > 1 ? "s" : ""}` },
+              ...(t.groups ? [{ icon: "person" as const, text: t.groups.name }] : []),
+            ]}
+          >
             {t.description && <p className="text-sm text-muted">{t.description}</p>}
             {mine ? (
               mine.completed_on ? (
                 <Link href={`/formations/${t.id}/attestation`} className="flex min-h-11 items-center justify-center gap-2 rounded-full bg-gold font-semibold text-night">
-                  <Award aria-hidden className="size-5" /> Terminée : mon attestation
+                  <Award aria-hidden className="size-5" /> Mon attestation
                 </Link>
               ) : (
                 <LessonBar done={myDone} total={t.training_lessons.length} />
               )
             ) : (
-              access.personId && (
-                <ActionForm action={enroll} hidden={{ training_id: t.id }} submitLabel="Je m'inscris" />
-              )
+              access.personId && <ActionForm action={enroll} hidden={{ training_id: t.id }} submitLabel="Je m'inscris" />
             )}
-          </Card>
+            <Link href={`/formations/${t.id}`} className="flex min-h-11 items-center justify-center rounded-full bg-royal/10 text-sm font-semibold text-royal">
+              Voir les leçons
+            </Link>
+          </ListItem>
         );
       })}
 

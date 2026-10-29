@@ -55,21 +55,19 @@ export default async function PeoplePage({ searchParams }: PageProps<"/fideles">
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
-      <div className="flex items-start justify-between gap-3">
-        <PageTitle
-          title="Fidèles"
-          intro={wholeChurch ? "Le registre de l'église." : "Les fidèles que vous suivez."}
-        />
-        {hasAny(access, ["people.manage"]) && (
-          <Link
-            href="/fideles/nouveau"
-            className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-royal px-4 text-sm font-semibold text-white"
-          >
-            <UserPlus aria-hidden className="size-4" />
-            Nouvelle fiche
-          </Link>
-        )}
-      </div>
+      <PageTitle
+        title="Fidèles"
+        intro={wholeChurch ? "Le registre de l'église." : "Les fidèles que vous suivez."}
+      />
+      {hasAny(access, ["people.manage"]) && (
+        <Link
+          href="/fideles/nouveau"
+          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-royal px-5 font-semibold text-white shadow-card"
+        >
+          <UserPlus aria-hidden className="size-5" />
+          Nouvelle fiche
+        </Link>
+      )}
       {removed && (
         <p role="status" className="rounded-2xl bg-ok-bg px-4 py-3 font-medium text-ok-text">
           Fiche supprimée de la liste. Son historique est conservé.

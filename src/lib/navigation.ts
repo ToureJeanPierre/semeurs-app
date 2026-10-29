@@ -9,6 +9,9 @@ export type AppModule = {
   description: string | null;
   icon: string;
   image_url: string | null;
+  hero_title: string | null;
+  verse_text: string | null;
+  verse_ref: string | null;
   href: string | null;
   enabled: boolean;
   home_position: number | null;
@@ -37,7 +40,7 @@ export const loadModules = cache(async (): Promise<AppModule[]> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("modules")
-    .select("code, label, description, icon, image_url, href, enabled, home_position, nav_position, required_permissions, required_scope")
+    .select("code, label, description, icon, image_url, hero_title, verse_text, verse_ref, href, enabled, home_position, nav_position, required_permissions, required_scope")
     .order("home_position", { nullsFirst: false })
     .order("label");
   return (data ?? []) as AppModule[];
@@ -73,4 +76,29 @@ export function menuLinks(modules: AppModule[]): (NavLink & { soon: boolean; des
     })),
     { href: "/profil", label: "Profil", icon: "user-round", soon: false, description: "Mon compte, verrouillage", image: "/images/modules/profile.webp" },
   ];
+}
+
+/** Habillage des onglets (bandeau illustré) : un par adresse de module, lu par PageTitle. */
+export function pageArts(modules: AppModule[]): PageArt[] {
+  return [
+    ...modules
+      .filter((m) => m.enabled && m.href)
+      .map((m) => ({ href: m.href!, label: m.label, icon: m.icon, image: m.image_url, heroTitle: m.hero_title, verse: m.verse_text, verseRef: m.verse_ref })),
+    { href: "/profil", label: "Profil", icon: "user-round", image: "/images/modules/profile.webp", heroTitle: "Mon compte", verse: null, verseRef: null },
+  ];
+}
+
+export type PageArt = {
+  href: string;
+  label: string;
+  icon: string;
+  image: string | null;
+  heroTitle: string | null;
+  verse: string | null;
+  verseRef: string | null;
+};
+
+/** Illustration d'un module (vignettes des listes), lue dans la table « modules ». */
+export async function moduleImage(code: string): Promise<string | null> {
+  return (await loadModules()).find((m) => m.code === code)?.image_url ?? null;
 }

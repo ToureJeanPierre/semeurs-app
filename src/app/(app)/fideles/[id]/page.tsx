@@ -101,7 +101,7 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
           <Avatar name={`${person.first_name} ${person.last_name}`} url={photo} size={72} className="bg-royal text-white" />
         )}
         <div className="min-w-0 [&_h1]:text-center">
-          <PageTitle title={personName(person)} intro={`${statusLabel} · ${family?.groups?.name ?? "Sans famille"}`} />
+          <PageTitle plain title={personName(person)} intro={`${statusLabel} · ${family?.groups?.name ?? "Sans famille"}`} />
         </div>
       </div>
 

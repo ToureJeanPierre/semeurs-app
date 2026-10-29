@@ -22,16 +22,17 @@ export function ServiceCard({
 }) {
   const filled = service.positions.filter((p) => p.personId || renderPosition);
   return (
-    <Card id={anchorId} className="flex scroll-mt-20 flex-col gap-3 shadow-card">
+    <Card id={anchorId} className="relative flex scroll-mt-20 flex-col gap-3 overflow-hidden shadow-card">
+      <span aria-hidden className="absolute inset-y-0 left-0 w-1.5 bg-gold" />
       <div className="flex items-start gap-3">
-        <div className="grid size-14 shrink-0 place-items-center rounded-2xl bg-royal text-center text-white">
+        <div className="grid size-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-b from-royal to-night text-center text-white shadow-float">
           <span className="text-xl font-extrabold leading-none">{Number(service.service_date.slice(8, 10))}</span>
           <span className="-mt-2 text-[11px] font-semibold uppercase">
             {formatShortDay(service.service_date).split(" ")[2]?.replace(".", "")}
           </span>
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="font-display text-lg font-semibold leading-tight">{service.title}</h3>
+          <h3 className="font-display text-lg font-bold leading-tight text-night">{service.title}</h3>
           <p className="text-sm text-muted first-letter:uppercase">
             {formatLongDay(service.service_date)} · {formatHour(service.starts_at)}
             {!service.published && <span className="ml-2 rounded-full bg-warm/20 px-2 py-0.5 text-xs font-semibold text-night">Brouillon</span>}

@@ -36,11 +36,4 @@ export function AdminLink({
   );
 }
 
-export function PageTitle({ title, intro }: { title: string; intro?: ReactNode }) {
-  return (
-    <div className="mb-4">
-      <h1 className="text-2xl font-extrabold">{title}</h1>
-      {intro && <p className="mt-1 text-muted">{intro}</p>}
-    </div>
-  );
-}
+export { PageTitle } from "@/components/layout/PageHero";

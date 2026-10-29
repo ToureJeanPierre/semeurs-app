@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { BookOpen, ExternalLink, Search, Trash2 } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
+import { ListItem } from "@/components/ui/ListItem";
+import { moduleImage } from "@/lib/navigation";
 import { SermonForm } from "@/components/sermons/SermonForm";
 import { Card } from "@/components/ui/Card";
 import { SubmitButton } from "@/components/ui/SubmitButton";
@@ -42,6 +44,7 @@ export default async function SermonsPage({ searchParams }: PageProps<"/predicat
   }
   const [{ data }, people] = await Promise.all([query, manager ? loadPeopleOptions() : Promise.resolve([])]);
   const sermons = (data ?? []) as unknown as Sermon[];
+  const art = await moduleImage("sermons");
   const paths = sermons.map((s) => s.audio_path).filter((p): p is string => Boolean(p));
   const { data: signed } = paths.length ? await supabase.storage.from("predications").createSignedUrls(paths, 3 * 3600) : { data: [] };
   const audioUrl = (p: string | null) => (p ? signed?.find((s) => s.path === p)?.signedUrl ?? undefined : undefined);
@@ -55,16 +58,21 @@ export default async function SermonsPage({ searchParams }: PageProps<"/predicat
       </form>
       {sermons.length === 0 && <p className="rounded-card bg-surface p-4 text-muted">{q ? "Aucune prédication ne correspond." : "Les prédications seront bientôt ici."}</p>}
       {sermons.map((s) => (
-        <Card key={s.id} className="flex flex-col gap-2 shadow-card">
-          <p>
-            <span className="block font-display text-lg font-semibold">{s.title}</span>
-            <span className="block text-sm text-muted">
-              {s.preacher ? personName(s.preacher) : s.preacher_name} · {formatFullDate(s.sermon_date)}
-            </span>
-          </p>
+        <ListItem
+          key={s.id}
+          title={s.title}
+          tone="gold"
+          image={art}
+          icon="book-open"
+          badge={audioUrl(s.audio_path) ? "Audio" : s.media_url ? "Vidéo" : undefined}
+          meta={[
+            { icon: "person", text: (s.preacher ? personName(s.preacher) : s.preacher_name) ?? "" },
+            { icon: "clock", text: formatFullDate(s.sermon_date) },
+          ]}
+        >
           {(s.theme || s.bible_text) && (
-            <p className="flex items-start gap-1.5 text-sm text-royal">
-              <BookOpen aria-hidden className="mt-0.5 size-4 shrink-0" />
+            <p className="flex items-start gap-1.5 rounded-xl bg-[#fff4d6] px-3 py-2 text-sm font-medium text-night">
+              <BookOpen aria-hidden className="mt-0.5 size-4 shrink-0 text-royal" />
               {[s.theme, s.bible_text].filter(Boolean).join(" · ")}
             </p>
           )}
@@ -88,7 +96,7 @@ export default async function SermonsPage({ searchParams }: PageProps<"/predicat
               </SubmitButton>
             </form>
           )}
-        </Card>
+        </ListItem>
       ))}
       {manager && (
         <Card className="shadow-card">

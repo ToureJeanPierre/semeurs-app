@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Lock, Vote } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
+import { ListItem } from "@/components/ui/ListItem";
+import { moduleImage } from "@/lib/navigation";
 import { ActionForm } from "@/components/people/ActionForm";
-import { Card } from "@/components/ui/Card";
 import { SelectField, TextAreaField } from "@/components/ui/SelectField";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { TextField } from "@/components/ui/TextField";
@@ -40,6 +40,7 @@ export default async function PollsPage() {
   const churchManager = hasAny(access, ["polls.manage"]);
   const groups = (myGroups ?? []) as { id: string; name: string }[];
   const canCreate = churchManager || groups.length > 0;
+  const art = await moduleImage("polls");
   const results = new Map(
     await Promise.all(
       polls.map(async (p) => {
@@ -84,25 +85,18 @@ export default async function PollsPage() {
         const showResults = mine !== undefined || closed || churchManager || p.created_by === access.personId;
         const canClose = !closed && (churchManager || p.created_by === access.personId);
         return (
-          <Card key={p.id} className="flex flex-col gap-3 shadow-card">
-            <div className="flex items-start gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold/20 text-night">
-                <Vote aria-hidden className="size-5" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block font-semibold">{p.question}</span>
-                <span className="flex items-center gap-1 text-sm text-muted">
-                  {p.groups?.name ?? "Toute l'église"}
-                  {p.anonymous && (
-                    <>
-                      {" · "}
-                      <Lock aria-hidden className="size-3.5" /> anonyme
-                    </>
-                  )}
-                  {closed ? " · clos" : p.closes_on ? ` · jusqu'au ${formatShortDay(p.closes_on)}` : ""}
-                </span>
-              </span>
-            </div>
+          <ListItem
+            key={p.id}
+            title={p.question}
+            tone={closed ? "royal" : mine === undefined ? "gold" : "green"}
+            image={art}
+            icon="vote"
+            badge={closed ? "Clos" : mine === undefined ? "À voter" : "J'ai voté"}
+            meta={[
+              { icon: "person", text: `${p.groups?.name ?? "Toute l'église"}${p.anonymous ? " · vote anonyme" : ""}` },
+              ...(p.closes_on && !closed ? [{ icon: "clock" as const, text: `Jusqu'au ${formatShortDay(p.closes_on)}` }] : []),
+            ]}
+          >
             {mine === undefined && !closed ? (
               <div className="flex flex-col gap-2">
                 {p.options.map((o, i) => (
@@ -152,7 +146,7 @@ export default async function PollsPage() {
                 <SubmitButton className="min-h-11 w-full rounded-full bg-cloud text-sm font-semibold">Clore le sondage</SubmitButton>
               </form>
             )}
-          </Card>
+          </ListItem>
         );
       })}
     </div>

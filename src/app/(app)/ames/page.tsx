@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronRight, Footprints, MessageCircle, Phone, UserPlus } from "lucide-react";
+import { Footprints, MessageCircle, Phone, UserPlus } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
+import { ListItem } from "@/components/ui/ListItem";
+import { moduleImage } from "@/lib/navigation";
 import { Card } from "@/components/ui/Card";
 import { getAccess, hasAny } from "@/lib/access";
 import { telHref, whatsappHref } from "@/lib/contact-links";
@@ -30,6 +32,7 @@ export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
   const today = todayIso();
   const manager = hasAny(access, ["souls.manage"]);
   const monthStart = addDays(today, -30);
+  const art = await moduleImage("souls");
   const statusLabel = (s: string) => statuses.find((x) => x.value === s)?.label ?? s;
 
   return (
@@ -83,21 +86,18 @@ export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
         const next = nextStep(s, stepList, today);
         const done = stepList.filter((st) => isStepDone(s, st.code)).length;
         return (
-          <Card key={s.id} className="flex flex-col gap-2 shadow-card">
-            <Link href={`/ames/${s.id}`} className="flex flex-col gap-2 active:scale-[0.99]">
-              <span className="flex items-start gap-2">
-                <span className="min-w-0 flex-1">
-                  <span className="block font-semibold">
-                    {s.last_name.toUpperCase()} {s.first_name}
-                  </span>
-                  <span className="block text-sm text-muted">
-                    {statusLabel(s.status)}
-                    {s.arrived_at ? ` · arrivé(e) le ${formatShortDay(s.arrived_at)}` : ""}
-                    {s.brought_by_name ? ` · par ${s.brought_by_name}` : ""}
-                  </span>
-                </span>
-                <ChevronRight aria-hidden className="mt-1 size-5 shrink-0 text-muted" />
-              </span>
+          <ListItem
+            key={s.id}
+            title={<Link href={`/ames/${s.id}`}>{`${s.last_name.toUpperCase()} ${s.first_name}`}</Link>}
+            tone={next?.late ? "rose" : next ? "green" : "teal"}
+            image={art}
+            icon="sprout"
+            badge={statusLabel(s.status)}
+            meta={[
+              ...(s.arrived_at ? [{ icon: "clock" as const, text: `Arrivé(e) le ${formatShortDay(s.arrived_at)}` }] : []),
+              ...(s.brought_by_name ? [{ icon: "person" as const, text: `Amené(e) par ${s.brought_by_name}` }] : []),
+            ]}
+          >
               <span className="h-2 overflow-hidden rounded-full bg-line" aria-hidden>
                 <span className="block h-full rounded-full bg-ok-ring" style={{ width: `${(done / Math.max(1, stepList.length)) * 100}%` }} />
               </span>
@@ -111,7 +111,6 @@ export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
                   <span className="font-semibold text-ok-text">Parcours terminé, gloire à Dieu !</span>
                 )}
               </span>
-            </Link>
             {s.phone && (
               <div className="grid grid-cols-2 gap-2">
                 <a href={telHref(s.phone)} className="flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-royal text-sm font-semibold text-white">
@@ -127,7 +126,10 @@ export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
                 </a>
               </div>
             )}
-          </Card>
+            <Link href={`/ames/${s.id}`} className="flex min-h-11 items-center justify-center rounded-full bg-royal/10 text-sm font-semibold text-royal">
+              Voir son parcours
+            </Link>
+          </ListItem>
         );
       })}
 
