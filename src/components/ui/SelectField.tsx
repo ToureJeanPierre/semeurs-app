@@ -15,13 +15,13 @@ export function SelectField({
   const id = useId();
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
-      <label htmlFor={id} className="text-sm font-semibold text-ink">
+      <label htmlFor={id} className="text-sm font-bold text-night">
         {label}
       </label>
       <select
         id={id}
         aria-invalid={error ? true : undefined}
-        className={`min-h-13 rounded-2xl border-2 bg-surface px-3 text-base focus:border-ink/40 ${error ? "border-alert-ring" : "border-line"}`}
+        className={`min-h-13 rounded-2xl border-2 bg-[#f4f8ff] px-3 text-base shadow-[inset_0_1px_2px_rgb(21_70_184/0.06)] outline-none focus:border-royal focus:bg-white focus:ring-4 focus:ring-royal/10 ${error ? "border-alert-ring" : "border-[#c9daf6]"}`}
         {...props}
       >
         {options.map((o) => (
@@ -49,14 +49,14 @@ export function TextAreaField({
   const id = useId();
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
-      <label htmlFor={id} className="text-sm font-semibold text-ink">
+      <label htmlFor={id} className="text-sm font-bold text-night">
         {label}
       </label>
       <textarea
         id={id}
         rows={3}
         aria-invalid={error ? true : undefined}
-        className={`rounded-2xl border-2 bg-surface p-3 text-base focus:border-ink/40 ${error ? "border-alert-ring" : "border-line"}`}
+        className={`rounded-2xl border-2 bg-[#f4f8ff] p-3 text-base shadow-[inset_0_1px_2px_rgb(21_70_184/0.06)] outline-none placeholder:text-muted/60 focus:border-royal focus:bg-white focus:ring-4 focus:ring-royal/10 ${error ? "border-alert-ring" : "border-[#c9daf6]"}`}
         {...props}
       />
       {error && (

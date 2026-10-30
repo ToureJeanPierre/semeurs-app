@@ -7,10 +7,11 @@ import { useCurrentArt } from "@/components/layout/PageArt";
 import { ModuleIcon } from "@/components/ui/icons";
 
 /**
- * Bandeau en tête d'onglet (maquette de Jean-Pierre) : illustration du module à droite,
- * accroche et verset sur l'écran principal de l'onglet, titre et détail sur les écrans intérieurs.
+ * Bandeau en tête d'onglet, sur le modèle des bannières de Jean-Pierre (30/10/2026) :
+ * icône dans un carré blanc, nom de l'onglet, grand titre, texte, verset en italique et
+ * référence en bleu ; l'illustration entière à droite, sur fond bleu ciel.
  * Tout vient de la table « modules » (illustration, accroche, verset) : rien n'est écrit ici.
- * `plain` garde un titre simple (fiche d'une personne, documents à imprimer).
+ * `plain` garde un titre simple (fiche d'une personne).
  */
 export function PageTitle({ title, intro, plain = false }: { title: string; intro?: ReactNode; plain?: boolean }) {
   const art = useCurrentArt();
@@ -23,43 +24,63 @@ export function PageTitle({ title, intro, plain = false }: { title: string; intr
       </div>
     );
   }
-  // Titre identique à celui de la barre du haut : le bandeau donne l'accroche à la place.
-  const same = !!art && title === art.label;
-  const headline = same ? (art.heroTitle ?? title) : title;
-  const eyebrow = same ? intro : art?.label;
-  const detail = same ? null : intro;
-  // Le verset n'apparaît que sur l'écran principal de l'onglet.
+  // Écran principal de l'onglet : nom de l'onglet en petit, accroche en grand, puis le verset.
   const main = !!art && pathname === art.href;
+  const same = !!art && title === art.label;
+  const eyebrow = art?.label;
+  const headline = same ? (art.heroTitle ?? title) : title;
+  const picture = art?.heroImage ?? art?.image ?? null;
+  const cutout = !!art?.heroImage; // illustration détourée : affichée entière, sans fondu
 
   return (
-    <section className="relative mb-4 overflow-hidden rounded-[1.375rem] bg-gradient-to-br from-[#f1f7ff] via-[#e4f0ff] to-[#cfe3fc] shadow-card print:hidden">
-      {art?.image ? (
-        <div
-          aria-hidden
-          className="absolute inset-y-0 right-0 w-[46%]"
-          style={{ maskImage: "linear-gradient(to right, transparent, black 38%)", WebkitMaskImage: "linear-gradient(to right, transparent, black 38%)" }}
-        >
-          <Image src={art.image} alt="" fill sizes="200px" unoptimized className="object-cover" priority />
+    <section className="relative mb-5 overflow-hidden rounded-[1.5rem] border border-white/80 bg-gradient-to-br from-[#e9f4fe] via-[#dff0fd] to-[#d3e8fc] p-4 shadow-card print:hidden">
+      {/* Ligne 1 : icône, nom de l'onglet et grand titre à gauche ; illustration en grand à droite. */}
+      <div className="flex min-h-36 items-stretch gap-2">
+        <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 py-1">
+          <div className="flex items-center gap-2.5">
+            {art && (
+              <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-white text-royal shadow-[0_6px_16px_-6px_rgb(21_70_184/0.35)]">
+                <ModuleIcon name={art.icon} className="size-6" strokeWidth={1.9} />
+              </span>
+            )}
+            {eyebrow && <p className="truncate font-display text-base font-medium text-ink/70">{eyebrow}</p>}
+          </div>
+          <h1 className="font-display text-[1.625rem] font-extrabold leading-[1.08] text-night">{headline}</h1>
         </div>
-      ) : (
-        <span aria-hidden className="absolute -right-6 -top-6 size-32 rounded-full bg-white/50" />
-      )}
-      <div className={`relative flex min-h-36 flex-col justify-center gap-1.5 p-4 ${art?.image ? "pr-[42%]" : ""}`}>
-        {art && (
-          <span className="mb-1 grid size-10 place-items-center rounded-xl bg-white/80 text-royal shadow-sm">
-            <ModuleIcon name={art.icon} className="size-5" strokeWidth={1.9} />
-          </span>
-        )}
-        {eyebrow && <p className="text-sm font-medium text-ink/70">{eyebrow}</p>}
-        <h1 className="font-display text-[1.375rem] font-extrabold leading-tight text-night">{headline}</h1>
-        {detail && <p className="text-sm text-ink/75">{detail}</p>}
-        {main && art?.verse && (
-          <figure className="mt-1">
-            <blockquote className="text-[0.8125rem] italic leading-snug text-ink/80">« {art.verse} »</blockquote>
-            {art.verseRef && <figcaption className="mt-0.5 text-xs font-semibold text-royal">{art.verseRef}</figcaption>}
-          </figure>
+        {picture && (
+          <div
+            aria-hidden
+            className="relative -my-4 -mr-4 w-[48%] shrink-0 self-stretch"
+            style={
+              cutout
+                ? undefined
+                : { maskImage: "linear-gradient(to right, transparent, black 35%)", WebkitMaskImage: "linear-gradient(to right, transparent, black 35%)" }
+            }
+          >
+            <Image
+              src={picture}
+              alt=""
+              fill
+              sizes="200px"
+              unoptimized
+              priority
+              className={cutout ? "scale-110 object-contain object-center" : "object-cover"}
+            />
+          </div>
         )}
       </div>
+      {/* Ligne 2 : texte et verset sur toute la largeur, lisibles sur un petit écran. */}
+      {(intro || (main && art?.verse)) && (
+        <div className="mt-3 flex flex-col gap-2 border-t border-white/70 pt-3">
+          {intro && <p className="text-[0.9375rem] leading-snug text-ink/80">{intro}</p>}
+          {main && art?.verse && (
+            <figure>
+              <blockquote className="text-sm italic leading-snug text-ink/75">« {art.verse} »</blockquote>
+              {art.verseRef && <figcaption className="mt-1 font-display text-sm font-bold text-royal">{art.verseRef}</figcaption>}
+            </figure>
+          )}
+        </div>
+      )}
     </section>
   );
 }

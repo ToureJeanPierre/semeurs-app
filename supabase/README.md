@@ -61,6 +61,7 @@ avec la même version que le nom du fichier.
 | `20261102000300_photo_column_guard.sql` | La photo ne change que par `set_person_photo` |
 | `20261102000400_family_photos.sql` | Photos dans « Ma famille » |
 | `20261102000500_page_heroes.sql` | Bandeau illustré des onglets : accroche et verset par module |
+| `20261102000600_hero_images.sql` | Illustrations de bandeau fournies par Jean-Pierre (formations, prière) |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

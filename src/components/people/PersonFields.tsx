@@ -50,7 +50,7 @@ function Select({
       <select
         name={name}
         defaultValue={defaultValue ?? ""}
-        className="min-h-13 rounded-2xl border-2 border-line bg-surface px-3 text-base focus:border-ink/40"
+        className="min-h-13 rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-3 text-base focus:border-royal focus:bg-white focus:ring-4 focus:ring-royal/10"
       >
         {empty !== undefined && <option value="">{empty}</option>}
         {options.map((o) => (
@@ -115,7 +115,7 @@ export function PersonFields({
             ].map(([value, label]) => (
               <label
                 key={value}
-                className="flex min-h-12 flex-1 cursor-pointer items-center gap-2 rounded-2xl border-2 border-line bg-surface px-4 has-checked:border-royal has-checked:bg-royal/5"
+                className="flex min-h-12 flex-1 cursor-pointer items-center gap-2 rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-4 has-checked:border-royal has-checked:bg-royal/5"
               >
                 <input type="radio" name="sex" value={value} defaultChecked={values.sex === value} className="size-5 accent-royal" />
                 <span className="font-semibold">{label}</span>

@@ -420,6 +420,12 @@ d'essai, puis une seule liste de retours).
   `verse_text`, `verse_ref` de `modules`) ; filtres en pastilles avec icônes ; listes en cartes à
   bordure de couleur avec vignette, informations à icônes et pastille (`ListItem`) : Événements,
   Prédications, Réunions, Formations, Sondages, Âmes, Cultes ; volets dépliables avec chevron.
+- **Bandeau refait sur le modèle des bannières de Jean-Pierre** (30/10) : icône dans un carré blanc,
+  nom de l'onglet, grand titre, illustration à droite (`modules.hero_image`, détourée depuis ses
+  bannières : formations, prière), texte et verset en dessous sur toute la largeur.
+- **Saisie visible partout** : champs sur fond bleuté avec bordure, halo bleu quand on écrit ;
+  encadré de formulaire coloré (`FormCard` : prière en or, évangélisation en vert, dons en or) ; toute
+  carte contenant un formulaire prend une bordure bleue, un fond dégradé et un bandeau de couleur.
 
 Prochaine action : essais de Jean-Pierre, corrections groupées.
 

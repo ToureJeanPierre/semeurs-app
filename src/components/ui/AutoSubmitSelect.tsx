@@ -29,7 +29,7 @@ export function AutoSubmitSelect({
         defaultValue={value}
         aria-label={ariaLabel}
         onChange={() => form.current?.requestSubmit()}
-        className="min-h-11 rounded-xl border-2 border-line bg-surface px-2 text-sm font-semibold"
+        className="min-h-11 rounded-xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-2 text-sm font-semibold"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>

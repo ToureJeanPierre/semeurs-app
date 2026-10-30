@@ -41,7 +41,7 @@ export function CountForm({
               value={counts[d] ?? ""}
               onChange={(e) => setCounts((c) => ({ ...c, [d]: e.target.value.replace(/\D/g, "") }))}
               aria-label={`Nombre de ${d} FCFA`}
-              className="min-h-11 w-full rounded-lg border-2 border-line bg-surface px-2 text-right text-base"
+              className="min-h-11 w-full rounded-lg border-2 border-[#c9daf6] bg-[#f4f8ff] px-2 text-right text-base"
             />
           </label>
         ))}

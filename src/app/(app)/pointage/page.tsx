@@ -36,7 +36,7 @@ export default async function AttendancePage() {
         <ActionForm action={openServiceSession} submitLabel="Ouvrir la liste" variant="primary">
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-semibold">Culte</span>
-            <select name="service_type_id" defaultValue={sorted[0]?.id} className="min-h-13 rounded-2xl border-2 border-line bg-surface px-3 text-base focus:border-ink/40">
+            <select name="service_type_id" defaultValue={sorted[0]?.id} className="min-h-13 rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-3 text-base focus:border-royal focus:bg-white focus:ring-4 focus:ring-royal/10">
               {sorted.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.short_name ?? t.name} — {WEEKDAYS[t.weekday]} {formatTime(t.start_time)}
@@ -46,7 +46,7 @@ export default async function AttendancePage() {
           </label>
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-semibold">Date</span>
-            <input type="date" name="session_date" defaultValue={today} max={today} className="min-h-13 rounded-2xl border-2 border-line bg-surface px-3 text-base focus:border-ink/40" />
+            <input type="date" name="session_date" defaultValue={today} max={today} className="min-h-13 rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-3 text-base focus:border-royal focus:bg-white focus:ring-4 focus:ring-royal/10" />
           </label>
         </ActionForm>
       </Card>

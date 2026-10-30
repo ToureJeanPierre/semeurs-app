@@ -47,7 +47,7 @@ export default async function TrainingsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
-      <PageTitle title="Formations" intro="Parcours des nouveaux convertis, école des disciples, formations d'équipe." />
+      <PageTitle title="Formations" intro="Parcours des nouveaux convertis, école des disciples et formations d'équipe." />
 
       {trainings.length === 0 && <p className="rounded-2xl bg-cloud p-4 text-sm text-muted">Aucune formation pour l&apos;instant.</p>}
       {trainings.map((t) => {

@@ -14,7 +14,7 @@ export function AbsenceForm({ reasons, personId }: { reasons: ValueOption[]; per
       </div>
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-semibold">Motif</span>
-        <select name="reason" defaultValue="travel" className="min-h-13 rounded-2xl border-2 border-line bg-surface px-3 text-base focus:border-ink/40">
+        <select name="reason" defaultValue="travel" className="min-h-13 rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-3 text-base focus:border-royal focus:bg-white focus:ring-4 focus:ring-royal/10">
           {reasons.map((r) => (
             <option key={r.value} value={r.value}>
               {r.label}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Lock, Sparkles, Trash2 } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
+import { FormCard } from "@/components/ui/FormCard";
 import { ActionForm } from "@/components/people/ActionForm";
 import { Card } from "@/components/ui/Card";
 import { TextAreaField } from "@/components/ui/SelectField";
@@ -77,16 +78,16 @@ export default async function PrayerPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
-      <PageTitle title="Prières" intro="« Priez les uns pour les autres. » Jacques 5.16" />
-      <Card className="shadow-card">
+      <PageTitle title="Prières" />
+      <FormCard title="Mon sujet de prière" subtitle="L'église prie avec vous." icon="hands-praying" tone="gold">
         <ActionForm action={addPrayerRequest} submitLabel="Déposer mon sujet" variant="primary">
-          <TextAreaField label="Mon sujet de prière" name="body" rows={3} required />
+          <TextAreaField label="Pour quoi voulez-vous que l'on prie ?" name="body" rows={4} required placeholder="Ma santé, mon travail, ma famille…" />
           <label className="flex min-h-11 items-start gap-3 text-sm">
             <input type="checkbox" name="confidential" className="mt-1 size-5 accent-royal" />
             <span>Confidentiel : seuls le pasteur et les responsables de l&apos;intercession le verront.</span>
           </label>
         </ActionForm>
-      </Card>
+      </FormCard>
       {open.length === 0 && <p className="rounded-card bg-surface p-4 text-muted">Aucun sujet pour l&apos;instant.</p>}
       {open.map(item)}
       {answered.length > 0 && <h2 className="text-lg font-semibold">Prières exaucées</h2>}

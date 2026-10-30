@@ -27,7 +27,7 @@ export function MessageTemplateForm({
           name="body"
           rows={4}
           defaultValue={body}
-          className="rounded-2xl border-2 border-line bg-surface p-3 text-base focus:border-ink/40"
+          className="rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] p-3 text-base focus:border-royal focus:bg-white focus:ring-4 focus:ring-royal/10"
         />
       </label>
       {state?.fieldErrors?.body && <p className="text-sm font-medium text-alert-text">{state.fieldErrors.body}</p>}

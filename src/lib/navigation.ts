@@ -10,6 +10,7 @@ export type AppModule = {
   icon: string;
   image_url: string | null;
   hero_title: string | null;
+  hero_image: string | null;
   verse_text: string | null;
   verse_ref: string | null;
   href: string | null;
@@ -40,7 +41,7 @@ export const loadModules = cache(async (): Promise<AppModule[]> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("modules")
-    .select("code, label, description, icon, image_url, hero_title, verse_text, verse_ref, href, enabled, home_position, nav_position, required_permissions, required_scope")
+    .select("code, label, description, icon, image_url, hero_title, hero_image, verse_text, verse_ref, href, enabled, home_position, nav_position, required_permissions, required_scope")
     .order("home_position", { nullsFirst: false })
     .order("label");
   return (data ?? []) as AppModule[];
@@ -83,8 +84,8 @@ export function pageArts(modules: AppModule[]): PageArt[] {
   return [
     ...modules
       .filter((m) => m.enabled && m.href)
-      .map((m) => ({ href: m.href!, label: m.label, icon: m.icon, image: m.image_url, heroTitle: m.hero_title, verse: m.verse_text, verseRef: m.verse_ref })),
-    { href: "/profil", label: "Profil", icon: "user-round", image: "/images/modules/profile.webp", heroTitle: "Mon compte", verse: null, verseRef: null },
+      .map((m) => ({ href: m.href!, label: m.label, icon: m.icon, image: m.image_url, heroImage: m.hero_image, heroTitle: m.hero_title, verse: m.verse_text, verseRef: m.verse_ref })),
+    { href: "/profil", label: "Profil", icon: "user-round", image: "/images/modules/profile.webp", heroImage: null, heroTitle: "Mon compte", verse: null, verseRef: null },
   ];
 }
 
@@ -93,6 +94,8 @@ export type PageArt = {
   label: string;
   icon: string;
   image: string | null;
+  /** Illustration de bandeau (détourée, sur fond bleu ciel) ; sinon la vignette du menu. */
+  heroImage: string | null;
   heroTitle: string | null;
   verse: string | null;
   verseRef: string | null;

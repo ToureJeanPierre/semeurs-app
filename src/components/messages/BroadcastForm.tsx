@@ -83,7 +83,7 @@ export function BroadcastForm({
           rows={5}
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          className="rounded-2xl border-2 border-line bg-surface p-3 text-base focus:border-ink/40"
+          className="rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] p-3 text-base focus:border-royal focus:bg-white focus:ring-4 focus:ring-royal/10"
         />
       </label>
       {body && (
@@ -100,7 +100,7 @@ export function BroadcastForm({
             ["app", "Dans l'appli", "Une notification pour chaque destinataire qui a un compte."],
             ["whatsapp", "Par WhatsApp (gratuit)", "L'appli prépare un message personnalisé pour chacun : vous touchez « Envoyer » personne par personne."],
           ].map(([value, label, hint], i) => (
-            <label key={value} className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-line bg-surface p-3 has-checked:border-royal has-checked:bg-royal/5">
+            <label key={value} className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] p-3 has-checked:border-royal has-checked:bg-royal/5">
               <input type="radio" name="channel" value={value} defaultChecked={i === 0} className="mt-0.5 size-5 accent-royal" />
               <span>
                 <span className="block font-semibold">{label}</span>

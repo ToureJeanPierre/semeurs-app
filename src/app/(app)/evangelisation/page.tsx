@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Check, Footprints, HeartHandshake, MapPin } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
+import { FormCard } from "@/components/ui/FormCard";
 import { ContactButtons } from "@/components/alerts/ContactButtons";
 import { ActionForm } from "@/components/people/ActionForm";
 import { Card } from "@/components/ui/Card";
@@ -73,10 +74,7 @@ export default async function EvangelismPage() {
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
       <PageTitle title="Évangélisation" intro="Noter la personne rencontrée, puis l'inviter au culte." />
 
-      <Card className="flex flex-col gap-3 shadow-card">
-        <h2 className="flex items-center gap-2 text-lg font-semibold">
-          <HeartHandshake aria-hidden className="size-5 text-royal" /> Personne rencontrée
-        </h2>
+      <FormCard title="Personne rencontrée" subtitle="Notez-la en quelques secondes." icon="heart-handshake" tone="green">
         <ActionForm action={quickContact} submitLabel="Enregistrer" variant="primary">
           <div className="grid grid-cols-2 gap-3">
             <TextField label="Nom" name="last_name" required />
@@ -95,7 +93,7 @@ export default async function EvangelismPage() {
             </div>
           </details>
         </ActionForm>
-      </Card>
+      </FormCard>
 
       <section className="flex flex-col gap-2">
         <h2 className="text-lg font-semibold">À inviter au prochain culte</h2>

@@ -107,6 +107,27 @@ main h2 {
   font-weight: 700;
 }
 
+/* Toute carte qui contient un formulaire à remplir devient un encadré de saisie visible (30/10) :
+   bordure bleue, fond dégradé, bandeau de couleur en haut. */
+main .rounded-card:has(> form :is(input:not([type="hidden"]), textarea, select)) {
+  border: 2px solid #bcd3f7;
+  background:
+    linear-gradient(90deg, var(--color-royal), #4f8df5, var(--color-sky)) top / 100% 6px no-repeat,
+    linear-gradient(180deg, #ffffff, #eaf3ff);
+  padding-top: 1.5rem;
+}
+
+/* Volets « Ajouter… » posés directement sur la page : encadrés bien visibles (30/10). */
+main details.rounded-card {
+  border: 2px solid #c9daf6;
+  background: linear-gradient(180deg, #ffffff, #eef5ff);
+}
+main details.rounded-card > summary {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-royal);
+}
+
 /* Volets dépliables (« Ajouter… », « Plus de détails ») : un chevron qui tourne à l'ouverture. */
 details > summary {
   list-style: none;

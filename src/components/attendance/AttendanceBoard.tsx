@@ -131,7 +131,7 @@ export function AttendanceBoard({
         )}
 
         <div className="flex gap-2">
-          <div className="flex min-h-12 flex-1 items-center rounded-2xl border-2 border-line bg-surface px-3 focus-within:border-ink/40">
+          <div className="flex min-h-12 flex-1 items-center rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-3 focus-within:border-royal focus-within:bg-white focus-within:ring-4 focus-within:ring-royal/10">
             <Search aria-hidden className="mr-2 size-5 shrink-0 text-muted" />
             <input
               type="search"

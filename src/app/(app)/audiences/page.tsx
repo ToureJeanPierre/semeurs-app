@@ -124,7 +124,7 @@ export default async function AudiencesPage() {
                   {times.map((t) => (
                     <label key={t} className="cursor-pointer">
                       <input type="radio" name="starts_at" value={t} className="peer sr-only" />
-                      <span className="grid min-h-11 place-items-center rounded-xl border-2 border-line bg-surface text-sm font-semibold peer-checked:border-royal peer-checked:bg-royal peer-checked:text-white peer-focus-visible:ring-3 peer-focus-visible:ring-sky">
+                      <span className="grid min-h-11 place-items-center rounded-xl border-2 border-[#c9daf6] bg-[#f4f8ff] text-sm font-semibold peer-checked:border-royal peer-checked:bg-royal peer-checked:text-white peer-focus-visible:ring-3 peer-focus-visible:ring-sky">
                         {timeFmt.format(new Date(t))}
                       </span>
                     </label>

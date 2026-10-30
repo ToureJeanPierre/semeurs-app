@@ -7,7 +7,7 @@ function Select({ label, name, options }: { label: string; name: string; options
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-sm font-semibold">{label}</span>
-      <select name={name} defaultValue={options[0]?.value} className="min-h-13 rounded-2xl border-2 border-line bg-surface px-3 text-base focus:border-ink/40">
+      <select name={name} defaultValue={options[0]?.value} className="min-h-13 rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-3 text-base focus:border-royal focus:bg-white focus:ring-4 focus:ring-royal/10">
         {options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}

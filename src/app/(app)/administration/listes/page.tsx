@@ -28,7 +28,7 @@ const LIST_NAMES: Record<string, string> = {
 type Item = { id: string; list_code: string; value: string; label: string; active: boolean; position: number };
 type StepRow = { id: string; label: string; due_days: number | null; active: boolean; position: number };
 
-const inputCls = "min-h-11 min-w-0 flex-1 rounded-xl border-2 border-line bg-surface px-3";
+const inputCls = "min-h-11 min-w-0 flex-1 rounded-xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-3";
 
 /** Listes de valeurs et parcours d'intégration : modifiables par l'administrateur, sans développeur. */
 export default async function ListsPage() {
@@ -52,7 +52,7 @@ export default async function ListsPage() {
           <form key={s.id} action={updateIntegrationStep} className="flex items-center gap-2">
             <input type="hidden" name="id" value={s.id} />
             <input name="label" defaultValue={s.label} aria-label="Libellé de l'étape" className={inputCls} />
-            <input name="due_days" defaultValue={s.due_days ?? ""} inputMode="numeric" aria-label="Délai en jours" className="min-h-11 w-14 rounded-xl border-2 border-line bg-surface px-2 text-center" />
+            <input name="due_days" defaultValue={s.due_days ?? ""} inputMode="numeric" aria-label="Délai en jours" className="min-h-11 w-14 rounded-xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-2 text-center" />
             <label className="flex items-center gap-1 text-xs">
               <input type="checkbox" name="active" defaultChecked={s.active} className="size-5 accent-royal" /> Active
             </label>

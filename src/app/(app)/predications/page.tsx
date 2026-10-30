@@ -52,7 +52,7 @@ export default async function SermonsPage({ searchParams }: PageProps<"/predicat
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
       <PageTitle title="Prédications" intro="Réécouter la Parole, à tout moment." />
-      <form action="/predications" className="flex min-h-13 items-center rounded-2xl border-2 border-line bg-surface px-3">
+      <form action="/predications" className="flex min-h-13 items-center rounded-2xl border-2 border-[#c9daf6] bg-[#f4f8ff] px-3">
         <Search aria-hidden className="mr-2 size-5 text-muted" />
         <input name="q" defaultValue={q} type="search" placeholder="Thème, texte biblique, prédicateur…" aria-label="Chercher une prédication" className="w-full bg-transparent py-3 outline-none" />
       </form>

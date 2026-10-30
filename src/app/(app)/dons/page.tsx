@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FileText, HandHeart } from "lucide-react";
+import { FileText } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
+import { FormCard } from "@/components/ui/FormCard";
 import { ProgressBar } from "@/components/contributions/ProgressBar";
 import { ActionForm } from "@/components/people/ActionForm";
 import { Card } from "@/components/ui/Card";
@@ -62,11 +63,8 @@ export default async function GivingPage() {
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
       <PageTitle title="Dons" intro="Dîmes, dons et engagements envers l'église. (Les cotisations de famille ou de groupe sont dans « Cotisations ».)" />
 
-      <Card className="flex flex-col gap-3 shadow-card">
-        <h2 className="flex items-center gap-2 text-lg font-semibold">
-          <HandHeart aria-hidden className="size-5 text-royal" /> Donner
-        </h2>
-        <p className="rounded-2xl bg-gold/15 p-3 text-sm">{howTo}</p>
+      <FormCard title="Donner" subtitle="Dîme, don, action de grâce." icon="hand-heart" tone="gold">
+        <p className="mb-3 rounded-2xl bg-white/80 p-3 text-sm">{howTo}</p>
         <ActionForm action={declareGift} submitLabel="J'ai donné : prévenir la caisse" variant="primary">
           <div className="grid grid-cols-2 gap-3">
             <SelectField
@@ -89,7 +87,7 @@ export default async function GivingPage() {
             <span>Dîme anonyme : mon nom n&apos;apparaîtra pas dans le suivi des dîmes.</span>
           </label>
         </ActionForm>
-      </Card>
+      </FormCard>
 
       {myPledges.length > 0 && (
         <section className="flex flex-col gap-2">

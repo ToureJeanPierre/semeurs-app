@@ -17,18 +17,18 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
 
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
-      <label htmlFor={inputId} className="text-sm font-semibold text-ink">
+      <label htmlFor={inputId} className="text-sm font-bold text-night">
         {label}
       </label>
       <div
         className={[
-          "flex min-h-13 items-center rounded-2xl border-2 bg-surface px-4 transition-colors",
-          "focus-within:border-ink/40",
-          error ? "border-alert-ring" : "border-line",
+"flex min-h-13 items-center rounded-2xl border-2 bg-[#f4f8ff] px-4 shadow-[inset_0_1px_2px_rgb(21_70_184/0.06)] transition-colors",
+          "focus-within:border-royal focus-within:bg-white focus-within:ring-4 focus-within:ring-royal/10",
+          error ? "border-alert-ring" : "border-[#c9daf6]",
         ].join(" ")}
       >
         {prefix && (
-          <span className="mr-2 border-r border-line pr-3 text-muted" aria-hidden>
+          <span className="mr-2 border-r border-[#c9daf6] pr-3 font-semibold text-royal" aria-hidden>
             {prefix}
           </span>
         )}
