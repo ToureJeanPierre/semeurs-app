@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Check, Footprints, HeartHandshake, MapPin } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { FormCard } from "@/components/ui/FormCard";
@@ -43,7 +42,18 @@ type Contact = {
  */
 export default async function EvangelismPage() {
   const access = await getAccess();
-  if (!hasAny(access, ["outreach.record", "souls.manage"], "any")) redirect("/");
+  // Pas encore dans l'équipe : on explique comment y entrer, au lieu de renvoyer à l'accueil.
+  if (!hasAny(access, ["outreach.record", "souls.manage"], "any")) {
+    return (
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
+        <PageTitle title="Évangélisation" />
+        <p className="rounded-card border-2 border-[#bcd3f7] bg-surface p-4 text-sm">
+          Cet onglet est réservé à l&apos;équipe d&apos;évangélisation. Pour y entrer, un administrateur vous ajoute comme membre de
+          l&apos;équipe : <span className="font-semibold">Administration → Groupes → Évangélisation → Ajouter un membre</span>.
+        </p>
+      </div>
+    );
+  }
   const manager = hasAny(access, ["souls.manage", "people.manage"]);
   const supabase = await createClient();
   const today = todayIso();

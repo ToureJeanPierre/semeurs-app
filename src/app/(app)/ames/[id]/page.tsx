@@ -91,7 +91,9 @@ export default async function SoulPage({ params, searchParams }: PageProps<"/ame
           )}
         </Card>
       ) : (
-        <p className="rounded-2xl bg-warn-bg px-4 py-3 text-sm text-warn-text">Pas de numéro de téléphone : ajoutez-le sur la fiche complète pour pouvoir l&apos;appeler.</p>
+        <Link href={`/fideles/${id}`} className="rounded-2xl border-2 border-dashed border-warn-ring bg-warn-bg px-4 py-3 text-sm font-semibold text-warn-text">
+          Pas de numéro de téléphone : touchez ici pour l&apos;ajouter sur sa fiche (« Modifier la fiche »).
+        </Link>
       )}
 
       {follows && (

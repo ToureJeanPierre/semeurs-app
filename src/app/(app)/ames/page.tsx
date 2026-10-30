@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Footprints, MessageCircle, Phone, UserPlus } from "lucide-react";
+import { MessageCircle, Phone, UserPlus } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { ListItem } from "@/components/ui/ListItem";
 import { moduleImage } from "@/lib/navigation";
@@ -38,14 +38,9 @@ export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
       <PageTitle title="Âmes" intro="Accueillir, appeler, accompagner jusqu'à l'intégration dans une famille." />
-      <div className="grid grid-cols-2 gap-3">
-        <Link href="/ames/nouvelle" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-royal px-3 text-center font-semibold text-white shadow-card">
-          <UserPlus aria-hidden className="size-5 shrink-0" /> Nouvelle âme
-        </Link>
-        <Link href="/evangelisation" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-surface px-3 text-center font-semibold text-royal shadow-card">
-          <Footprints aria-hidden className="size-5 shrink-0" /> Évangélisation
-        </Link>
-      </div>
+      <Link href="/ames/nouvelle" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-royal px-3 text-center font-semibold text-white shadow-card">
+        <UserPlus aria-hidden className="size-5 shrink-0" /> Nouvelle âme
+      </Link>
 
       {manager && (
         <ul className="grid grid-cols-3 gap-2 text-center">
@@ -111,6 +106,14 @@ export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
                   <span className="font-semibold text-ok-text">Parcours terminé, gloire à Dieu !</span>
                 )}
               </span>
+            {!s.phone && (
+              <Link
+                href={`/fideles/${s.id}`}
+                className="flex min-h-11 items-center justify-center gap-1.5 rounded-full border-2 border-dashed border-warn-ring bg-warn-bg text-sm font-semibold text-warn-text"
+              >
+                <Phone aria-hidden className="size-4" /> Pas de numéro : l&apos;ajouter
+              </Link>
+            )}
             {s.phone && (
               <div className="grid grid-cols-2 gap-2">
                 <a href={telHref(s.phone)} className="flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-royal text-sm font-semibold text-white">
