@@ -66,7 +66,7 @@ export function bottomNavLinks(modules: AppModule[]): NavLink[] {
  */
 export function menuLinks(modules: AppModule[]): (NavLink & { soon: boolean; description: string | null; image: string | null })[] {
   return [
-    { href: "/", label: "Accueil", icon: "house", soon: false, description: null, image: null },
+    { href: "/", label: "Accueil", icon: "house", soon: false, description: null, image: "/images/modules/home.webp" },
     ...modules.filter((m) => m.enabled || m.nav_position !== null).map((m) => ({
       href: moduleHref(m),
       label: m.label,
