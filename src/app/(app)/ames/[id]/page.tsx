@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle2, Circle, CircleCheck, IdCard, MapPin, X } from "lucide-react";
+import { CheckCircle2, Circle, CircleCheck, IdCard, MapPin, Trash2, X } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PersonPicker } from "@/components/admin/PersonPicker";
 import { ContactButtons } from "@/components/alerts/ContactButtons";
@@ -21,6 +21,8 @@ import { loadValueList } from "@/lib/people";
 import { isStepDone, nextStep, type Soul, type Step } from "@/lib/souls";
 import { createClient } from "@/lib/supabase/server";
 import { assignSoul, endAssignment, toggleStep } from "../actions";
+import { archivePerson } from "../../fideles/actions";
+import { ReasonPicker } from "@/components/ui/ReasonPicker";
 
 export const metadata: Metadata = { title: "Accompagnement" };
 
@@ -50,6 +52,7 @@ export default async function SoulPage({ params, searchParams }: PageProps<"/ame
   const doneOn = new Map(((done ?? []) as { step_id: string; done_on: string }[]).map((d) => [d.step_id, d.done_on]));
   const next = nextStep(soul, stepList, todayIso());
   const name = `${soul.last_name.toUpperCase()} ${soul.first_name}`;
+  const archiveReasons = manager || hasAny(access, ["people.manage"]) ? await loadValueList("archive_reason") : [];
   // Ceux qui accompagnent cette âme (gagneur, membre à qui elle est confiée, responsable) peuvent la visiter.
   const follows =
     manager || soul.brought_by === access.personId || ((assignments ?? []) as { assignee_id: string }[]).some((a) => a.assignee_id === access.personId);
@@ -186,6 +189,20 @@ export default async function SoulPage({ params, searchParams }: PageProps<"/ame
       </Link>
 
       <PersonFollowUp personId={id} name={soul.first_name} canManage={Boolean(canManage)} />
+
+      {(manager || hasAny(access, ["people.manage"])) && (
+        <details className="rounded-card bg-surface px-4 shadow-card">
+          <summary className="flex min-h-12 cursor-pointer items-center gap-2 font-semibold text-alert-text">
+            <Trash2 aria-hidden className="size-5" /> Supprimer cette âme
+          </summary>
+          <ActionForm action={archivePerson} hidden={{ person_id: id, from: "ames" }} submitLabel="Supprimer de la liste" className="flex flex-col gap-3 pb-4">
+            <p className="text-sm text-muted">
+              {soul.first_name} disparaîtra de la liste des âmes et des fidèles. Rien n&apos;est effacé : la fiche peut être restaurée sur demande.
+            </p>
+            <ReasonPicker label="Motif" options={archiveReasons} />
+          </ActionForm>
+        </details>
+      )}
     </div>
   );
 }

@@ -419,5 +419,6 @@ export async function archivePerson(_prev: FormState, formData: FormData): Promi
   // Le compte ne peut plus se connecter (bloqué, non effacé : réversible par l'administrateur).
   if (account?.user_id) await admin.auth.admin.updateUserById(account.user_id, { ban_duration: "876000h" });
   revalidatePath("/fideles");
-  redirect("/fideles?supprime=1");
+  revalidatePath("/ames");
+  redirect(formData.get("from") === "ames" ? "/ames?supprime=1" : "/fideles?supprime=1");
 }

@@ -68,6 +68,7 @@ avec la même version que le nom du fichier.
 | `20261102001000_reports.sql` | Bilans d'activité et financier (`activity_report`, `finance_report`), droit `reports.view` |
 | `20261102001100_hero_images_2.sql` | Illustrations de bandeau : cultes, événements, annonces |
 | `20261102001200_reports_image.sql` | Vignette du menu : Bilans |
+| `20261102001300_archive_souls.sql` | Le responsable des âmes peut supprimer (archiver) une nouvelle âme |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

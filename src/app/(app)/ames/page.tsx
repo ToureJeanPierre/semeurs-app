@@ -17,6 +17,7 @@ export const metadata: Metadata = { title: "Âmes" };
 /** Les âmes que l'on accompagne : parcours d'intégration, prochaine étape, gagneur. */
 export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
   const params = await searchParams;
+  const removed = params.supprime === "1";
   const access = await getAccess();
   const supabase = await createClient();
   const [{ data }, { data: steps }, statuses, { data: stats }] = await Promise.all([
@@ -38,6 +39,11 @@ export default async function SoulsPage({ searchParams }: PageProps<"/ames">) {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
       <PageTitle title="Âmes" intro="Accueillir, appeler, accompagner jusqu'à l'intégration dans une famille." />
+      {removed && (
+        <p role="status" className="rounded-2xl bg-ok-bg px-4 py-3 font-medium text-ok-text">
+          Âme retirée de la liste. Sa fiche reste dans l&apos;historique.
+        </p>
+      )}
       <Link href="/ames/nouvelle" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-royal px-3 text-center font-semibold text-white shadow-card">
         <UserPlus aria-hidden className="size-5 shrink-0" /> Nouvelle âme
       </Link>
