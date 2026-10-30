@@ -66,6 +66,7 @@ avec la même version que le nom du fichier.
 | `20261102000800_archive_reasons.sql` | Motifs de suppression d'une fiche (liste administrable) |
 | `20261102000900_group_display_names.sql` | Groupes nommés avec leur type dans les listes de choix |
 | `20261102001000_reports.sql` | Bilans d'activité et financier (`activity_report`, `finance_report`), droit `reports.view` |
+| `20261102001100_hero_images_2.sql` | Illustrations de bandeau : cultes, événements, annonces |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.
