@@ -426,6 +426,9 @@ d'essai, puis une seule liste de retours).
 - **Saisie visible partout** : champs sur fond bleuté avec bordure, halo bleu quand on écrit ;
   encadré de formulaire coloré (`FormCard` : prière en or, évangélisation en vert, dons en or) ; toute
   carte contenant un formulaire prend une bordure bleue, un fond dégradé et un bandeau de couleur.
+- **Dons** (30/10) : plus de total sur l'année ni d'attestation côté fidèle (demande de Jean-Pierre) ;
+  il voit seulement ses 10 derniers dons et leur état. L'attestation reste possible côté caisse.
+- Événements de vie : accroche « Dieu est présent à chaque saison », Ecclésiaste 3:1.
 
 Prochaine action : essais de Jean-Pierre, corrections groupées.
 

@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { FileText } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { FormCard } from "@/components/ui/FormCard";
 import { ProgressBar } from "@/components/contributions/ProgressBar";
@@ -33,7 +31,6 @@ export default async function GivingPage() {
   const access = await getAccess();
   const supabase = await createClient();
   const today = todayIso();
-  const year = today.slice(0, 4);
   const [{ data: pledges }, { data: campaigns }, { data: mine }, methods, { data: instructions }] = await Promise.all([
     supabase
       .from("pledges")
@@ -45,9 +42,8 @@ export default async function GivingPage() {
       .select("id, amount, category, status, op_date, anonymous")
       .eq("person_id", access.personId ?? "")
       .eq("direction", "in")
-      .gte("op_date", `${year}-01-01`)
       .order("op_date", { ascending: false })
-      .limit(20),
+      .limit(10),
     loadValueList("payment_method"),
     supabase.from("settings").select("value").eq("key", "giving_instructions").maybeSingle(),
   ]);
@@ -57,7 +53,6 @@ export default async function GivingPage() {
   const howTo = (instructions?.value as string | undefined) || "Demandez au caissier le numéro Mobile Money de l'église.";
   const CATEGORY: Record<string, string> = { tithe: "Dîme", gift: "Don", thanksgiving: "Action de grâce", pledge: "Engagement" };
   const STATUS: Record<string, string> = { pending: "en vérification", awaiting_pastor: "en vérification", approved: "reçu, merci", rejected: "non reconnu" };
-  const totalYear = (mine ?? []).filter((o) => o.status === "approved").reduce((s, o) => s + o.amount, 0);
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
@@ -140,7 +135,7 @@ export default async function GivingPage() {
 
       {(mine ?? []).length > 0 && (
         <section className="flex flex-col gap-2">
-          <h2 className="text-lg font-semibold">Mes dons en {year}</h2>
+          <h2 className="text-lg font-semibold">Mes derniers dons</h2>
           <ul className="flex flex-col divide-y divide-line rounded-card bg-surface px-4 text-sm shadow-card">
             {(mine ?? []).map((o) => (
               <li key={o.id} className="flex min-h-12 items-center justify-between gap-2">
@@ -152,9 +147,6 @@ export default async function GivingPage() {
               </li>
             ))}
           </ul>
-          <Link href={`/dons/attestation?annee=${year}`} className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-royal/10 font-semibold text-royal">
-            <FileText aria-hidden className="size-5" /> Mon attestation {year} ({formatMoney(totalYear)})
-          </Link>
         </section>
       )}
     </div>
