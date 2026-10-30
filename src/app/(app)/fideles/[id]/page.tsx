@@ -14,7 +14,7 @@ import { Avatar } from "@/components/people/Avatar";
 import { PhotoPicker } from "@/components/people/PhotoPicker";
 import { signPhotos } from "@/lib/photos";
 import { Card } from "@/components/ui/Card";
-import { TextField } from "@/components/ui/TextField";
+import { ReasonPicker } from "@/components/ui/ReasonPicker";
 import { DoneLink } from "@/components/ui/DoneLink";
 import { ModuleIcon } from "@/components/ui/icons";
 import { getAccess, hasAny } from "@/lib/access";
@@ -59,6 +59,7 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
     supabase.from("alerts").select("level").eq("person_id", id).maybeSingle(),
   ]);
   const groups = (memberships ?? []) as unknown as Membership[];
+  const archiveReasons = hasAny(access, ["people.manage"]) ? await loadValueList("archive_reason") : [];
   const photo = person.photo_path ? (await signPhotos([person.photo_path])).get(person.photo_path) ?? null : null;
   const family = groups.find((m) => m.groups?.group_types?.slug === "family");
   const statusLabel = statuses.find((s) => s.value === person.status)?.label ?? person.status;
@@ -234,7 +235,7 @@ export default async function PersonPage({ params, searchParams }: PageProps<"/f
                   {person.first_name} disparaîtra de la liste et de ses groupes, et ne pourra plus se connecter. Son historique (cotisations,
                   dons, présences) est conservé : la fiche peut être restaurée sur demande.
                 </p>
-                <TextField label="Motif" name="reason" placeholder="Doublon, erreur de saisie, départ de l'église…" required />
+                <ReasonPicker label="Motif" options={archiveReasons} />
               </ActionForm>
             </details>
           )}

@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import QRCode from "qrcode";
 import Link from "next/link";
-import { Baby, CalendarX2, ChevronRight, Trash2 } from "lucide-react";
+import { Baby, CalendarX2, QrCode, Trash2 } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { AbsenceForm } from "@/components/people/AbsenceForm";
+import { HashOpener } from "@/components/ui/HashOpener";
 import { Card } from "@/components/ui/Card";
 import { getAccess } from "@/lib/access";
 import { loadValueList } from "@/lib/people";
 import { createClient } from "@/lib/supabase/server";
 import { HomeLocator } from "@/components/location/HomeLocator";
 import { MyCommitments } from "@/components/my-space/MyCommitments";
+import { MyContributions } from "@/components/my-space/MyContributions";
+import { MyGroupsNews } from "@/components/my-space/MyGroupsNews";
 import { MyPath } from "@/components/my-space/MyPath";
 import { MyPositions } from "@/components/my-space/MyPositions";
 import { removeAbsence, saveMyHome } from "./actions";
@@ -42,40 +45,53 @@ export default async function MySpacePage() {
   ]);
   const qr = token ? await QRCode.toString(token, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#0B2A6F" } }) : null;
 
+  const pendingAbsences = (absences ?? []).length;
+
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-5 px-4 pb-8 pt-5">
       <PageTitle title="Mon espace" />
+      <HashOpener />
 
+      {/* Raccourcis : ce que l'on vient faire ici le plus souvent. */}
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { href: "#signaler-absence", label: "Je serai absent(e)", icon: CalendarX2, cls: "bg-gradient-to-b from-royal to-night text-white" },
+          { href: "#code", label: "Mon code de présence", icon: QrCode, cls: "bg-surface text-royal" },
+          { href: "/evenements-de-vie", label: "Une nouvelle à partager", icon: Baby, cls: "bg-surface text-royal" },
+        ].map((t) => {
+          const cls = `flex min-h-24 flex-col items-center justify-center gap-1.5 rounded-card p-2 text-center text-sm font-semibold shadow-card active:scale-95 ${t.cls}`;
+          const body = (
+            <>
+              <t.icon aria-hidden className="size-6" />
+              {t.label}
+            </>
+          );
+          // Ancre dans la page : lien simple, pour que le volet visé s'ouvre (HashOpener).
+          return t.href.startsWith("#") ? (
+            <a key={t.href} href={t.href} className={cls}>
+              {body}
+            </a>
+          ) : (
+            <Link key={t.href} href={t.href} className={cls}>
+              {body}
+            </Link>
+          );
+        })}
+      </div>
+
+      <MyContributions personId={access.personId} />
+      <MyGroupsNews personId={access.personId} />
       <MyCommitments personId={access.personId} />
       <MyPositions personId={access.personId} />
       <MyPath personId={access.personId} />
 
-      {qr && (
-        <Card className="flex flex-col items-center gap-3 text-center shadow-card">
-          <h2 className="text-lg font-semibold">Mon code de présence</h2>
-          <div className="w-60 rounded-2xl bg-white p-2" role="img" aria-label="Mon code QR de présence" dangerouslySetInnerHTML={{ __html: qr }} />
-          <p className="text-sm text-muted">Présentez ce code au protocole à l&apos;entrée du culte.</p>
-        </Card>
-      )}
-
-      <Card className="flex flex-col gap-2 shadow-card">
-        <h2 className="text-lg font-semibold">Ma maison</h2>
-        <p className="text-sm text-muted">
-          Quand vous êtes chez vous, touchez le bouton : votre père de famille pourra vous rendre visite plus facilement.
-        </p>
-        <HomeLocator
-          save={saveMyHome}
-          savedLabel={home ? `Maison enregistrée le ${dateFormat.format(new Date(home.set_at))}. Vous pouvez la mettre à jour.` : null}
-        />
-      </Card>
-
-      <Card className="flex flex-col gap-3 shadow-card">
+      <Card id="absence" className="flex scroll-mt-24 flex-col gap-3 shadow-card">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
           <CalendarX2 aria-hidden className="size-5 text-royal" />
-          Je serai absent(e)
+          Mes absences prévues
         </h2>
-        <p className="-mt-1 text-sm text-muted">Voyage, maladie, travail : prévenez, et personne ne s&apos;inquiétera de votre absence. Vous ne serez pas programmé(e) ces jours-là.</p>
-        {(absences ?? []).length > 0 && (
+        {pendingAbsences === 0 && <p className="text-sm text-muted">Aucune absence signalée.</p>}
+        {pendingAbsences > 0 && (
           <ul className="flex flex-col divide-y divide-line">
             {(absences ?? []).map((a) => (
               <li key={a.id} className="flex items-center gap-3 py-2">
@@ -98,16 +114,39 @@ export default async function MySpacePage() {
             ))}
           </ul>
         )}
-        <AbsenceForm reasons={reasons} />
+        <details id="signaler-absence" className="scroll-mt-24 rounded-2xl border-2 border-[#bcd3f7] bg-gradient-to-b from-white to-[#eaf3ff] px-3">
+          <summary className="flex min-h-12 cursor-pointer items-center gap-2 font-display font-bold text-royal">
+            <CalendarX2 aria-hidden className="size-5" /> Signaler une absence
+          </summary>
+          <div className="flex flex-col gap-2 pb-3">
+            <p className="text-sm text-muted">Voyage, maladie, travail : prévenez, et personne ne s&apos;inquiétera. Vous ne serez pas programmé(e) ces jours-là.</p>
+            <AbsenceForm reasons={reasons} />
+          </div>
+        </details>
       </Card>
-      <Link href="/evenements-de-vie" className="flex items-center gap-3 rounded-card bg-surface p-4 shadow-card active:scale-[0.99]">
-        <Baby aria-hidden className="size-6 shrink-0 text-royal" />
-        <span className="flex-1">
-          <span className="block font-semibold">Une naissance, un mariage, un deuil, une maladie ?</span>
-          <span className="block text-sm text-muted">Prévenez l&apos;église : votre père de famille et le pasteur seront avertis.</span>
-        </span>
-        <ChevronRight aria-hidden className="size-5 shrink-0 text-muted" />
-      </Link>
+
+      {qr && (
+        <details id="code" className="scroll-mt-24 rounded-card bg-surface px-4 shadow-card">
+          <summary className="flex min-h-14 cursor-pointer items-center gap-2 font-display text-lg font-bold text-night">
+            <QrCode aria-hidden className="size-5 text-royal" /> Mon code de présence
+          </summary>
+          <div className="flex flex-col items-center gap-3 pb-4 text-center">
+            <div className="w-60 rounded-2xl bg-white p-2" role="img" aria-label="Mon code QR de présence" dangerouslySetInnerHTML={{ __html: qr }} />
+            <p className="text-sm text-muted">Présentez ce code au protocole à l&apos;entrée du culte.</p>
+          </div>
+        </details>
+      )}
+
+      <Card className="flex flex-col gap-2 shadow-card">
+        <h2 className="text-lg font-semibold">Ma maison</h2>
+        <p className="text-sm text-muted">
+          Quand vous êtes chez vous, touchez le bouton : votre père de famille pourra vous rendre visite plus facilement.
+        </p>
+        <HomeLocator
+          save={saveMyHome}
+          savedLabel={home ? `Maison enregistrée le ${dateFormat.format(new Date(home.set_at))}. Vous pouvez la mettre à jour.` : null}
+        />
+      </Card>
     </div>
   );
 }

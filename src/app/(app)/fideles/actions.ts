@@ -407,8 +407,10 @@ export async function addCareNote(_prev: FormState, formData: FormData): Promise
 export async function archivePerson(_prev: FormState, formData: FormData): Promise<FormState> {
   const id = uuid.safeParse(formData.get("person_id"));
   if (!id.success) return { error: "Fiche inconnue." };
-  const reason = String(formData.get("reason") ?? "").trim();
-  if (reason.length < 3) return { fieldErrors: { reason: "Indiquez le motif (doublon, erreur de saisie, départ…)." } };
+  const choice = String(formData.get("reason") ?? "").trim();
+  const reason = choice === "__other" ? String(formData.get("reason_other") ?? "").trim() : choice;
+  if (!choice) return { fieldErrors: { reason: "Choisissez le motif." } };
+  if (reason.length < 3) return { fieldErrors: { reason_other: "Écrivez le motif." } };
   const admin = createAdminClient();
   const { data: account } = await admin.from("users").select("user_id").eq("person_id", id.data).maybeSingle();
   const supabase = await createClient();

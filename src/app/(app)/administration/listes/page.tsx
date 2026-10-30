@@ -22,6 +22,7 @@ const LIST_NAMES: Record<string, string> = {
   payment_method: "Moyens de paiement",
   life_event_kind: "Événements de vie",
   outreach_decision: "Réponses en évangélisation",
+  archive_reason: "Motifs de suppression d'une fiche",
   resource_kind: "Types de ressources (répertoire)",
 };
 

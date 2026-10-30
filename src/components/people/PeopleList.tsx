@@ -23,7 +23,7 @@ function normalize(text: string) {
 
 
 /** Registre avec recherche instantanée et filtre « sans famille ». */
-export function PeopleList({ rows }: { rows: PeopleRow[] }) {
+export function PeopleList({ rows, canEdit = false }: { rows: PeopleRow[]; canEdit?: boolean }) {
   const [query, setQuery] = useState("");
   const [onlyUnattached, setOnlyUnattached] = useState(false);
   const unattachedCount = rows.filter((r) => !r.family).length;
@@ -82,6 +82,15 @@ export function PeopleList({ rows }: { rows: PeopleRow[] }) {
                   </span>
                 </span>
               </Link>
+              {!r.phone && canEdit && (
+                <Link
+                  href={`/fideles/${r.id}`}
+                  aria-label={`Ajouter le numéro de ${r.name}`}
+                  className="flex min-h-11 shrink-0 items-center gap-1 rounded-full border-2 border-dashed border-warn-ring bg-warn-bg px-3 text-xs font-semibold text-warn-text"
+                >
+                  <Phone aria-hidden className="size-4" /> Pas de n°
+                </Link>
+              )}
               {r.phone && (
                 <>
                   <a href={telHref(r.phone)} aria-label={`Appeler ${r.name}`} className="grid size-11 shrink-0 place-items-center rounded-full bg-royal/10 text-royal">

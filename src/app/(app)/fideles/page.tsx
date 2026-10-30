@@ -73,7 +73,7 @@ export default async function PeoplePage({ searchParams }: PageProps<"/fideles">
           Fiche supprimée de la liste. Son historique est conservé.
         </p>
       )}
-      <PeopleList rows={rows} />
+      <PeopleList rows={rows} canEdit={hasAny(access, ["people.manage"], "any")} />
     </div>
   );
 }
