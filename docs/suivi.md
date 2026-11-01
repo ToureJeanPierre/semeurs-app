@@ -434,6 +434,9 @@ d'essai, puis une seule liste de retours).
 - **Mon espace repensé** : raccourcis (Je serai absent(e), Mon code de présence, Une nouvelle à
   partager), mes cotisations en cours, ce qui arrive dans ma famille et mes équipes, mes dernières
   nouvelles ; le formulaire d'absence et le code QR sont rangés dans des volets.
+- **Événements** (01/11) : seulement les événements de l'église (croisades, conventions, veillées,
+  sorties…), à venir et historique. Les cultes restent dans « Cultes », les répétitions et activités
+  dans chaque groupe (et Mon espace), les réunions dans « Réunions ».
 - **Bilans** (`/bilans`) : bilan du mois ou de l'année, imprimable (cultes et présences, groupes,
   âmes et évangélisation, suivi, réunions, formations, actes, programme) et bilan financier pour qui
   a le droit caisse (soldes, recettes et dépenses par catégorie).
