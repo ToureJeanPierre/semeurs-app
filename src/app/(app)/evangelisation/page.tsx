@@ -31,6 +31,7 @@ type Contact = {
   decision: string;
   note: string | null;
   met_by: string | null;
+  met: { first_name: string; last_name: string } | null;
   invited_on: string | null;
   created_at: string;
   outreach_outings: { zone: string; outing_date: string } | null;
@@ -42,31 +43,29 @@ type Contact = {
  */
 export default async function EvangelismPage() {
   const access = await getAccess();
-  // Pas encore dans l'équipe : on explique comment y entrer, au lieu de renvoyer à l'accueil.
-  if (!hasAny(access, ["outreach.record", "souls.manage"], "any")) {
-    return (
-      <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
-        <PageTitle title="Évangélisation" />
-        <p className="rounded-card border-2 border-[#bcd3f7] bg-surface p-4 text-sm">
-          Cet onglet est réservé à l&apos;équipe d&apos;évangélisation. Pour y entrer, un administrateur vous ajoute comme membre de
-          l&apos;équipe : <span className="font-semibold">Administration → Groupes → Évangélisation → Ajouter un membre</span>.
-        </p>
-      </div>
-    );
-  }
+  // Tout le monde évangélise ; l'équipe d'évangélisation (et le responsable des âmes) voit toutes les personnes.
+  const team = hasAny(access, ["outreach.record", "souls.manage"], "any");
   const manager = hasAny(access, ["souls.manage", "people.manage"]);
   const supabase = await createClient();
   const today = todayIso();
   const [{ data: contactRows }, { data: soulRows }, { data: lastOuting }, decisions, invite, home] = await Promise.all([
     supabase
       .from("outreach_contacts")
-      .select("id, first_name, last_name, phone, district, decision, note, met_by, invited_on, created_at, outreach_outings(zone, outing_date)")
+      .select(
+        "id, first_name, last_name, phone, district, decision, note, met_by, invited_on, created_at, outreach_outings(zone, outing_date), met:people!outreach_contacts_met_by_fkey(first_name, last_name)",
+      )
       .is("person_id", null)
       .gte("created_at", addDays(today, -90))
       .order("created_at", { ascending: false })
       .limit(100),
     supabase.rpc("souls_overview"),
-    supabase.from("outreach_outings").select("zone").eq("outing_date", today).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    supabase
+      .from("outreach_outings")
+      .select("zone")
+      .eq("outing_date", today)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
     loadValueList("outreach_decision"),
     loadMessageTemplate("outreach_invite", INVITE_FALLBACK),
     loadHomeData(),
@@ -82,7 +81,10 @@ export default async function EvangelismPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
-      <PageTitle title="Évangélisation" intro="Noter la personne rencontrée, puis l'inviter au culte." />
+      <PageTitle
+        title="Évangélisation"
+        intro="Vous avez parlé de Jésus-Christ à quelqu'un ? Notez son nom, son numéro et son quartier, puis appelez-le et invitez-le jusqu'à ce qu'il vienne à l'église."
+      />
 
       <FormCard title="Personne rencontrée" subtitle="Notez-la en quelques secondes." icon="heart-handshake" tone="green">
         <ActionForm action={quickContact} submitLabel="Enregistrer" variant="primary">
@@ -106,7 +108,8 @@ export default async function EvangelismPage() {
       </FormCard>
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-lg font-semibold">À inviter au prochain culte</h2>
+        <h2 className="text-lg font-semibold">{team ? "Toutes les personnes rencontrées" : "Les personnes que j'ai rencontrées"}</h2>
+        {!team && <p className="text-sm text-muted">L&apos;équipe d&apos;évangélisation les voit aussi et vous aide à les suivre.</p>}
         {culte ? (
           <p className="rounded-2xl bg-gold/15 px-4 py-3 text-sm">
             <span className="font-semibold">{culte.label}</span>
@@ -119,7 +122,9 @@ export default async function EvangelismPage() {
           <p className="rounded-2xl bg-cloud px-4 py-3 text-sm text-muted">Aucun culte n&apos;est paramétré.</p>
         )}
 
-        {contacts.length === 0 && <p className="rounded-card bg-surface p-4 text-sm text-muted">Personne de noté ces trois derniers mois.</p>}
+        {contacts.length === 0 && (
+          <p className="rounded-card bg-surface p-4 text-sm text-muted">Personne de noté ces trois derniers mois.</p>
+        )}
         {contacts.map((c) => {
           const invited = invitedRecently(c);
           return (
@@ -129,13 +134,15 @@ export default async function EvangelismPage() {
                   <span className="block font-semibold">
                     {c.last_name.toUpperCase()} {c.first_name}
                   </span>
-                  <span className="flex flex-wrap items-center gap-x-1 text-sm text-muted">
+                  <span className="block text-sm text-muted">
                     {c.district && (
                       <>
-                        <MapPin aria-hidden className="size-3.5" /> {c.district} ·
+                        <MapPin aria-hidden className="-mt-0.5 mr-0.5 inline size-3.5" />
+                        {c.district} ·{" "}
                       </>
                     )}
                     {decision(c.decision)} · rencontré(e) le {formatShortDay(c.created_at.slice(0, 10))}
+                    {team && c.met && c.met_by !== access.personId ? ` par ${c.met.first_name} ${c.met.last_name}` : ""}
                   </span>
                   {c.note && <span className="block text-sm">{c.note}</span>}
                 </span>
@@ -151,7 +158,9 @@ export default async function EvangelismPage() {
                   <form action={markInvited}>
                     <input type="hidden" name="contact_id" value={c.id} />
                     <input type="hidden" name="invited" value={invited ? "0" : "1"} />
-                    <SubmitButton className={`min-h-11 w-full rounded-full text-sm font-semibold ${invited ? "bg-cloud text-muted" : "bg-ok-bg text-ok-text"}`}>
+                    <SubmitButton
+                      className={`min-h-11 w-full rounded-full text-sm font-semibold ${invited ? "bg-cloud text-muted" : "bg-ok-bg text-ok-text"}`}
+                    >
                       {invited ? "Annuler « invité(e) »" : "C'est fait : marquer invité(e)"}
                     </SubmitButton>
                   </form>
@@ -201,14 +210,22 @@ export default async function EvangelismPage() {
         </section>
       )}
 
-      <div className="grid grid-cols-2 gap-3">
-        <Link href="/ames/sorties" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-surface px-3 text-center text-sm font-semibold text-royal shadow-card">
-          <Footprints aria-hidden className="size-5 shrink-0" /> Toutes les sorties
-        </Link>
-        <Link href="/ames" className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-surface px-3 text-center text-sm font-semibold text-royal shadow-card">
-          <HeartHandshake aria-hidden className="size-5 shrink-0" /> Nouvelles âmes
-        </Link>
-      </div>
+      {team && (
+        <div className="grid grid-cols-2 gap-3">
+          <Link
+            href="/ames/sorties"
+            className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-surface px-3 text-center text-sm font-semibold text-royal shadow-card"
+          >
+            <Footprints aria-hidden className="size-5 shrink-0" /> Toutes les sorties
+          </Link>
+          <Link
+            href="/ames"
+            className="flex min-h-14 items-center justify-center gap-2 rounded-card bg-surface px-3 text-center text-sm font-semibold text-royal shadow-card"
+          >
+            <HeartHandshake aria-hidden className="size-5 shrink-0" /> Nouvelles âmes
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

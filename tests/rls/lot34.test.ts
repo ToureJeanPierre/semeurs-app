@@ -128,15 +128,16 @@ ${as("ua")}
     });
   });
 
-  it("évangélisation, visite des âmes, suppression : chacun dans son rôle", async () => {
+  it("évangélisation (ouverte à tous, l'équipe voit tout), visite des âmes, suppression", async () => {
     const r = await runScenario(`
   insert into public.groups (id, type_id, name) values ('00000000-0000-4000-8000-0000000000e1', (select id from public.group_types where slug = 'team'), 'Évangélisation test');
+${as("ub")}
+  perform public.quick_outreach_contact('Koffi', 'Voisin', null, 'Niangon', 'interested', null, 'Quartier');
+  select count(*) into n from public.outreach_contacts where last_name = 'Voisin';
+  r := r || jsonb_build_object('member_sees_own_contact', n);
 ${as("ua")}
-  begin
-    perform public.quick_outreach_contact('Awa', 'Test', null, 'Niangon', 'interested', null, 'Marché');
-    r := r || '{"outsider_records": "allowed"}';
-  exception when insufficient_privilege then r := r || '{"outsider_records": "denied"}';
-  end;
+  select count(*) into n from public.outreach_contacts where last_name = 'Voisin';
+  r := r || jsonb_build_object('other_member_sees_it', n);
   reset role;
   insert into public.group_capabilities (group_id, capability_code) values ('00000000-0000-4000-8000-0000000000e1', 'evangelism');
   insert into public.group_memberships (group_id, person_id) values ('00000000-0000-4000-8000-0000000000e1', pa);
@@ -146,6 +147,8 @@ ${as("ua")}
   perform public.quick_outreach_contact('Awa', 'Test', null, 'Niangon', 'interested', null, 'Marché');
   select count(*) into n from public.outreach_contacts where first_name = 'Awa' and last_name = 'Test';
   r := r || jsonb_build_object('evangelist_sees_contact', n);
+  select count(*) into n from public.outreach_contacts where last_name = 'Voisin';
+  r := r || jsonb_build_object('team_sees_member_contact', n);
   select count(*) into n from public.people_locations where person_id = pd;
   r := r || jsonb_build_object('soul_winner_sees_home', n);
   begin
@@ -171,8 +174,10 @@ ${as("ue")}
   r := r || jsonb_build_object('members_left_group', n);`);
 
     expect(r).toEqual({
-      outsider_records: "denied",
+      member_sees_own_contact: 1,
+      other_member_sees_it: 0,
       evangelist_sees_contact: 1,
+      team_sees_member_contact: 1,
       soul_winner_sees_home: 1,
       member_deletes: "denied",
       member_deletes_group: "denied",

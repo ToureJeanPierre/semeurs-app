@@ -437,6 +437,10 @@ d'essai, puis une seule liste de retours).
 - **Événements** (01/11) : seulement les événements de l'église (croisades, conventions, veillées,
   sorties…), à venir et historique. Les cultes restent dans « Cultes », les répétitions et activités
   dans chaque groupe (et Mon espace), les réunions dans « Réunions ».
+- **Évangélisation ouverte à tous** (07/11) : onglet dans le menu de chaque fidèle ; chacun note la
+  personne à qui il a parlé de Jésus-Christ et la voit dans « Les personnes que j'ai rencontrées »
+  (appeler, SMS, WhatsApp, invitation déjà écrite) ; l'équipe d'évangélisation et le responsable des
+  âmes voient toutes les personnes (avec qui les a rencontrées) et sont prévenus de chaque nouvelle.
 - **Bilans** (`/bilans`) : bilan du mois ou de l'année, imprimable (cultes et présences, groupes,
   âmes et évangélisation, suivi, réunions, formations, actes, programme) et bilan financier pour qui
   a le droit caisse (soldes, recettes et dépenses par catégorie).
