@@ -102,9 +102,12 @@ h3 {
   line-height: 1.15;
 }
 
-main h2 {
-  color: var(--color-night);
-  font-weight: 700;
+/* Dans la couche « base » : une couleur donnée par une classe (text-white…) l'emporte toujours. */
+@layer base {
+  main h2 {
+    color: var(--color-night);
+    font-weight: 700;
+  }
 }
 
 /* Toute carte qui contient un formulaire à remplir devient un encadré de saisie visible (30/10) :
@@ -202,6 +205,17 @@ textarea:focus-visible {
   font-weight: 600;
   animation: splash-rise 0.5s ease-out 0.35s both;
 }
+/* Fond de la carte Évangélisation de l'accueil : le dégradé ondule lentement. */
+@keyframes evangelism-wave {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 @keyframes splash-pop {
   from { transform: scale(0.55); opacity: 0; }
   to { transform: scale(1); opacity: 1; }

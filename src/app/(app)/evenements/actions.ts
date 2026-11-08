@@ -17,6 +17,7 @@ const eventSchema = z.object({
   description: z.string().trim().max(3000).optional(),
   registration: z.enum(["on"]).optional(),
   capacity: z.string().optional(),
+  poster_path: z.string().regex(/^[0-9a-f-]{36}\.jpg$/).or(z.literal("")).optional(),
 });
 
 /** Nouvel événement de l'église : annoncé à tous (notification sur le téléphone). */
@@ -34,6 +35,7 @@ export async function createChurchEvent(_prev: FormState, formData: FormData): P
     description: v.description || null,
     registration: v.registration === "on",
     capacity: v.capacity ? Number(v.capacity) || null : null,
+    poster_path: v.poster_path || null,
   });
   if (error) return { error: explain(error) };
   revalidatePath("/evenements");

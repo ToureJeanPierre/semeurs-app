@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ChevronRight, LockKeyhole } from "lucide-react";
 import { HomeBanner } from "@/components/home/HomeBanner";
+import { EvangelismHomeLoader } from "@/components/home/EvangelismHomeLoader";
+import { HomeEvents } from "@/components/home/HomeEvents";
 import { PendingPolls } from "@/components/home/PendingPolls";
 import { NextServiceCard } from "@/components/home/NextServiceCard";
 import { ShortcutGrid } from "@/components/home/ShortcutGrid";
@@ -54,6 +56,10 @@ export default async function HomePage() {
             serverNow={now.toISOString()}
           />
         )}
+
+        <HomeEvents />
+
+        <EvangelismHomeLoader />
 
         <PendingPolls />
 

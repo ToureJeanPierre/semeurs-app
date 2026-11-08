@@ -441,6 +441,11 @@ d'essai, puis une seule liste de retours).
   personne à qui il a parlé de Jésus-Christ et la voit dans « Les personnes que j'ai rencontrées »
   (appeler, SMS, WhatsApp, invitation déjà écrite) ; l'équipe d'évangélisation et le responsable des
   âmes voient toutes les personnes (avec qui les a rencontrées) et sont prévenus de chaque nouvelle.
+- **Accueil animé** (08/11) : carrousel « À l'affiche » des prochains événements (affiche qui zoome,
+  titre mot à mot, compte à rebours, glisser du doigt, barre de défilement) ; affiche facultative à
+  l'annonce d'un événement (allégée dans le téléphone, stockage privé « affiches ») ; carte
+  « Évangélisation » animée (phrases qui défilent, pousse qui grandit, fond qui ondule) avec le
+  nombre de personnes à inviter. `prefers-reduced-motion` respecté.
 - **Bilans** (`/bilans`) : bilan du mois ou de l'année, imprimable (cultes et présences, groupes,
   âmes et évangélisation, suivi, réunions, formations, actes, programme) et bilan financier pour qui
   a le droit caisse (soldes, recettes et dépenses par catégorie).

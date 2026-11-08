@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CalendarDays, Trash2 } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { ActionForm } from "@/components/people/ActionForm";
+import { PosterPicker } from "@/components/events/PosterPicker";
 import { FormCard } from "@/components/ui/FormCard";
 import { ListItem, type Meta } from "@/components/ui/ListItem";
 import { SelectField, TextAreaField } from "@/components/ui/SelectField";
@@ -27,6 +28,7 @@ type EventRow = {
   place: string | null;
   registration: boolean;
   capacity: number | null;
+  poster_path: string | null;
   event_registrations: { person_id: string; people: { first_name: string; last_name: string } | null }[];
 };
 
@@ -44,13 +46,16 @@ export default async function EventsPage() {
   const [{ data }, kinds, art] = await Promise.all([
     supabase
       .from("church_events")
-      .select("id, title, kind, description, starts_at, ends_at, place, registration, capacity, event_registrations(person_id, people(first_name, last_name))")
+      .select("id, title, kind, description, starts_at, ends_at, place, registration, capacity, poster_path, event_registrations(person_id, people(first_name, last_name))")
       .gte("starts_at", addDays(today, -365))
       .order("starts_at"),
     loadValueList("event_kind"),
     moduleImage("events"),
   ]);
   const events = (data ?? []) as unknown as EventRow[];
+  const posterPaths = events.map((e) => e.poster_path).filter((p): p is string => !!p);
+  const { data: signed } = posterPaths.length ? await supabase.storage.from("affiches").createSignedUrls(posterPaths, 3600) : { data: [] };
+  const poster = (p: string | null) => (p ? (signed ?? []).find((x) => x.path === p)?.signedUrl ?? null : null);
   const upcoming = events.filter((e) => (e.ends_at ?? e.starts_at).slice(0, 10) >= today);
   const past = events.filter((e) => !upcoming.includes(e)).reverse();
   const kindLabel = (k: string) => kinds.find((x) => x.value === k)?.label ?? "Événement";
@@ -64,7 +69,7 @@ export default async function EventsPage() {
       ...(e.place ? [{ icon: "place" as const, text: e.place }] : []),
     ];
     return (
-      <ListItem key={e.id} title={e.title} meta={meta} badge={kindLabel(e.kind)} tone={isPast ? "royal" : "teal"} image={art} icon="calendar-days">
+      <ListItem key={e.id} title={e.title} meta={meta} badge={kindLabel(e.kind)} tone={isPast ? "royal" : "teal"} image={poster(e.poster_path) ?? art} icon="calendar-days">
         {e.description && <p className="whitespace-pre-wrap text-sm">{e.description}</p>}
         {e.registration && !isPast && (
           <form action={toggleRegistration} className="flex items-center gap-3">
@@ -140,6 +145,7 @@ export default async function EventsPage() {
             </div>
             <TextField label="Lieu" name="place" />
             <TextAreaField label="Présentation" name="description" rows={3} />
+            <PosterPicker />
             <label className="flex min-h-11 items-center gap-3 text-sm">
               <input type="checkbox" name="registration" className="size-5 accent-royal" /> Inscription demandée
             </label>
