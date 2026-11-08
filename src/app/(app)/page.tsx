@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronRight, LockKeyhole } from "lucide-react";
 import { HomeBanner } from "@/components/home/HomeBanner";
 import { EvangelismHomeLoader } from "@/components/home/EvangelismHomeLoader";
-import { HomeEvents } from "@/components/home/HomeEvents";
+import { PromoSection } from "@/components/home/PromoSection";
 import { PendingPolls } from "@/components/home/PendingPolls";
 import { NextServiceCard } from "@/components/home/NextServiceCard";
 import { ShortcutGrid } from "@/components/home/ShortcutGrid";
@@ -46,6 +46,8 @@ export default async function HomePage() {
       <HomeBanner imageUrl={home.banner.image_url} headline={home.banner.headline} verse={verse} />
 
       <div className="mx-auto flex w-full max-w-lg flex-col gap-6 px-4 pt-4">
+        <PromoSection />
+
         {next && (
           <NextServiceCard
             name={next.service.short_name ?? next.service.name}
@@ -56,8 +58,6 @@ export default async function HomePage() {
             serverNow={now.toISOString()}
           />
         )}
-
-        <HomeEvents />
 
         <EvangelismHomeLoader />
 

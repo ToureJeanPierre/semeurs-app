@@ -210,4 +210,21 @@ ${as("ub")}
 
     expect(r).toEqual({ own_photo: 1, other_photo: "denied", foreign_folder: "denied", father_sets_member_photo: 1 });
   });
+
+  it("bannières de l'accueil : tout le monde les voit, seuls les responsables les gèrent", async () => {
+    const r = await runScenario(`
+${as("ua")}
+  begin
+    insert into public.promo_slides (title) values ('Publicité pirate');
+    r := r || '{"member_creates": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"member_creates": "denied"}';
+  end;
+  select count(*) into n from public.promo_slides;
+  r := r || jsonb_build_object('member_sees', case when n > 0 then 'yes' else 'no' end);
+${as("ue")}
+  insert into public.promo_slides (title) values ('Annonce officielle');
+  r := r || '{"admin_creates": "allowed"}';`);
+
+    expect(r).toEqual({ member_creates: "denied", member_sees: "yes", admin_creates: "allowed" });
+  });
 });

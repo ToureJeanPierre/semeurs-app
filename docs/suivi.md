@@ -446,6 +446,12 @@ d'essai, puis une seule liste de retours).
   l'annonce d'un événement (allégée dans le téléphone, stockage privé « affiches ») ; carte
   « Évangélisation » animée (phrases qui défilent, pousse qui grandit, fond qui ondule) avec le
   nombre de personnes à inviter. `prefers-reduced-motion` respecté.
+- **Bannières animées de l'accueil** (08/11, GSAP 3.13) : messages qui se succèdent seuls, avec
+  zoom avant/arrière, fondu, glissement, rotation 3D, balayage lumineux, lueur du bouton, parallaxe
+  (le fond, l'image et le texte bougent à des vitesses différentes), titres mot à mot ; glisser du
+  doigt, points, bouton pause ; simple fondu si « moins d'animations ». Réglées dans Administration →
+  Bannières de l'accueil (texte, image, couleur, animation, durée, période, ordre, aperçu en direct) ;
+  les prochains événements s'y intercalent seuls. Remplace le carrousel « À l'affiche ».
 - **Bilans** (`/bilans`) : bilan du mois ou de l'année, imprimable (cultes et présences, groupes,
   âmes et évangélisation, suivi, réunions, formations, actes, programme) et bilan financier pour qui
   a le droit caisse (soldes, recettes et dépenses par catégorie).

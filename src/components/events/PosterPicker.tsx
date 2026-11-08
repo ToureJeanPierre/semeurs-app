@@ -20,9 +20,9 @@ async function shrink(file: File): Promise<Blob> {
 
 /**
  * Affiche de l'événement (facultative) : choisie dans la galerie ou prise en photo, envoyée tout de
- * suite ; son chemin part avec le formulaire dans le champ caché `poster_path`.
+ * suite ; son chemin part avec le formulaire dans le champ caché `name` (poster_path par défaut).
  */
-export function PosterPicker() {
+export function PosterPicker({ name = "poster_path", label = "Affiche (facultatif)" }: { name?: string; label?: string }) {
   const input = useRef<HTMLInputElement>(null);
   const [path, setPath] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
@@ -48,8 +48,8 @@ export function PosterPicker() {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-sm font-bold text-night">Affiche (facultatif)</span>
-      <input type="hidden" name="poster_path" value={path} />
+      <span className="text-sm font-bold text-night">{label}</span>
+      <input type="hidden" name={name} value={path} />
       <input ref={input} type="file" accept="image/*" className="sr-only" tabIndex={-1} onChange={(e) => onPick(e.target.files?.[0])} />
       {preview ? (
         <div className="relative overflow-hidden rounded-2xl border-2 border-[#c9daf6]">

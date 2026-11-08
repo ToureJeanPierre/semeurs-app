@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { KeyRound, ListChecks, SlidersHorizontal, UsersRound, Network } from "lucide-react";
+import { GalleryHorizontalEnd, KeyRound, ListChecks, SlidersHorizontal, UsersRound, Network } from "lucide-react";
 import { AdminLink, PageTitle } from "@/components/admin/AdminCard";
 import { hasAny, requirePermission } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 export const metadata: Metadata = { title: "Administration" };
 
 export default async function AdministrationPage() {
-  const access = await requirePermission("settings.manage", "roles.manage", "groups.manage");
+  const access = await requirePermission("settings.manage", "roles.manage", "groups.manage", "promos.manage");
   const supabase = await createClient();
   const [groups, people] = await Promise.all([
     supabase.from("groups").select("id", { count: "exact", head: true }),
@@ -33,6 +33,15 @@ export default async function AdministrationPage() {
           title="Personnes"
           detail={`${people.count ?? 0} personnes au registre`}
         />
+        {hasAny(access, ["promos.manage"]) && (
+          <AdminLink
+            href="/administration/bannieres"
+            icon={<GalleryHorizontalEnd aria-hidden className="size-6" />}
+            title="Bannières de l'accueil"
+            detail="Messages animés qui défilent sur l'accueil : textes, images, effets"
+            accent="var(--color-gold)"
+          />
+        )}
         {hasAny(access, ["roles.manage"]) && (
           <AdminLink
             href="/administration/roles"
