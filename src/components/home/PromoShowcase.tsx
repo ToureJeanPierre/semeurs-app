@@ -196,7 +196,7 @@ export function PromoShowcase({ slides }: { slides: PromoSlide[] }) {
     <section aria-roledescription="carrousel" aria-label="À la une" className="flex flex-col gap-2">
       <div
         ref={stage}
-        className="relative h-[19.5rem] touch-pan-y select-none overflow-hidden rounded-[1.75rem] bg-night shadow-float [perspective:1100px] sm:h-80 lg:h-96"
+        className="relative h-[16.5rem] touch-pan-y select-none overflow-hidden rounded-[1.75rem] bg-night shadow-float [perspective:1100px] sm:h-80 lg:h-96"
         onPointerDown={(e) => {
           startX.current = e.clientX;
           setHold(true);
@@ -247,14 +247,14 @@ export function PromoShowcase({ slides }: { slides: PromoSlide[] }) {
                     {s.eyebrow}
                   </span>
                 )}
-                <h3 className="relative font-display text-[1.5rem] font-extrabold leading-[1.05] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,.35)] [perspective:600px] sm:text-4xl lg:text-5xl">
+                <h3 className="relative font-display text-[1.375rem] font-extrabold leading-[1.05] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,.35)] [perspective:600px] sm:text-4xl lg:text-5xl">
                   {s.title.split(" ").map((word, w) => (
                     <span key={w} className="inline-block overflow-hidden pb-1 align-bottom">
                       <span className="p-word mr-[0.24em] inline-block">{word}</span>
                     </span>
                   ))}
                 </h3>
-                {s.subtitle && <p className="p-sub line-clamp-3 max-w-xl text-sm leading-snug text-white/90 sm:text-base">{s.subtitle}</p>}
+                {s.subtitle && <p className="p-sub line-clamp-2 max-w-xl text-sm leading-snug text-white/90 sm:text-base">{s.subtitle}</p>}
                 {s.ctaLabel && s.ctaHref && (
                   <span className="p-cta relative mt-1 inline-flex min-h-11 items-center gap-1.5 self-start overflow-hidden whitespace-nowrap rounded-full bg-white px-4 text-sm font-bold text-night sm:px-5 sm:text-base">
                     {s.ctaLabel} <ChevronRight aria-hidden className="size-4" />

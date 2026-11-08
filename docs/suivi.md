@@ -452,6 +452,9 @@ d'essai, puis une seule liste de retours).
   doigt, points, bouton pause ; simple fondu si « moins d'animations ». Réglées dans Administration →
   Bannières de l'accueil (texte, image, couleur, animation, durée, période, ordre, aperçu en direct) ;
   les prochains événements s'y intercalent seuls. Remplace le carrousel « À l'affiche ».
+- **Bande déroulante des annonces** (08/11) entre la bannière du verset et les bannières animées :
+  mes messages des 30 derniers jours (église et groupes) puis les prochains événements ; s'arrête
+  quand on la touche. Bannière du verset et bannières animées un peu réduites.
 - **Bilans** (`/bilans`) : bilan du mois ou de l'année, imprimable (cultes et présences, groupes,
   âmes et évangélisation, suivi, réunions, formations, actes, programme) et bilan financier pour qui
   a le droit caisse (soldes, recettes et dépenses par catégorie).
