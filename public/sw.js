@@ -1,10 +1,10 @@
 // Service worker du lot 0 : rend l'appli installable et affiche une page
 // « hors connexion » quand le réseau manque. Le vrai mode hors connexion
 // (pointage, suivi, file de synchronisation) arrive au lot 1.
-const VERSION = "v4";
+const VERSION = "v5";
 // Application d'administration (adresse « …gestion… » ou « …admin… ») : son propre logo et sa propre icône.
 const IS_ADMIN = /gestion|admin/.test(self.location.hostname.split(".")[0]);
-const ICON = IS_ADMIN ? "/icons/admin/icon-192.png" : "/icons/icon-192.png";
+const ICON = IS_ADMIN ? "/icons/admin/admin-192.png" : "/icons/icon-192.png";
 const LOGO = IS_ADMIN ? "/logo-admin.webp" : "/logo-semeurs.webp";
 const STATIC_CACHE = `semeurs-static-${VERSION}`;
 const OFFLINE_URL = "/hors-ligne";

@@ -37,11 +37,12 @@ export const ADMIN_BRAND: Brand = {
   description: "L'application d'administration de l'Église évangélique Les Semeurs de la Parole.",
   logo: "/logo-admin.webp",
   icons: {
-    icon192: "/icons/admin/icon-192.png",
-    icon512: "/icons/admin/icon-512.png",
-    maskable512: "/icons/admin/icon-maskable-512.png",
-    apple: "/icons/admin/apple-touch-icon.png",
-    favicon: "/icons/admin/favicon-48.png",
+    // Icône bien différente de celle des fidèles : fond bleu nuit et bandeau doré « ADMIN ».
+    icon192: "/icons/admin/admin-192.png",
+    icon512: "/icons/admin/admin-512.png",
+    maskable512: "/icons/admin/admin-maskable-512.png",
+    apple: "/icons/admin/admin-apple-180.png",
+    favicon: "/icons/admin/admin-48.png",
   },
   themeColor: "#0B2A6F",
 };
