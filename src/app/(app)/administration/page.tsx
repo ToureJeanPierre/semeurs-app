@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { GalleryHorizontalEnd, KeyRound, ListChecks, SlidersHorizontal, UsersRound, Network } from "lucide-react";
+import { GalleryHorizontalEnd, KeyRound, UserMinus, ListChecks, SlidersHorizontal, UsersRound, Network } from "lucide-react";
 import { AdminLink, PageTitle } from "@/components/admin/AdminCard";
 import { hasAny, requirePermission } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
@@ -7,11 +7,12 @@ import { createClient } from "@/lib/supabase/server";
 export const metadata: Metadata = { title: "Administration" };
 
 export default async function AdministrationPage() {
-  const access = await requirePermission("settings.manage", "roles.manage", "groups.manage", "promos.manage");
+  const access = await requirePermission("settings.manage", "roles.manage", "groups.manage", "promos.manage", "people.manage");
   const supabase = await createClient();
-  const [groups, people] = await Promise.all([
+  const [groups, people, exits] = await Promise.all([
     supabase.from("groups").select("id", { count: "exact", head: true }),
     supabase.from("people").select("id", { count: "exact", head: true }),
+    supabase.from("group_exit_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
   ]);
 
   return (
@@ -21,6 +22,15 @@ export default async function AdministrationPage() {
         intro="Tout se configure ici : groupes, personnes, responsables et paramètres."
       />
       <div className="flex flex-col gap-3">
+        {hasAny(access, ["groups.manage", "people.manage"]) && (
+          <AdminLink
+            href="/administration/demandes"
+            icon={<UserMinus aria-hidden className="size-6" />}
+            title={`Demandes de retrait${exits.count ? ` (${exits.count} en attente)` : ""}`}
+            detail="Les pères de famille et responsables demandent qu'un membre quitte leur groupe"
+            accent={exits.count ? "var(--color-alert-ring)" : undefined}
+          />
+        )}
         <AdminLink
           href="/administration/groupes"
           icon={<Network aria-hidden className="size-6" />}

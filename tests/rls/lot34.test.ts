@@ -264,4 +264,38 @@ ${as("ua")}
       member_names: "denied",
     });
   });
+
+  it("retrait d'un membre (option B) : le père demande, seule l'administration décide", async () => {
+    const r = await runScenario(`
+${as("ub")}
+  insert into public.group_exit_requests (id, group_id, person_id, reason, requested_by)
+  values ('00000000-0000-4000-8000-0000000000f1', fam_x, pc, 'A déménagé loin', pb);
+  r := r || '{"father_requests": "allowed"}';
+  begin
+    perform public.decide_group_exit('00000000-0000-4000-8000-0000000000f1', true, null);
+    r := r || '{"father_decides": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"father_decides": "denied"}';
+  end;
+  select count(*) into n from public.group_memberships where group_id = fam_x and person_id = pc and end_date is null;
+  r := r || jsonb_build_object('still_member_while_pending', n);
+${as("ua")}
+  begin
+    insert into public.group_exit_requests (group_id, person_id, reason, requested_by) values (fam_x, pb, 'Je veux', pa);
+    r := r || '{"member_requests": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"member_requests": "denied"}';
+  end;
+${as("ue")}
+  perform public.decide_group_exit('00000000-0000-4000-8000-0000000000f1', true, 'Bonne route');
+  reset role;
+  select count(*) into n from public.group_memberships where group_id = fam_x and person_id = pc and end_date is null;
+  r := r || jsonb_build_object('member_after_approval', n);`);
+
+    expect(r).toEqual({
+      father_requests: "allowed",
+      father_decides: "denied",
+      still_member_while_pending: 1,
+      member_requests: "denied",
+      member_after_approval: 0,
+    });
+  });
 });

@@ -10,6 +10,7 @@ import { daysUntilBirthday } from "@/lib/birthdays";
 import { ContactList, type ContactRow } from "@/components/alerts/ContactList";
 import { MemberFamily } from "@/components/people/MemberFamily";
 import { GroupHelpers } from "@/components/groups/GroupHelpers";
+import { GroupExitRequest } from "@/components/groups/GroupExitRequest";
 import { ChatEntry } from "@/components/groups/ChatEntry";
 import { ContactPickerButton } from "@/components/people/ContactPickerButton";
 import { DelegationForm } from "@/components/people/DelegationForm";
@@ -210,6 +211,12 @@ export default async function FamilyPage() {
 
             {family.canManage && (
               <GroupHelpers groupId={family.id} members={list.map((m) => ({ id: m.person_id, name: personName(m.people!) }))} />
+            )}
+            {family.canManage && (
+              <GroupExitRequest
+                groupId={family.id}
+                members={list.filter((m) => m.person_id !== access.personId).map((m) => ({ id: m.person_id, name: personName(m.people!) }))}
+              />
             )}
 
             <div className="flex flex-col gap-3">

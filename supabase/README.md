@@ -74,6 +74,7 @@ avec la même version que le nom du fichier.
 | `20261108100000_promo_slides.sql` | Bannières animées de l'accueil (`promo_slides`, droit `promos.manage`, listes `promo_theme` et `promo_effect`) |
 | `20261109000000_leaders_build_groups.sql` | Les responsables inscrivent dans leur groupe (sans doublon) et désignent leurs aides (`set_group_function`) |
 | `20261109000100_add_person_fix.sql` | Correctif de l'inscription par numéro |
+| `20261109100000_group_exit_requests.sql` | Retrait d'un membre (option B) : le responsable demande, l'administration décide (`decide_group_exit`) |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.

@@ -23,6 +23,7 @@ const LIST_NAMES: Record<string, string> = {
   life_event_kind: "Événements de vie",
   outreach_decision: "Réponses en évangélisation",
   archive_reason: "Motifs de suppression d'une fiche",
+  group_exit_reason: "Motifs de retrait d'un groupe",
   resource_kind: "Types de ressources (répertoire)",
 };
 

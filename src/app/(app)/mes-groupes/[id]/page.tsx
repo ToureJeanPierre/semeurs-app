@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CalendarDays, CheckSquare, ClipboardList, GraduationCap, Lightbulb, Megaphone, MapPin, Music, Package, ThumbsUp, Trash2, Wallet } from "lucide-react";
 import { ClassChildren } from "@/components/groups/ClassChildren";
 import { GroupHelpers } from "@/components/groups/GroupHelpers";
+import { GroupExitRequest } from "@/components/groups/GroupExitRequest";
 import { RegisterMemberForm } from "@/components/groups/RegisterMemberForm";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PersonPicker } from "@/components/admin/PersonPicker";
@@ -375,6 +376,9 @@ export default async function GroupHubPage({ params }: PageProps<"/mes-groupes/[
 
       {leader && group.group_types?.slug !== "family" && <RegisterMemberForm groupId={id} />}
       {leader && <GroupHelpers groupId={id} members={memberOptions} />}
+      {leader && group.group_types?.slug !== "family" && (
+        <GroupExitRequest groupId={id} members={memberOptions.filter((m) => m.id !== access.personId)} />
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         {has("trainings") && (

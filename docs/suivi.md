@@ -466,6 +466,10 @@ d'essai, puis une seule liste de retours).
   de cellule ou de Jeunesse inscrivent les membres de leur groupe (un numéro déjà connu rattache la
   personne existante ; une personne d'une autre famille n'est pas déplacée) et désignent eux-mêmes
   leurs aides (« Mes aides » : fonctions placées sous la leur).
+- **Retrait d'un membre, option B** (09/11) : le père de famille ou le responsable demande avec un
+  motif (liste `group_exit_reason` + « Autre ») ; l'administration ou le pasteur est prévenu et
+  accepte ou refuse dans Administration → Demandes de retrait ; le membre reste en attendant ; le
+  demandeur est prévenu de la décision.
 - **Bilans** (`/bilans`) : bilan du mois ou de l'année, imprimable (cultes et présences, groupes,
   âmes et évangélisation, suivi, réunions, formations, actes, programme) et bilan financier pour qui
   a le droit caisse (soldes, recettes et dépenses par catégorie).
