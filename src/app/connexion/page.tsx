@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Logo } from "@/components/Logo";
+import { getBrand } from "@/lib/brand";
 import { HeroSky } from "@/components/ui/HeroSky";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = { title: "Connexion" };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const brand = await getBrand();
   return (
     <main className="flex flex-1 flex-col">
       <HeroSky className="px-6 pb-20 pt-12 text-center">
@@ -30,6 +32,9 @@ export default function LoginPage() {
           <Reveal delay={0.15}>
             <p className="text-sm font-medium text-white/85">Église évangélique</p>
             <h1 className="text-3xl font-extrabold">Les Semeurs de la Parole</h1>
+            {brand.kind === "admin" && (
+              <p className="mx-auto mt-2 w-fit rounded-full bg-gold px-4 py-1 text-sm font-extrabold uppercase tracking-wide text-night">Administration</p>
+            )}
           </Reveal>
         </div>
       </HeroSky>

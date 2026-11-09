@@ -1,10 +1,14 @@
 // Service worker du lot 0 : rend l'appli installable et affiche une page
 // « hors connexion » quand le réseau manque. Le vrai mode hors connexion
 // (pointage, suivi, file de synchronisation) arrive au lot 1.
-const VERSION = "v3";
+const VERSION = "v4";
+// Application d'administration (adresse « …gestion… » ou « …admin… ») : son propre logo et sa propre icône.
+const IS_ADMIN = /gestion|admin/.test(self.location.hostname.split(".")[0]);
+const ICON = IS_ADMIN ? "/icons/admin/icon-192.png" : "/icons/icon-192.png";
+const LOGO = IS_ADMIN ? "/logo-admin.webp" : "/logo-semeurs.webp";
 const STATIC_CACHE = `semeurs-static-${VERSION}`;
 const OFFLINE_URL = "/hors-ligne";
-const PRECACHE = [OFFLINE_URL, "/logo-semeurs.webp", "/icons/icon-192.png"];
+const PRECACHE = [OFFLINE_URL, LOGO, ICON];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE)));
@@ -63,8 +67,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title || "Les Semeurs de la Parole", {
       body: data.body || "",
-      icon: "/icons/icon-192.png",
-      badge: "/icons/icon-192.png",
+      icon: ICON,
+      badge: ICON,
       tag: data.tag,
       data: { link: data.link || "/notifications" },
     }),

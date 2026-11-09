@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, CheckSquare, ClipboardList, GraduationCap, Lightbulb, Megaphone, MapPin, Music, Package, ThumbsUp, Trash2, Wallet } from "lucide-react";
 import { ClassChildren } from "@/components/groups/ClassChildren";
+import { GroupHelpers } from "@/components/groups/GroupHelpers";
+import { RegisterMemberForm } from "@/components/groups/RegisterMemberForm";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { PersonPicker } from "@/components/admin/PersonPicker";
 import { ChatEntry } from "@/components/groups/ChatEntry";
@@ -370,6 +372,9 @@ export default async function GroupHubPage({ params }: PageProps<"/mes-groupes/[
       )}
 
       {has("children") && (leader || canRecord) && <ClassChildren groupId={id} />}
+
+      {leader && group.group_types?.slug !== "family" && <RegisterMemberForm groupId={id} />}
+      {leader && <GroupHelpers groupId={id} members={memberOptions} />}
 
       <div className="grid grid-cols-2 gap-3">
         {has("trainings") && (

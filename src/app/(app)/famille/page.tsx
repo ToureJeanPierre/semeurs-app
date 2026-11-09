@@ -9,6 +9,7 @@ import { Birthdays } from "@/components/alerts/Birthdays";
 import { daysUntilBirthday } from "@/lib/birthdays";
 import { ContactList, type ContactRow } from "@/components/alerts/ContactList";
 import { MemberFamily } from "@/components/people/MemberFamily";
+import { GroupHelpers } from "@/components/groups/GroupHelpers";
 import { ChatEntry } from "@/components/groups/ChatEntry";
 import { ContactPickerButton } from "@/components/people/ContactPickerButton";
 import { DelegationForm } from "@/components/people/DelegationForm";
@@ -205,6 +206,10 @@ export default async function FamilyPage() {
                   <TextField label="Téléphone (facultatif)" name="phone" type="tel" inputMode="tel" prefix="+225" />
                 </ActionForm>
               </Card>
+            )}
+
+            {family.canManage && (
+              <GroupHelpers groupId={family.id} members={list.map((m) => ({ id: m.person_id, name: personName(m.people!) }))} />
             )}
 
             <div className="flex flex-col gap-3">

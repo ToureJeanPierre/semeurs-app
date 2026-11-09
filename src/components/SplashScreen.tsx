@@ -9,7 +9,7 @@ import Image from "next/image";
  * s'affiche instantanément, même en 3G. Une seule fois par ouverture de l'appli :
  * le petit script ci-dessous le masque avant affichage s'il a déjà été vu.
  */
-export function SplashScreen() {
+export function SplashScreen({ logo = "/logo-semeurs.webp", name = "Les Semeurs de la Parole" }: { logo?: string; name?: string }) {
   return (
     <>
       <script
@@ -21,10 +21,10 @@ export function SplashScreen() {
       />
       <div id="splash" aria-hidden className="splash">
         <div className="splash-logo">
-          <Image src="/logo-semeurs.webp" alt="" width={148} height={148} priority />
+          <Image src={logo} alt="" width={148} height={148} priority />
           <span className="splash-sweep" />
         </div>
-        <p className="splash-name">Les Semeurs de la Parole</p>
+        <p className="splash-name">{name}</p>
       </div>
     </>
   );

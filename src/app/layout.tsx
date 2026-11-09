@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Comfortaa, Dancing_Script, Figtree, Outfit } from "next/font/google";
+import { BrandProvider } from "@/components/BrandProvider";
 import { MotionProvider } from "@/components/MotionProvider";
+import { getBrand } from "@/lib/brand";
 import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
 import { SplashScreen } from "@/components/SplashScreen";
 import "./globals.css";
@@ -31,39 +33,44 @@ const outfit = Outfit({
   weight: ["600", "800"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Les Semeurs de la Parole",
-    template: "%s · Les Semeurs",
-  },
-  description: "Application de l'Église évangélique Les Semeurs de la Parole, Yopougon.",
-  applicationName: "Les Semeurs",
-  appleWebApp: { capable: true, title: "Les Semeurs", statusBarStyle: "default" },
-  icons: {
-    icon: [
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
-    ],
-    apple: "/icons/apple-touch-icon.png",
-  },
-  formatDetection: { telephone: false },
-};
+/** Nom, icônes et couleur selon l'application ouverte (fidèles ou administration). */
+export async function generateMetadata(): Promise<Metadata> {
+  const brand = await getBrand();
+  return {
+    title: { default: brand.name, template: `%s · ${brand.shortName}` },
+    description: brand.description,
+    applicationName: brand.shortName,
+    manifest: "/manifest.webmanifest",
+    appleWebApp: { capable: true, title: brand.shortName, statusBarStyle: "default" },
+    icons: {
+      icon: [
+        { url: brand.icons.favicon, sizes: "48x48", type: "image/png" },
+        { url: brand.icons.icon192, sizes: "192x192", type: "image/png" },
+        { url: brand.icons.icon512, sizes: "512x512", type: "image/png" },
+      ],
+      apple: brand.icons.apple,
+    },
+    formatDetection: { telephone: false },
+  };
+}
 
-export const viewport: Viewport = {
-  themeColor: "#1546B8",
-  width: "device-width",
-  initialScale: 1,
-};
+export async function generateViewport(): Promise<Viewport> {
+  const brand = await getBrand();
+  return { themeColor: brand.themeColor, width: "device-width", initialScale: 1 };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const brand = await getBrand();
   return (
     <html
       lang="fr-CI"
       className={`${figtree.variable} ${outfit.variable} ${script.variable} ${rounded.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <SplashScreen />
-        <MotionProvider>{children}</MotionProvider>
+        <SplashScreen logo={brand.logo} name={brand.kind === "admin" ? "Administration" : brand.name} />
+        <BrandProvider brand={brand}>
+          <MotionProvider>{children}</MotionProvider>
+        </BrandProvider>
         <RegisterServiceWorker />
       </body>
     </html>

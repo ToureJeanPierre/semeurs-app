@@ -455,6 +455,17 @@ d'essai, puis une seule liste de retours).
 - **Bande déroulante des annonces** (08/11) entre la bannière du verset et les bannières animées :
   mes messages des 30 derniers jours (église et groupes) puis les prochains événements ; s'arrête
   quand on la touche. Bannière du verset et bannières animées un peu réduites.
+- **Deux applications installables** (09/11) : même site, deux adresses. Fidèles :
+  semeurs-app.vercel.app ; administration : semeurs-gestion.vercel.app (alias Vercel du même projet).
+  L'adresse décide de l'habillage (`src/lib/brand.ts`, variable facultative `ADMIN_APP_HOSTS`) :
+  nom, logo (nouveau logo pour l'administration), icônes, couleur, manifeste dynamique
+  (`/manifest.webmanifest`), écran de lancement, icône des notifications. Deux origines distinctes :
+  installer l'une ne remplace jamais l'autre (le souci rencontré avec Kalim). Connexion et empreinte
+  à faire une fois dans chacune.
+- **Les responsables construisent la base** (09/11) : le père de famille et le responsable d'équipe,
+  de cellule ou de Jeunesse inscrivent les membres de leur groupe (un numéro déjà connu rattache la
+  personne existante ; une personne d'une autre famille n'est pas déplacée) et désignent eux-mêmes
+  leurs aides (« Mes aides » : fonctions placées sous la leur).
 - **Bilans** (`/bilans`) : bilan du mois ou de l'année, imprimable (cultes et présences, groupes,
   âmes et évangélisation, suivi, réunions, formations, actes, programme) et bilan financier pour qui
   a le droit caisse (soldes, recettes et dépenses par catégorie).

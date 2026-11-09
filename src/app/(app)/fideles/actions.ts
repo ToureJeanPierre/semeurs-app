@@ -132,7 +132,8 @@ export async function addPersonToGroup(_prev: FormState, formData: FormData): Pr
   });
   if (error) return { error: error.code === "42501" ? error.message : explain(error) };
   revalidatePath("/famille");
-  return { success: `${parsed.data.first_name} ${parsed.data.last_name} fait maintenant partie de la famille.` };
+  revalidatePath(`/mes-groupes/${parsed.data.group_id}`);
+  return { success: `${parsed.data.first_name} ${parsed.data.last_name} fait maintenant partie du groupe.` };
 }
 
 // ---------------------------------------------------------------------------

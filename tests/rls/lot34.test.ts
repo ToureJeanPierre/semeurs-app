@@ -227,4 +227,41 @@ ${as("ue")}
 
     expect(r).toEqual({ member_creates: "denied", member_sees: "yes", admin_creates: "allowed" });
   });
+
+  it("responsables : le père inscrit (sans doublon) et désigne ses aides, jamais au-dessus de lui", async () => {
+    const r = await runScenario(`
+  update public.people set phone = '+2250700000001' where id = pd;
+${as("ub")}
+  perform public.set_group_function(fam_x, (select id from public.group_functions where type_id = t_family and label = 'Adjoint'), pc);
+  select count(*) into n from public.group_memberships gm join public.group_functions f on f.id = gm.function_id
+  where gm.group_id = fam_x and gm.person_id = pc and f.label = 'Adjoint';
+  r := r || jsonb_build_object('father_names_helper', n);
+  begin
+    perform public.set_group_function(fam_x, f_head, pc);
+    r := r || '{"father_names_father": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"father_names_father": "denied"}';
+  end;
+  begin
+    perform public.add_person_to_group(fam_x, 'D', 'Test', 'M', '+2250700000001');
+    r := r || '{"steal_other_family": "allowed"}';
+  exception when raise_exception then r := r || '{"steal_other_family": "denied"}';
+  end;
+  perform public.add_person_to_group(fam_x, 'Nouveau', 'Venu', 'F', null);
+  select count(*) into n from public.people where first_name = 'Nouveau' and last_name = 'Venu';
+  r := r || jsonb_build_object('father_registers', n);
+${as("ua")}
+  begin
+    perform public.set_group_function(fam_x, (select id from public.group_functions where type_id = t_family and label = 'Adjoint'), pa);
+    r := r || '{"member_names": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"member_names": "denied"}';
+  end;`);
+
+    expect(r).toEqual({
+      father_names_helper: 1,
+      father_names_father: "denied",
+      steal_other_family: "denied",
+      father_registers: 1,
+      member_names: "denied",
+    });
+  });
 });

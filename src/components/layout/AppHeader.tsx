@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft, Bell, Menu } from "lucide-react";
+import { useBrand } from "@/components/BrandProvider";
 import { Logo } from "@/components/Logo";
 import type { menuLinks } from "@/lib/navigation";
 import { MenuSheet } from "./MenuSheet";
@@ -37,6 +38,7 @@ const iconButton =
 export function AppHeader({ menu, unread }: { menu: ReturnType<typeof menuLinks>; unread: number }) {
   const pathname = usePathname();
   const { back } = useNavTrail();
+  const brand = useBrand();
 
   // Titre : l'entrée du menu dont l'adresse est le début le plus long de la page courante,
   // sinon le titre par défaut de la rubrique (écran absent du menu de cette personne).
@@ -95,7 +97,9 @@ export function AppHeader({ menu, unread }: { menu: ReturnType<typeof menuLinks>
                   <Logo size={44} priority />
                 </span>
                 <span className="min-w-0 leading-tight">
-                  <span className="block text-xs font-medium text-white/85">Église Évangélique</span>
+                  <span className="block text-xs font-medium text-white/85">
+                    {brand.kind === "admin" ? <span className="font-bold text-gold">Administration</span> : "Église Évangélique"}
+                  </span>
                   <span className="block truncate font-display text-base font-semibold">
                     Les Semeurs de la Parole
                   </span>

@@ -72,6 +72,8 @@ avec la même version que le nom du fichier.
 | `20261107000000_evangelism_for_all.sql` | Évangélisation ouverte à tous : chacun note et suit ses contacts, l'équipe voit tout et est prévenue |
 | `20261108000000_event_posters.sql` | Affiche des événements (stockage « affiches ») pour le carrousel de l'accueil |
 | `20261108100000_promo_slides.sql` | Bannières animées de l'accueil (`promo_slides`, droit `promos.manage`, listes `promo_theme` et `promo_effect`) |
+| `20261109000000_leaders_build_groups.sql` | Les responsables inscrivent dans leur groupe (sans doublon) et désignent leurs aides (`set_group_function`) |
+| `20261109000100_add_person_fix.sql` | Correctif de l'inscription par numéro |
 
 Tests des règles RLS : `npm run test:rls` (nécessite `SUPABASE_ACCESS_TOKEN`). Chaque scénario
 s'exécute dans un bloc qui se termine par une exception : rien ne reste en base.
