@@ -298,4 +298,40 @@ ${as("ue")}
       member_after_approval: 0,
     });
   });
+
+  it("dîmes : le pasteur seul les voit ; caissier, trésorerie, administrateur et assistant n'y ont aucun accès", async () => {
+    const r = await runScenario(`
+  insert into public.role_assignments (person_id, role_id) select pb, id from public.roles where code = 'cashier';
+  insert into public.role_assignments (person_id, role_id) select pd, id from public.roles where code = 'pastor';
+  insert into auth.users (id, email, aud, role) values (gen_random_uuid(), 'pastor@rls.invalid', 'authenticated', 'authenticated');
+  insert into public.users (user_id, person_id) select id, pd from auth.users where email = 'pastor@rls.invalid';
+${as("ua")}
+  insert into public.tithes (person_id, amount, method) values (pa, 25000, 'orange_money');
+  select count(*) into n from public.tithes where person_id = pa;
+  r := r || jsonb_build_object('giver_sees_own', n);
+${as("ub")}
+  select count(*) into n from public.tithes;
+  r := r || jsonb_build_object('cashier_sees', n);
+${as("ue")}
+  select count(*) into n from public.tithes;
+  r := r || jsonb_build_object('admin_sees', n);
+  begin
+    perform public.tithe_report(extract(year from current_date)::int);
+    r := r || '{"admin_report": "allowed"}';
+  exception when insufficient_privilege then r := r || '{"admin_report": "denied"}';
+  end;
+  begin
+    insert into public.cash_operations (account_id, direction, amount, category, person_id, source)
+    select id, 'in', 1000, 'tithe', pe, 'declaration' from public.cash_accounts limit 1;
+    r := r || '{"tithe_in_church_cash": "allowed"}';
+  exception when others then r := r || '{"tithe_in_church_cash": "denied"}';
+  end;
+  reset role;
+  perform set_config('request.jwt.claims', json_build_object('sub', (select id from auth.users where email = 'pastor@rls.invalid'), 'role', 'authenticated')::text, true);
+  execute 'set local role authenticated';
+  select count(*) into n from public.tithes where person_id = pa;
+  r := r || jsonb_build_object('pastor_sees', n);`);
+
+    expect(r).toEqual({ giver_sees_own: 1, cashier_sees: 0, admin_sees: 0, admin_report: "denied", tithe_in_church_cash: "denied", pastor_sees: 1 });
+  });
 });

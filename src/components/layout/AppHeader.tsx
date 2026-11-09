@@ -24,6 +24,7 @@ const FALLBACK_TITLES: Record<string, string> = {
   "/predications": "Prédications",
   "/evangelisation": "Évangélisation",
   "/bilans": "Bilans",
+  "/dimes": "Dîmes",
   "/administration": "Administration",
 };
 

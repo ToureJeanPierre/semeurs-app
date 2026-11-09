@@ -70,7 +70,7 @@ export default async function OfferingCountPage() {
         <CountForm
           denominations={denominations}
           accounts={labels.accounts.map((a) => ({ value: a.id, label: a.name }))}
-          categories={labels.income.filter((c) => ["offering", "tithe", "thanksgiving", "collection"].includes(c.value))}
+          categories={labels.income.filter((c) => ["offering", "thanksgiving", "collection"].includes(c.value))}
           today={todayIso()}
         />
       </Card>

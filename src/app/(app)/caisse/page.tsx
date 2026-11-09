@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowDownLeft, ArrowUpRight, Calculator, FileBarChart, HandCoins, ListOrdered, Users } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Calculator, FileBarChart, HandCoins, ListOrdered } from "lucide-react";
 import { PageTitle } from "@/components/admin/AdminCard";
 import { OperationCard } from "@/components/cash/OperationCard";
 import { Card } from "@/components/ui/Card";
@@ -42,7 +42,6 @@ export default async function CashPage() {
     { href: "/caisse/engagements", label: "Engagements", icon: HandCoins, accent: "bg-royal text-white" },
     { href: "/caisse/operations", label: "Opérations", icon: ListOrdered, accent: "bg-surface text-royal" },
     { href: "/caisse/rapports", label: "Arrêtés et rapports", icon: FileBarChart, accent: "bg-surface text-royal" },
-    hasAny(access, ["cash.view"]) && { href: "/caisse/dimes", label: "Dîmes nominatives", icon: Users, accent: "bg-surface text-royal" },
   ].filter(Boolean) as { href: string; label: string; icon: typeof Calculator; accent: string }[];
 
   return (

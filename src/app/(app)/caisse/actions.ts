@@ -291,7 +291,7 @@ export async function closeCampaign(formData: FormData): Promise<void> {
 // Côté fidèle : déclarer un don, une dîme, un versement d'engagement ; s'engager
 // --------------------------------------------------------------------------
 const declareSchema = z.object({
-  category: z.enum(["tithe", "gift", "thanksgiving", "pledge"]),
+  category: z.enum(["tithe", "offering", "gift", "thanksgiving", "pledge"]),
   amount,
   method: z.string().min(1),
   reference: z.string().trim().max(80).optional(),
@@ -305,10 +305,23 @@ export async function declareGift(_prev: FormState, formData: FormData): Promise
   const v = parsed.data;
   if (v.method !== "cash" && !v.reference) return { fieldErrors: { reference: "Indiquez la référence reçue par SMS." } };
   const supabase = await createClient();
-  const [{ data: me }, { data: accounts }] = await Promise.all([
-    supabase.rpc("my_access"),
-    supabase.from("cash_accounts").select("id, kind").eq("active", true).order("position"),
-  ]);
+  const { data: me } = await supabase.rpc("my_access");
+  const personId = (me as { person_id?: string } | null)?.person_id;
+  // La dîme va directement au pasteur : elle ne passe jamais par la caisse de l'église.
+  if (v.category === "tithe") {
+    const { error } = await supabase.from("tithes").insert({
+      person_id: personId,
+      amount: v.amount,
+      method: v.method,
+      reference: v.reference || null,
+      anonymous: v.anonymous === "on",
+    });
+    if (error) return { error: explain(error) };
+    revalidatePath("/dons");
+    revalidatePath("/dimes");
+    return { success: "Merci ! Le pasteur va confirmer la réception de votre dîme." };
+  }
+  const { data: accounts } = await supabase.from("cash_accounts").select("id, kind").eq("active", true).order("position");
   const account = (accounts ?? []).find((a) => a.kind === (v.method === "cash" ? "cash" : "mobile_money")) ?? (accounts ?? [])[0];
   if (!account) return { error: "La caisse n'a pas encore de compte. Prévenez le caissier." };
   const { error } = await supabase.from("cash_operations").insert({
@@ -317,10 +330,9 @@ export async function declareGift(_prev: FormState, formData: FormData): Promise
     category: v.category,
     amount: v.amount,
     op_date: new Date().toISOString().slice(0, 10),
-    anonymous: v.category === "tithe" && v.anonymous === "on",
     method: v.method,
     reference: v.reference || null,
-    person_id: (me as { person_id?: string } | null)?.person_id,
+    person_id: personId,
     pledge_id: v.category === "pledge" ? v.pledge_id || null : null,
     source: "declaration",
   });

@@ -13,7 +13,7 @@ import { recordOperation } from "../actions";
 
 export const metadata: Metadata = { title: "Saisie de caisse" };
 
-/** Recette (don, dîme, collecte…) ou dépense avec justificatif photographié. */
+/** Recette (don, offrande, collecte… — jamais de dîme : elle va au pasteur) ou dépense avec justificatif photographié. */
 export default async function CashEntryPage({ searchParams }: PageProps<"/caisse/saisie">) {
   await requirePermission("cash.manage");
   const out = (await searchParams).sens === "out";
@@ -24,7 +24,7 @@ export default async function CashEntryPage({ searchParams }: PageProps<"/caisse
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-8 pt-5">
       <PageTitle
         title={out ? "Dépense" : "Recette"}
-        intro={out ? "Avec la photo du justificatif. Au-delà du plafond, le pasteur approuve." : "Don, dîme, action de grâce, collecte… Les offrandes se comptent par coupures."}
+        intro={out ? "Avec la photo du justificatif. Au-delà du plafond, le pasteur approuve." : "Don, action de grâce, collecte… Les offrandes se comptent par coupures. (Les dîmes vont directement au pasteur.)"}
       />
       <Card className="shadow-card">
         <ActionForm action={recordOperation} hidden={{ direction: out ? "out" : "in" }} submitLabel="Enregistrer" variant="primary">
@@ -37,15 +37,7 @@ export default async function CashEntryPage({ searchParams }: PageProps<"/caisse
             <SelectField label="Compte" name="account_id" options={labels.accounts.map((a) => ({ value: a.id, label: a.name }))} />
           </div>
           <TextField label="Libellé" name="label" placeholder={out ? "Facture CIE d'octobre" : "Don de la famille …"} />
-          {!out && (
-            <>
-              <PersonPicker name="person_id" label="Donateur (facultatif ; obligatoire pour une dîme nominative)" people={people} />
-              <label className="flex min-h-11 items-start gap-3 text-sm">
-                <input type="checkbox" name="anonymous" className="mt-1 size-5 accent-royal" />
-                <span>Dîme anonyme (le nom ne figurera pas dans le suivi des dîmes)</span>
-              </label>
-            </>
-          )}
+          {!out && <PersonPicker name="person_id" label="Donateur (facultatif)" people={people} />}
           <div className="grid grid-cols-2 gap-3">
             <SelectField label="Moyen" name="method" options={labels.methods} />
             <TextField label="Référence" name="reference" placeholder="Mobile Money, chèque…" />

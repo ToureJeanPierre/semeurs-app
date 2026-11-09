@@ -470,6 +470,10 @@ d'essai, puis une seule liste de retours).
   motif (liste `group_exit_reason` + « Autre ») ; l'administration ou le pasteur est prévenu et
   accepte ou refuse dans Administration → Demandes de retrait ; le membre reste en attendant ; le
   demandeur est prévenu de la décision.
+- **Dîmes vues par le pasteur seul** (09/11, décision de Jean-Pierre) : table `tithes` séparée de la
+  caisse, droit `tithes.view` réservé au rôle Pasteur ; page « Dîmes » (à confirmer, bilan annuel
+  imprimable) ; la caisse refuse toute dîme ; les traces anciennes du journal ne sont lisibles que
+  du pasteur ; numéro du pasteur (07 07 62 46 31) en réglage `tithe_phone`. Test RLS dédié.
 - **Bilans** (`/bilans`) : bilan du mois ou de l'année, imprimable (cultes et présences, groupes,
   âmes et évangélisation, suivi, réunions, formations, actes, programme) et bilan financier pour qui
   a le droit caisse (soldes, recettes et dépenses par catégorie).
