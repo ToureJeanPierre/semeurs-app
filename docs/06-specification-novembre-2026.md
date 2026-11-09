@@ -184,14 +184,22 @@ l'application Mobile Money du fidèle et la déclaration est vérifiée par le d
 ### 3.4 Qui valide
 | Catégorie | Reçu par | Vérifié par |
 | --- | --- | --- |
-| Dîme | Pasteur | **Le pasteur** (`cash.approve`) : il confirme « reçu » sur son téléphone |
+| Dîme | Pasteur | **Le pasteur seul** : il confirme « reçu » sur son téléphone |
 | Offrande / don | Pasteur **ou** caissier (réglage) | Le destinataire ; si caissier, validation à deux comme aujourd'hui |
 
-> **Point à trancher (finances, CLAUDE.md §6)** — voir §8, décision D2.
+**Décision de Jean-Pierre (09/11/2026) : la dîme est vue par le pasteur seul.** Lui seul voit les
+dîmes, leur total et leur bilan. Elles ne passent **pas** par la caisse de l'église : ni le
+trésorier, ni les caissiers, ni l'administrateur ne les voient, même en total, même dans les bilans.
+
+Données : nouvelle table **`tithes`** (séparée de `cash_operations`), dont la règle RLS n'autorise
+la lecture et l'écriture qu'au pasteur (droit dédié `tithes.view`, attribué au seul rôle Pasteur) ;
+le fidèle voit seulement ses propres déclarations. Les dîmes déjà enregistrées dans la caisse y sont
+déplacées. Le bilan financier de l'église ne contient plus aucune dîme ; le pasteur a son propre
+« Bilan des dîmes » (mois, année), visible de lui seul.
 
 ### 3.5 Confidentialité
 - Un fidèle ne voit que ses propres dons (déjà le cas).
-- Dîmes : visibles du pasteur seul (et, selon D2, de la trésorerie en totaux uniquement).
+- Dîmes : visibles du **pasteur seul** — détail, totaux et bilans.
 - Aucun total annuel ni attestation côté fidèle (décision du 30/10, inchangée).
 
 ---
@@ -273,8 +281,11 @@ l'église). Une équipe qui coche « Caisse » reçoit un compte à son nom.
 - Les opérations de l'équipe vont dans `cash_operations` avec ce compte : **même garde-fou**
   (annulation par contre-opération motivée, rien ne s'efface, journal).
 - Saisie : trésorier(ère) de l'équipe (fonction avec `cash.manage` **dans le groupe**) ;
-  validation : le responsable de l'équipe (règle des quatre yeux à l'échelle du groupe).
-- Lecture : bureau de l'équipe + trésorerie de l'église (consolidation dans les bilans).
+  validation : le responsable de l'équipe (règle des quatre yeux à l'échelle du groupe), **sans
+  plafond**.
+- **Décision de Jean-Pierre (09/11/2026) : la caisse d'équipe dépend de l'équipe seule.** Lecture et
+  validation réservées au bureau de l'équipe. Le trésorier et les caissiers de l'église n'y ont
+  **aucun** accès ; elle n'entre pas dans les bilans de l'église.
 - Le solde de l'équipe s'affiche dans sa page ; il est **séparé** de la caisse de l'église.
 
 ### 5.3 Tenues
@@ -334,8 +345,9 @@ Ajouts à la liste `JOBS` : `notify_rehearsal_reminders` (veille des répétitio
 
 ### 7.4 Sécurité
 - Toutes les nouvelles tables ont leurs règles RLS et un déclencheur de journal (`audit`).
-- Tests RLS ajoutés : fidèle sans accès aux noms du programme ; dîme invisible hors pasteur ;
-  caisse d'équipe illisible par une autre équipe ; tenue commandée seulement pour soi
+- Tests RLS ajoutés : fidèle sans accès aux noms du programme ; dîme (détail et totaux) invisible
+  de tout autre que le pasteur, administrateur et trésorier compris ; caisse d'équipe illisible par
+  une autre équipe et par la trésorerie de l'église ; tenue commandée seulement pour soi
   (ou par le bureau du groupe).
 - Numéros de téléphone (pasteur, caissier) : réglages, jamais dans le code.
 
@@ -350,10 +362,10 @@ envoi automatique de SMS, API WhatsApp Business, paiement en ligne direct.
 | # | Question | Option A | Option B | Proposition |
 | --- | --- | --- | --- | --- |
 | D1 | Indisponibilité : bloquer un **jour entier** ou aussi des **créneaux** ? | Jour entier (simple) | Jour ou plage horaire | A |
-| D2 | La dîme va au pasteur : la trésorerie la voit-elle ? | Le pasteur seul, rien dans la caisse de l'église | Le pasteur confirme, et la caisse enregistre le **total** (sans noms) pour les bilans | B (transparence des bilans) |
+| D2 | La dîme : qui la voit ? | — | — | **Tranché : le pasteur seul (détail, total, bilan)** |
 | D3 | Offrande à distance : quel destinataire par défaut ? | Caissier | Pasteur | Au choix du pasteur, caissier proposé |
 | D4 | Programme : les fidèles voient-ils le **thème** du culte ? | Oui | Non | A |
-| D5 | Caisse d'équipe : qui valide une dépense ? | Le responsable de l'équipe | Le responsable **et** la trésorerie de l'église au-delà d'un plafond | B |
+| D5 | Caisse d'équipe : qui la gère ? | — | — | **Tranché : l'équipe seule, sans plafond ni trésorerie de l'église** |
 | D6 | Tenues : paiement suivi comme une cotisation (reçu) ? | Oui | Non, simple pointage « payé » | A |
 
 ## 9. Ordre de réalisation proposé
